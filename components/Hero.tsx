@@ -42,6 +42,8 @@ export default function Hero() {
   return (
     <section id="start" tabIndex={-1} aria-labelledby="hero-name" className="carbon relative overflow-hidden outline-none">
       <div className="livery pointer-events-none absolute inset-0 opacity-90" aria-hidden="true" />
+      {/* dark fade from the left so the stripes never sit behind the text */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d1114] via-[#0d1114]/85 to-transparent lg:via-[#0d1114]/70 lg:to-[60%]" aria-hidden="true" />
       <Skyline />
       <div className="relative mx-auto grid min-h-[calc(100svh-84px)] max-w-7xl items-center gap-10 px-4 pb-40 pt-12 sm:pb-48 lg:grid-cols-[1.2fr_1fr] lg:pr-[300px] xl:pr-4">
         <div>
