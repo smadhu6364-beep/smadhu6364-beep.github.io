@@ -101,7 +101,7 @@ export const projects: Project[] = [
     tagline: "A trip-planning and booking interface prototype.",
     repo: "https://github.com/smadhu6364-beep/roam-travel",
     demo: "https://smadhu6364-beep.github.io/roam-travel/",
-    stack: ["Next.js 15", "React 19", "TypeScript", "Tailwind"],
+    stack: ["Next.js 16", "React 19", "TypeScript", "Tailwind"],
     detail: [
       "Front-end prototype for planning and booking trips.",
       "Flights and payments are scaffolded, not live.",
