@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --carbon: #07090b;
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  background: var(--carbon);
+  color: #f4f1ea;
+  overflow-x: hidden;
+}
+
+/* Carbon-fibre weave, done with gradients only */
+.carbon {
+  background-color: #0b0e11;
+  background-image:
+    linear-gradient(27deg, #0f1317 5px, transparent 5px),
+    linear-gradient(207deg, #0f1317 5px, transparent 5px),
+    linear-gradient(27deg, #13181d 5px, transparent 5px),
+    linear-gradient(207deg, #13181d 5px, transparent 5px),
+    linear-gradient(90deg, #0d1114 10px, transparent 10px),
+    linear-gradient(#11161a 25%, #0e1215 25%, #0e1215 50%, transparent 50%, transparent 75%, #151a1f 75%, #151a1f);
+  background-position: 0 5px, 10px 0, 0 10px, 10px 5px, 0 0, 0 0;
+  background-size: 20px 20px;
+}
+
+.kerb {
+  height: 10px;
+  background: repeating-linear-gradient(90deg, #e10600 0 28px, #f4f1ea 28px 56px);
+}
+.kerb-thin { height: 5px; background: repeating-linear-gradient(90deg, #e10600 0 16px, #f4f1ea 16px 32px); }
+
+.chequer {
+  background-color: #f4f1ea;
+  background-image:
+    linear-gradient(45deg, #07090b 25%, transparent 25%),
+    linear-gradient(-45deg, #07090b 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #07090b 75%),
+    linear-gradient(-45deg, transparent 75%, #07090b 75%);
+  background-size: 28px 28px;
+  background-position: 0 0, 0 14px, 14px -14px, -14px 0;
+}
+
+.livery {
+  background: linear-gradient(115deg, transparent 0 38%, #ff7a1a 38% 46%, transparent 46% 48%, #14b8a6 48% 52%, transparent 52% 54%, #f4f1ea 54% 55%, transparent 55%);
+}
+
+.skew { transform: skewX(-12deg); }
+.unskew { transform: skewX(12deg); }
+
+:focus-visible {
+  outline: 3px solid #ff7a1a;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.speedlines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 1;
+  background-image: repeating-linear-gradient(100deg, transparent 0 60px, rgba(255,255,255,0.05) 60px 61px, transparent 61px 140px);
+  opacity: 0; transition: opacity 0.25s;
+}
+.speedlines.on { opacity: 1; }
+
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.ticker-track { animation: ticker 40s linear infinite; }
+.no-motion .ticker-track { animation: none; }
+
+@media print {
+  body { background: #fff; color: #000; }
+}
+
+section[id] { scroll-margin-top: 84px; }
