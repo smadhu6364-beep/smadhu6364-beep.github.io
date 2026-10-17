@@ -9,9 +9,8 @@ export const profile = {
     "I've run day-to-day operations on busy front lines, and now I build data and AI tools. I'm looking for data and analytics roles in Ireland.",
 };
 
-export type Stint = {
-  pos: number;
-  team: string;
+export type Job = {
+  company: string;
   role: string;
   place: string;
   dates: string;
@@ -19,10 +18,9 @@ export type Stint = {
   points: string[];
 };
 
-export const experience: Stint[] = [
+export const experience: Job[] = [
   {
-    pos: 1,
-    team: "Thomas Cook (India) Limited",
+    company: "Thomas Cook (India) Limited",
     role: "Operations Executive (Customer Service)",
     place: "Bengaluru",
     dates: "Apr 2026 – Sep 2026",
@@ -34,8 +32,7 @@ export const experience: Stint[] = [
     ],
   },
   {
-    pos: 2,
-    team: "Trip Factory",
+    company: "Trip Factory",
     role: "Operations Coordinator",
     place: "Bengaluru",
     dates: "Jul 2024 – Mar 2026",
@@ -47,8 +44,7 @@ export const experience: Stint[] = [
     ],
   },
   {
-    pos: 3,
-    team: "Amitri Cafe",
+    company: "Amitri Cafe",
     role: "Cafe Team Member",
     place: "Bengaluru",
     dates: "6 months",
@@ -68,6 +64,8 @@ export type Project = {
   stack: string[];
   detail: string[];
   note?: string;
+  demo?: string;
+  featured?: boolean;
 };
 
 export const projects: Project[] = [
@@ -76,19 +74,21 @@ export const projects: Project[] = [
     name: "LLM Risk Register Benchmark",
     tagline: "Can LLMs draft a project risk register from real planning documents?",
     repo: "https://github.com/smadhu6364-beep/public-reproducible-benchmark",
+    featured: true,
     stack: ["Python", "LLM evaluation", "Prompt engineering", "Reproducible research"],
     detail: [
       "A benchmark study, co-authored with Kruthik Jadhav, that evaluates three LLMs across three prompting strategies for automated risk-register generation.",
       "Inputs are real project planning documents from 21 World Bank and UK government sources.",
       "Reproducible pipeline with a strict no-leakage evaluation design, covered by 456 unit tests.",
     ],
-    note: "Being prepared for an IEEE conference submission.",
+    note: "Targeting an IEEE conference.",
   },
   {
     id: "civicpulse",
     name: "CivicPulse",
     tagline: "Snap a local problem, get a complaint letter and a pin on the map.",
     repo: "https://github.com/smadhu6364-beep/civicpulse",
+    featured: true,
     stack: ["React", "FastAPI", "Gemini Vision", "Firebase", "Leaflet"],
     detail: [
       "Take a photo of a local problem. Gemini Vision categorises it, scores its severity, works out which authority is responsible and drafts a complaint letter.",
@@ -100,6 +100,7 @@ export const projects: Project[] = [
     name: "Roam",
     tagline: "A trip-planning and booking interface prototype.",
     repo: "https://github.com/smadhu6364-beep/roam-travel",
+    demo: "https://smadhu6364-beep.github.io/roam-travel/",
     stack: ["Next.js 15", "React 19", "TypeScript", "Tailwind"],
     detail: [
       "Front-end prototype for planning and booking trips.",
@@ -122,6 +123,7 @@ export const projects: Project[] = [
     name: "In-browser vision demos",
     tagline: "Body, face, hand and object detection running in the browser.",
     repo: "https://github.com/smadhu6364-beep/aiml-project",
+    demo: "https://smadhu6364-beep.github.io/aiml-project/",
     stack: ["TensorFlow.js", "React", "BodyPix", "Face Mesh", "Handpose", "COCO-SSD"],
     detail: [
       "A set of demos using BodyPix, Face Mesh, Handpose and COCO-SSD with TensorFlow.js and React.",
@@ -130,55 +132,31 @@ export const projects: Project[] = [
   },
 ];
 
-export type Compound = {
-  name: string;
-  compound: string;
-  letter: string;
-  color: string;
-  skills: string[];
-};
-
-export const compounds: Compound[] = [
+export const skills = [
   {
     name: "Data",
-    compound: "Soft",
-    letter: "S",
-    color: "#e10600",
     skills: ["Python", "SQL", "Advanced Excel", "Power BI", "Statistics", "Data visualisation"],
   },
   {
     name: "Web",
-    compound: "Medium",
-    letter: "M",
-    color: "#ffd21a",
     skills: ["JavaScript", "TypeScript", "React", "Next.js", "FastAPI", "Django", "Leaflet.js", "Firebase"],
   },
   {
     name: "AI / ML",
-    compound: "Hard",
-    letter: "H",
-    color: "#f4f1ea",
     skills: ["Gemini API", "Prompt engineering", "scikit-learn", "LLM evaluation", "Reproducible research"],
   },
   {
     name: "Tools",
-    compound: "Intermediate",
-    letter: "I",
-    color: "#22c55e",
     skills: ["Docker", "Git", "GitHub Actions"],
   },
   {
     name: "Operations",
-    compound: "Wet",
-    letter: "W",
-    color: "#3b82f6",
     skills: ["Query and complaint resolution", "Records accuracy", "Inventory checks", "Shift reporting"],
   },
 ];
 
 export const education = [
   {
-    round: "R2",
     status: "Current",
     title: "MSc in Business Analytics (Computing)",
     school: "Dublin City University",
@@ -192,7 +170,6 @@ export const education = [
     ],
   },
   {
-    round: "R1",
     status: "Completed",
     title: "BE Computer Science Engineering",
     school: "DSATM",
@@ -202,11 +179,3 @@ export const education = [
   },
 ];
 
-export const sections = [
-  { id: "start", label: "Grid", corner: "T1", sector: 1 },
-  { id: "pitwall", label: "Pit wall", corner: "T3", sector: 1 },
-  { id: "telemetry", label: "Telemetry", corner: "T6", sector: 2 },
-  { id: "tyres", label: "Tyres", corner: "T9", sector: 2 },
-  { id: "qualifying", label: "Qualifying", corner: "T11", sector: 3 },
-  { id: "finish", label: "Finish", corner: "T14", sector: 3 },
-] as const;
