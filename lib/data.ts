@@ -80,7 +80,7 @@ export const projects: Project[] = [
     detail: [
       "A benchmark study, co-authored with Kruthik Jadhav, that evaluates three LLMs across three prompting strategies for automated risk-register generation.",
       "Inputs are real project planning documents from 21 World Bank and UK government sources.",
-      "Reproducible pipeline with a strict no-leakage evaluation design, covered by 438 unit tests.",
+      "Reproducible pipeline with a strict no-leakage evaluation design, covered by 456 unit tests.",
     ],
     note: "Being prepared for an IEEE conference submission.",
   },
