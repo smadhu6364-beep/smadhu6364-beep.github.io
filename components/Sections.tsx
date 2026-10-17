@@ -41,7 +41,7 @@ export function Experience() {
         <Head id="pitwall-h" kicker="Sector 1 · Pit wall" title="Experience" sub="Each role is a stint. Most recent at the top. Open a row for the detail." />
         <Reveal>
           <div className="overflow-hidden rounded-xl border border-white/10 bg-carbon-900">
-            <div className="hidden grid-cols-[56px_1fr_1fr_140px_40px] gap-3 border-b border-white/10 bg-carbon-800 px-4 py-2 font-cond text-xs uppercase tracking-[0.25em] text-mute md:grid">
+            <div className="hidden grid-cols-[56px_1fr_1fr_190px_40px] gap-3 border-b border-white/10 bg-carbon-800 px-4 py-2 font-cond text-xs uppercase tracking-[0.25em] text-mute md:grid">
               <span>Pos</span>
               <span>Team</span>
               <span>Role</span>
@@ -60,7 +60,7 @@ export function Experience() {
                         aria-expanded={isOpen}
                         aria-controls={panelId}
                         onClick={() => setOpen(isOpen ? null : i)}
-                        className="grid w-full grid-cols-[44px_1fr_28px] items-center gap-3 px-4 py-4 text-left hover:bg-carbon-800 md:grid-cols-[56px_1fr_1fr_140px_40px]"
+                        className="grid w-full grid-cols-[44px_1fr_28px] items-center gap-3 px-4 py-4 text-left hover:bg-carbon-800 md:grid-cols-[56px_1fr_1fr_190px_40px]"
                       >
                         <span className={`flex h-9 w-9 items-center justify-center font-display text-lg font-black italic ${i === 0 ? "bg-papaya text-carbon-950" : "bg-carbon-700 text-chalk"}`}>
                           {s.pos}
