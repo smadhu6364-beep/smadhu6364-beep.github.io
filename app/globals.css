@@ -35,3 +35,16 @@ section[id] { scroll-margin-top: 80px; }
 @media print {
   body { background: #fff; color: #000; }
 }
+
+/* F1 backdrop: streaks, windows, reduced motion */
+@keyframes f1-streak { from { transform: translateX(110vw); } to { transform: translateX(-30vw); } }
+.f1-streak {
+  right: 0;
+  background: linear-gradient(90deg, transparent, rgb(var(--accent) / 0.35), transparent);
+  animation: f1-streak linear infinite;
+}
+.f1-window { fill: rgba(255, 196, 120, 0.12); }
+.dark .f1-window { fill: rgba(255, 196, 120, 0.45); }
+@media (prefers-reduced-motion: reduce) {
+  .f1-streak, .f1-car { display: none; }
+}

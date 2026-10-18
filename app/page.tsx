@@ -1,4 +1,4 @@
-import Circuit from "@/components/Circuit";
+import F1Backdrop from "@/components/F1Backdrop";
 import ThemeToggle from "@/components/ThemeToggle";
 import { education, experience, profile, projects, skills } from "@/lib/data";
 
@@ -66,10 +66,8 @@ export default function Home() {
         Skip to content
       </a>
 
-      {/* Faint Albert Park outline in the background */}
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <Circuit className="absolute -right-40 top-6 w-[560px] max-w-none text-accent opacity-[0.08] lg:-left-32 lg:bottom-[-40px] lg:right-auto lg:top-auto lg:w-[760px] lg:opacity-[0.06]" />
-      </div>
+      {/* Albert Park at night: circuit, lapping car, skyline */}
+      <F1Backdrop />
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:flex lg:gap-16 lg:px-12">
         <header className="pt-10 lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-[44%] lg:flex-col lg:justify-between lg:py-20">
