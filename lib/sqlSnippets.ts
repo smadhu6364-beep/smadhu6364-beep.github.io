@@ -140,9 +140,9 @@ ORDER BY price_rank;`,
 )
 SELECT * FROM checks
 ORDER BY check_no;`,
-    rowsLabel: "First 6 rows",
+    rowsLabel: "Rows for the checks shown",
     columns: ["check_no", "check_name", "value"],
-    rows: quality.slice(0, 6).map((q) => [q.no, q.name, q.value.toLocaleString("en-IE")]),
+    rows: quality.filter((q) => [1, 2, 4, 6].includes(Number(q.no))).map((q) => [q.no, q.name, q.value.toLocaleString("en-IE")]),
   },
 ];
 
