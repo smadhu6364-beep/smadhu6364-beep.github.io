@@ -27,7 +27,7 @@ export const caseStudies: CaseStudy[] = [
     role: "Co-author with Kruthik Jadhav · research code and data pipeline",
     overview: [
       "This is the code and data behind a paper we're preparing for an IEEE conference: \"Evaluating Large Language Models for Automated Risk Register Generation from Project Documentation: A Benchmark Study.\"",
-      "We compare three LLMs (Claude, GPT and one open-source model) across three prompting strategies: zero-shot, few-shot and structured reasoning.",
+      "We compare three LLMs from different providers across three prompting strategies: zero-shot, few-shot and structured reasoning.",
     ],
     problem: [
       "Risk registers are written by hand from long planning documents. It's slow work, and it's tempting to hand it to an LLM. But nobody has a clear answer to how complete those AI-drafted registers are, or which kinds of risk they tend to miss or make up.",
@@ -63,19 +63,19 @@ export const caseStudies: CaseStudy[] = [
       },
       {
         title: "Guards on the run itself",
-        body: "Raw outputs are append-only, and the run driver has a cost guard. The synchronous grid came in over the budget in the project spec, so we added batch mode for Claude and GPT to bring it under.",
+        body: "Raw outputs are append-only, and the run driver has a cost guard that estimates spend before anything is sent, so the full grid stays within the project budget.",
       },
     ],
     stack: [
       { layer: "Language", tech: "Python 3.11+, pinned dependencies" },
       { layer: "Matching", tech: "Sentence-transformer embeddings" },
-      { layer: "Models", tech: "Claude, GPT, one open-source model (sync and batch APIs)" },
+      { layer: "Models", tech: "Three LLMs via their providers' APIs" },
       { layer: "Analysis", tech: "Fleiss' kappa, matplotlib figures" },
       { layer: "Testing", tech: "unittest, 456 tests, fully offline" },
     ],
     status: [
       "The corpus (21 of 21 projects) and the pipeline are complete and unit-tested. The run driver has been pre-flighted end to end with stubbed providers.",
-      "The full experiment run hasn't happened yet. It needs real API keys and recruited human raters for the expert ratings, so there are no results to show here.",
+      "Results aren't shown here while the paper is being prepared for submission. The expert-rating part of the study needs recruited human raters.",
       "The batch code path is tested against mocked provider responses only. It hasn't been run against a live API.",
     ],
     learned: [
