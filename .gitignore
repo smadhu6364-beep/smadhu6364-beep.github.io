@@ -2,3 +2,8 @@ node_modules
 .next
 out
 *.tsbuildinfo
+
+# Private, unpublished work (copied in by scripts/private.mjs only when its flag is on)
+private/
+lib/private/
+public/projects/airbnb/
