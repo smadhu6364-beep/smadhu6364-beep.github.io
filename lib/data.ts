@@ -66,6 +66,10 @@ export type Project = {
   note?: string;
   demo?: string;
   featured?: boolean;
+  /** Screenshot under /public/projects, or omitted when the card shows a diagram */
+  image?: { src: string; alt: string; w: number; h: number };
+  /** Has a case study at /projects/<id>/ */
+  caseStudy?: boolean;
 };
 
 export const projects: Project[] = [
@@ -82,6 +86,7 @@ export const projects: Project[] = [
       "Reproducible pipeline with a strict no-leakage evaluation design, covered by 456 unit tests.",
     ],
     note: "Targeting an IEEE conference.",
+    caseStudy: true,
   },
   {
     id: "civicpulse",
@@ -94,6 +99,8 @@ export const projects: Project[] = [
       "Take a photo of a local problem. Gemini Vision categorises it, scores its severity, works out which authority is responsible and drafts a complaint letter.",
       "Reports appear on a live community map.",
     ],
+    image: { src: "/projects/civicpulse.webp", alt: "CivicPulse report form with photo upload, description and a map for picking the location", w: 1280, h: 800 },
+    caseStudy: true,
   },
   {
     id: "roam",
@@ -106,6 +113,8 @@ export const projects: Project[] = [
       "Front-end prototype for planning and booking trips.",
       "Flights and payments are scaffolded, not live.",
     ],
+    image: { src: "/projects/roam.webp", alt: "Roam home page with the headline Plan. Explore. Experience. and a destination search box", w: 1280, h: 800 },
+    caseStudy: true,
   },
   {
     id: "foodiepy",
@@ -117,6 +126,8 @@ export const projects: Project[] = [
       "Built with three other contributors.",
       "Gradient boosting forecasts order volume for fulfilment centres, feeding an inventory app.",
     ],
+    image: { src: "/projects/foodiepy.webp", alt: "Foodiepy landing page: forecast food demand for the next few weeks", w: 1280, h: 800 },
+    caseStudy: true,
   },
   {
     id: "aiml",
@@ -129,6 +140,7 @@ export const projects: Project[] = [
       "A set of demos using BodyPix, Face Mesh, Handpose and COCO-SSD with TensorFlow.js and React.",
       "Everything runs client-side, no server needed.",
     ],
+    image: { src: "/projects/aiml.webp", alt: "Browser Vision Lab page listing object detection, face mesh, hand gestures and body segmentation demos", w: 1100, h: 900 },
   },
 ];
 

@@ -3,21 +3,21 @@
 @tailwind utilities;
 
 :root {
-  --bg: 250 250 249;
+  --bg: 245 245 247;
   --surface: 255 255 255;
-  --ink: 17 24 39;
-  --muted: 75 85 99;
-  --line: 229 231 235;
-  --accent: 15 118 110;
+  --ink: 29 29 31;
+  --muted: 110 110 115;
+  --line: 210 210 215;
+  --accent: 0 113 227;
   color-scheme: light;
 }
 .dark {
-  --bg: 11 17 28;
-  --surface: 17 25 40;
-  --ink: 236 239 244;
-  --muted: 156 166 182;
-  --line: 36 48 68;
-  --accent: 45 212 191;
+  --bg: 12 12 14;
+  --surface: 28 28 30;
+  --ink: 245 245 247;
+  --muted: 152 152 157;
+  --line: 58 58 60;
+  --accent: 41 151 255;
   color-scheme: dark;
 }
 
@@ -28,23 +28,39 @@ body { background: rgb(var(--bg)); color: rgb(var(--ink)); overflow-x: hidden; }
 :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 3px; border-radius: 4px; }
 section[id] { scroll-margin-top: 80px; }
 
-/* A thin kerb stripe used as a quiet section divider */
-.kerb { height: 3px; width: 48px; border-radius: 2px;
-  background: repeating-linear-gradient(90deg, rgb(var(--accent)) 0 8px, transparent 8px 12px); opacity: .8; }
+/* Small gradient bar above section headings (iCloud-style accent) */
+.kerb { height: 4px; width: 40px; border-radius: 999px;
+  background: linear-gradient(90deg, #0071e3, #af52de 55%, #ff2d55); }
 
 @media print {
   body { background: #fff; color: #000; }
 }
 
-/* F1 backdrop: streaks, windows, reduced motion */
-@keyframes f1-streak { from { transform: translateX(110vw); } to { transform: translateX(-30vw); } }
-.f1-streak {
-  right: 0;
-  background: linear-gradient(90deg, transparent, rgb(var(--accent) / 0.35), transparent);
-  animation: f1-streak linear infinite;
+/* iCloud look: frosted-glass cards everywhere a surface is used */
+.bg-surface, .glass {
+  background-color: rgb(var(--surface) / 0.62) !important;
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  border-color: rgb(255 255 255 / 0.65) !important;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.04), 0 12px 32px -12px rgb(0 0 0 / 0.12);
 }
-.f1-window { fill: rgba(255, 196, 120, 0.12); }
-.dark .f1-window { fill: rgba(255, 196, 120, 0.45); }
-@media (prefers-reduced-motion: reduce) {
-  .f1-streak, .f1-car { display: none; }
+.dark .bg-surface, .dark .glass {
+  background-color: rgb(var(--surface) / 0.55) !important;
+  border-color: rgb(255 255 255 / 0.08) !important;
+  box-shadow: 0 12px 32px -12px rgb(0 0 0 / 0.5);
 }
+.glass { border: 1px solid; border-radius: 22px; }
+
+/* drifting colour glows behind everything */
+.cloud-blob { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .55; will-change: transform; animation: cloud-drift 26s ease-in-out infinite alternate; }
+.dark .cloud-blob { opacity: .28; }
+.cloud-blue   { width: 52vw; height: 52vw; left: -12vw; top: -14vw; background: #0a84ff; }
+.cloud-purple { width: 44vw; height: 44vw; right: -10vw; top: 6vh; background: #af52de; animation-duration: 32s; animation-delay: -8s; }
+.cloud-pink   { width: 38vw; height: 38vw; right: 14vw; bottom: -14vw; background: #ff6b9a; animation-duration: 29s; animation-delay: -15s; }
+.cloud-teal   { width: 40vw; height: 40vw; left: 10vw; bottom: -16vw; background: #30d0c7; animation-duration: 35s; animation-delay: -4s; }
+@keyframes cloud-drift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(4vw, 3vh, 0) scale(1.08); }
+  100% { transform: translate3d(-3vw, 5vh, 0) scale(.95); }
+}
+@media (prefers-reduced-motion: reduce) { .cloud-blob { animation: none; } }

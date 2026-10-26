@@ -1,6 +1,8 @@
-import F1Backdrop from "@/components/F1Backdrop";
+import CloudBackdrop from "@/components/CloudBackdrop";
+import PipelineDiagram from "@/components/PipelineDiagram";
 import ThemeToggle from "@/components/ThemeToggle";
-import { education, experience, profile, projects, skills } from "@/lib/data";
+import { getCaseStudy } from "@/lib/caseStudies";
+import { education, experience, profile, projects, skills, type Project } from "@/lib/data";
 
 const nav = [
   { id: "about", label: "About" },
@@ -53,6 +55,43 @@ function Ext({ href, children }: { href: string; children: React.ReactNode }) {
   );
 }
 
+function CaseLink({ id, name }: { id: string; name: string }) {
+  return (
+    <a
+      href={`/projects/${id}/`}
+      className="inline-flex items-center gap-1 text-sm font-semibold text-accent underline-offset-4 hover:underline"
+    >
+      Read case study<span className="sr-only">: {name}</span> <span aria-hidden="true">→</span>
+    </a>
+  );
+}
+
+function ProjectMedia({ p }: { p: Project }) {
+  if (p.image) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={p.image.src}
+        alt={p.image.alt}
+        width={p.image.w}
+        height={p.image.h}
+        loading="lazy"
+        decoding="async"
+        className="aspect-[16/10] h-auto w-full object-cover object-top"
+      />
+    );
+  }
+  const cs = getCaseStudy(p.id);
+  if (!cs) return null;
+  return (
+    <div className="w-full bg-bg/60 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="w-full">
+        <PipelineDiagram nodes={cs.diagram.nodes} title={`${p.name} pipeline`} />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const featured = projects.filter((p) => p.featured);
   const others = projects.filter((p) => !p.featured);
@@ -66,8 +105,8 @@ export default function Home() {
         Skip to content
       </a>
 
-      {/* Albert Park at night: circuit, lapping car, skyline */}
-      <F1Backdrop />
+      {/* iCloud-style colour glows behind frosted cards */}
+      <CloudBackdrop />
 
       <div className="mx-auto max-w-6xl px-5 sm:px-8 lg:flex lg:gap-16 lg:px-12">
         <header className="pt-10 lg:sticky lg:top-0 lg:flex lg:max-h-screen lg:w-[44%] lg:flex-col lg:justify-between lg:py-20">
@@ -91,6 +130,7 @@ export default function Home() {
               <a href={`mailto:${profile.email}`} className={btnGhost}>Email me</a>
               <a href={profile.github} className={btnGhost} target="_blank" rel="noopener noreferrer">GitHub</a>
               <a href="/cv/" className={btnGhost}>View CV</a>
+              <a href="/Madhu_Sudhan_Srinivas_CV.pdf" download className={btnGhost}>Download CV (PDF)</a>
             </div>
 
             <nav aria-label="Sections" className="mt-14 hidden lg:block">
@@ -161,22 +201,32 @@ export default function Home() {
             <Heading id="projects">Projects</Heading>
             <div className="space-y-6">
               {featured.map((p) => (
-                <article key={p.id} className="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-7">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-accent">Featured</p>
-                  <h3 className="mt-2 font-display text-xl font-semibold">{p.name}</h3>
-                  <p className="mt-2 font-medium text-ink">{p.tagline}</p>
-                  <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
-                    {p.detail.map((d) => (
-                      <li key={d}>{d}</li>
-                    ))}
-                  </ul>
-                  {p.note && <p className="mt-3 text-sm font-medium text-ink">{p.note}</p>}
-                  <div className="mt-5">
-                    <Chips items={p.stack} />
-                  </div>
-                  <div className="mt-5 flex flex-wrap gap-5">
-                    <Ext href={p.repo}>Code on GitHub</Ext>
-                    {p.demo && <Ext href={p.demo}>Live demo</Ext>}
+                <article key={p.id} className="glass overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
+                  {p.caseStudy ? (
+                    <a href={`/projects/${p.id}/`} tabIndex={-1} aria-hidden="true" className="block border-b border-line">
+                      <ProjectMedia p={p} />
+                    </a>
+                  ) : (
+                    <div className="border-b border-line"><ProjectMedia p={p} /></div>
+                  )}
+                  <div className="p-6 sm:p-7">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-accent">Featured</p>
+                    <h3 className="mt-2 font-display text-xl font-semibold">{p.name}</h3>
+                    <p className="mt-2 font-medium text-ink">{p.tagline}</p>
+                    <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
+                      {p.detail.map((d) => (
+                        <li key={d}>{d}</li>
+                      ))}
+                    </ul>
+                    {p.note && <p className="mt-3 text-sm font-medium text-ink">{p.note}</p>}
+                    <div className="mt-5">
+                      <Chips items={p.stack} />
+                    </div>
+                    <div className="mt-5 flex flex-wrap items-center gap-5">
+                      {p.caseStudy && <CaseLink id={p.id} name={p.name} />}
+                      <Ext href={p.repo}>Code on GitHub</Ext>
+                      {p.demo && <Ext href={p.demo}>Live demo</Ext>}
+                    </div>
                   </div>
                 </article>
               ))}
@@ -184,18 +234,38 @@ export default function Home() {
             <h3 className="mb-2 mt-12 text-sm font-semibold uppercase tracking-widest text-muted">Other projects</h3>
             <ul className="divide-y divide-line border-y border-line">
               {others.map((p) => (
-                <li key={p.id} className="py-5">
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <li key={p.id} className="flex flex-col gap-4 py-5 sm:flex-row sm:items-start">
+                  {p.image && (
+                    <a
+                      href={p.caseStudy ? `/projects/${p.id}/` : p.demo ?? p.repo}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      className="block shrink-0 overflow-hidden rounded-lg border border-line sm:w-40"
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={p.image.src}
+                        alt=""
+                        width={p.image.w}
+                        height={p.image.h}
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[16/10] h-auto w-full object-cover object-top"
+                      />
+                    </a>
+                  )}
+                  <div className="min-w-0 flex-1">
                     <h4 className="font-semibold">{p.name}</h4>
-                    <div className="flex gap-4">
+                    <p className="mt-1 text-sm leading-relaxed text-muted">
+                      {p.tagline} {p.detail.join(" ")}
+                    </p>
+                    <p className="mt-2 text-xs text-muted">{p.stack.join(" · ")}</p>
+                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+                      {p.caseStudy && <CaseLink id={p.id} name={p.name} />}
                       <Ext href={p.repo}>Code</Ext>
                       {p.demo && <Ext href={p.demo}>Live demo</Ext>}
                     </div>
                   </div>
-                  <p className="mt-1 text-sm leading-relaxed text-muted">
-                    {p.tagline} {p.detail.join(" ")}
-                  </p>
-                  <p className="mt-2 text-xs text-muted">{p.stack.join(" · ")}</p>
                 </li>
               ))}
             </ul>
