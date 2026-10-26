@@ -3,6 +3,11 @@ import { profile } from "@/lib/data";
 import SoundToggle from "./SoundToggle";
 import ThemeToggle from "./ThemeToggle";
 
+// Evaluated when the static site is built, so it shows the date of the last build.
+const BUILT = new Date();
+const builtLabel = BUILT.toLocaleDateString("en-IE", { month: "long", year: "numeric", timeZone: "Europe/Dublin" });
+const builtIso = BUILT.toISOString().slice(0, 7);
+
 export default function Footer() {
   return (
     <footer className="mx-auto max-w-[1240px] px-4 pb-10 pt-8 sm:px-8">
@@ -18,7 +23,9 @@ export default function Footer() {
           <li><ThemeToggle /></li>
         </ul>
       </div>
-      <p className="mt-3 text-xs text-muted">Every number here comes from my CV or the project files. The music is made in your browser and stays off until you turn it on.</p>
+      <p className="mt-3 text-xs text-muted">
+        Every number here comes from my CV or the project files. The music is made in your browser and stays off until you turn it on. Last updated <time dateTime={builtIso}>{builtLabel}</time>.
+      </p>
     </footer>
   );
 }

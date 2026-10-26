@@ -13,20 +13,20 @@ const FONT = `Inter, -apple-system, "Segoe UI Variable Display", "Segoe UI", sys
 
 const og = `<!doctype html><html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;600;700&display=swap"><style>
 *{margin:0;box-sizing:border-box}
-body{width:1200px;height:630px;background:#f5f4ef;font-family:${FONT};color:#181714;overflow:hidden;position:relative}
+body{width:1200px;height:630px;background:#fbfaf7;font-family:${FONT};color:#1c1b18;overflow:hidden;position:relative}
 .top{display:flex;align-items:center;gap:16px;padding:44px 64px 0}
-.mono{width:52px;height:52px;border-radius:50%;background:#181714;color:#f5f4ef;font-family:${SERIF};font-style:italic;font-size:34px;display:flex;align-items:center;justify-content:center;padding-bottom:4px}
+.mono{width:52px;height:52px;border-radius:50%;background:#f1f4c8;border:1.5px solid #1c1b18;color:#1c1b18;font-family:${SERIF};font-style:italic;font-size:34px;display:flex;align-items:center;justify-content:center;padding-bottom:4px}
 .nm{font-size:24px;font-weight:600;letter-spacing:-.3px}
 .dot{margin-left:auto;font-size:19px;color:#3d3b36;display:flex;align-items:center;gap:10px}.dot i{width:12px;height:12px;border-radius:50%;background:#2e8c4a}
 h1{position:absolute;left:64px;top:170px;font-size:92px;line-height:1.02;font-weight:700;letter-spacing:-3.6px;width:700px}
 h1 em{font-family:${SERIF};font-weight:400;font-size:100px;letter-spacing:-1px}
 .sub{position:absolute;left:64px;bottom:56px;font-size:22px;color:#4a4842}
-.card{position:absolute;right:70px;top:150px;width:350px;height:330px;background:#fbfaf6;border:1px solid #dad7cd;border-radius:6px;transform:rotate(2.5deg);padding:44px 34px;box-shadow:0 30px 50px -30px rgba(40,30,10,.45);background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(218,215,205,.7) 31px 32px)}
-.tape{position:absolute;top:-16px;left:50%;width:120px;height:32px;margin-left:-60px;transform:rotate(-3deg);background:rgba(231,236,149,.9)}
+.card{position:absolute;right:70px;top:150px;width:350px;height:330px;background:#ffffff;border:1px solid #e8e5dd;border-radius:6px;transform:rotate(2.5deg);padding:44px 34px;box-shadow:0 30px 50px -32px rgba(40,30,10,.3);background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(232,229,221,.8) 31px 32px)}
+.tape{position:absolute;top:-16px;left:50%;width:120px;height:32px;margin-left:-60px;transform:rotate(-3deg);background:rgba(241,244,200,.95);border-left:1px dashed rgba(28,27,24,.12);border-right:1px dashed rgba(28,27,24,.12)}
 .lb{font-size:13px;letter-spacing:.14em;color:#58554e;font-weight:600}
 .q{font-family:${SERIF};font-style:italic;font-size:34px;line-height:1.15;margin-top:22px}
-.cur{position:absolute;left:34px;right:34px;bottom:30px;border-top:1px dashed #dad7cd;padding-top:14px;font-size:16px}
-.band{position:absolute;right:0;bottom:0;width:470px;height:12px;background:#e7ec95}
+.cur{position:absolute;left:34px;right:34px;bottom:30px;border-top:1px dashed #e8e5dd;padding-top:14px;font-size:16px}
+.band{position:absolute;right:0;bottom:0;width:470px;height:12px;background:#f1f4c8}
 </style></head><body>
 <div class="top"><div class="mono">m</div><div class="nm">Madhu Sudhan Srinivas</div><div class="dot"><i></i>Open to data analyst roles in Ireland</div></div>
 <h1>From the front line <em>to the data.</em></h1>
@@ -35,7 +35,7 @@ h1 em{font-family:${SERIF};font-weight:400;font-size:100px;letter-spacing:-1px}
 <div class="band"></div>
 </body></html>`;
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#181714"/><text x="32" y="42" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-size="40" fill="#f5f4ef">m</text></svg>`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="1.5" y="1.5" width="61" height="61" rx="30.5" fill="#f1f4c8" stroke="#1c1b18" stroke-width="3"/><text x="32" y="42" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-size="40" fill="#1c1b18">m</text></svg>`;
 fs.writeFileSync(path.join(pub, "icon.svg"), svg);
 
 const browser = await puppeteer.launch({ executablePath: browserPath, headless: true });
@@ -49,7 +49,7 @@ const pngs = {};
 for (const [name, size, pad] of [["icon-512.png", 512, 0], ["icon-192.png", 192, 0], ["apple-touch-icon.png", 180, 0], ["f32", 32, 0], ["f16", 16, 0]]) {
   await page.setViewport({ width: size, height: size });
   // apple-touch gets a full-bleed square (iOS rounds it); others use the rounded svg
-  const inner = name === "apple-touch-icon.png" ? svg.replace('rx="32"', 'rx="0"') : svg;
+  const inner = name === "apple-touch-icon.png" ? svg.replace('rx="30.5"', 'rx="0"') : svg;
   await page.setContent(`<html><body style="margin:0;background:transparent">${inner.replace("<svg ", `<svg width="${size}" height="${size}" `)}</body></html>`);
   const buf = await page.screenshot({ omitBackground: true });
   if (name.endsWith(".png")) fs.writeFileSync(path.join(pub, name), buf); else pngs[name] = buf;

@@ -136,7 +136,6 @@ const allProjects: Project[] = [
       "Every residential sale on the Property Price Register from 2010 to October 2026, analysed in eight SQL files.",
       "The national median was €380,000 in 2025, up from €148,000 in 2013. Dublin's lead over the rest of the country has shrunk from 2.22 times to 1.49 times.",
     ],
-    image: { src: "/projects/irish-property.webp", alt: "Line chart of median sale price by year, 2010 to 2025, for Dublin and the rest of Ireland", w: 1200, h: 630 },
     caseStudy: true,
   },
   {
@@ -184,7 +183,6 @@ const allProjects: Project[] = [
       "A set of demos using BodyPix, Face Mesh, Handpose and COCO-SSD with TensorFlow.js and React.",
       "Everything runs client-side, no server needed.",
     ],
-    image: { src: "/projects/aiml.webp", alt: "Browser Vision Lab page listing object detection, face mesh, hand gestures and body segmentation demos", w: 1100, h: 900 },
   },
 ];
 

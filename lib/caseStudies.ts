@@ -194,13 +194,6 @@ const allCaseStudies: CaseStudy[] = [
       "Rerun the queries once late filings for 2026 are in, since recent months can be revised upwards.",
     ],
     links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/irish-property-sql" }],
-    galleryTitle: "More charts",
-    images: [
-      { src: "/projects/irish-property.webp", alt: "Line chart of median sale price by year, 2010 to 2025, for Dublin and the rest of Ireland", w: 1200, h: 630, caption: "Median sale price by year, Dublin against the rest of Ireland." },
-      { src: "/projects/irish-property-median.webp", alt: "Chart of the national median sale price by year as a line, with the number of sales as bars, 2010 to 2025", w: 1228, h: 649, caption: "National median price (line) and number of sales (bars) by year." },
-      { src: "/projects/irish-property-counties.webp", alt: "Bar chart of median sale price by county in 2025, from Dublin at 498,999 euro down to Longford at 185,000 euro", w: 1107, h: 996, caption: "Median sale price by county, 2025." },
-      { src: "/projects/irish-property-new.webp", alt: "Chart comparing new and second-hand home medians by year, with VAT added back on new homes", w: 1149, h: 649, caption: "New against second-hand homes." },
-    ],
   },
   {
     slug: "civicpulse",

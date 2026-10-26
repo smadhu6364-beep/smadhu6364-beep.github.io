@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import type { Project, ProjectKind } from "@/lib/data";
+import { CountyBars, MiniDublin } from "./PropertyCharts";
 
 const filters: { label: string; kind: ProjectKind | null }[] = [
   { label: "All work", kind: null },
@@ -12,7 +13,6 @@ const filters: { label: string; kind: ProjectKind | null }[] = [
 
 /** A second, narrower image for the phone mock where one exists */
 const phoneImage: Record<string, { src: string; w: number; h: number }> = {
-  "irish-property": { src: "/projects/irish-property-counties.webp", w: 1107, h: 996 },
   roam: { src: "/projects/roam-planner.webp", w: 1280, h: 800 },
 };
 
@@ -52,19 +52,51 @@ function BenchmarkScreen({ big }: { big?: boolean }) {
   );
 }
 
+/** Light stand-in for the in-browser vision demo, whose real screenshot is dark */
+function VisionScreen({ big }: { big?: boolean }) {
+  const demos = [
+    ["Object detection", "COCO-SSD"],
+    ["Face mesh", "Face Mesh"],
+    ["Hand gestures", "Handpose"],
+    ["Body segmentation", "BodyPix"],
+  ];
+  return (
+    <div className={`flex h-full flex-col bg-surface ${big ? "p-4 sm:p-6" : "p-3"}`}>
+      <p className={`label ${big ? "!text-[10px] sm:!text-xs" : "!text-[9px]"}`}>Browser vision lab</p>
+      <ul className={`mt-2 flex-1 ${big ? "divide-y divide-line sm:mt-3" : "space-y-1.5"}`}>
+        {demos.map(([name, model]) => (
+          <li key={name} className={big ? "flex items-baseline gap-2 py-1 sm:py-2" : "rounded-md border border-line bg-bg px-2 py-1"}>
+            <span className={`block font-medium leading-tight ${big ? "text-[11px] sm:text-sm" : "text-[10px]"}`}>{name}</span>
+            <span className={`block text-muted ${big ? "text-[10px] sm:text-xs" : "text-[9px]"}`}>{big && "· "}{model}</span>
+          </li>
+        ))}
+      </ul>
+      {big && <p className="hidden text-xs text-muted sm:block">Runs in the browser with TensorFlow.js</p>}
+    </div>
+  );
+}
+
+function Screen({ p, big }: { p: Project; big?: boolean }) {
+  if (p.id === "irish-property") return big ? <MiniDublin /> : <div className="h-full bg-surface p-2.5"><p className="label !text-[8px]">2025 median by county</p><div className="mt-2"><CountyBars limit={12} compact /></div></div>;
+  if (p.id === "aiml") return <VisionScreen big={big} />;
+  if (p.id === "benchmark") return <BenchmarkScreen big={big} />;
+  return null;
+}
+
 function Mock({ p, wide }: { p: Project; wide: boolean }) {
+  const custom = ["irish-property", "aiml", "benchmark"].includes(p.id);
   const ph = phoneImage[p.id] ?? (p.image ? { src: p.image.src, w: p.image.w, h: p.image.h } : null);
   return (
-    <div className={`relative ${wide ? "pr-10 sm:pr-16" : "pr-10 sm:pr-14"}`} aria-hidden={p.image ? undefined : true}>
+    <div className={`relative ${wide ? "pr-10 sm:pr-16" : "pr-10 sm:pr-14"}`} aria-hidden={custom ? true : undefined}>
       <div className="mock-browser">
         <div className="mock-bar"><i /><i /><i /></div>
         <div className="aspect-[16/10]">
-          {p.image ? <Img src={p.image.src} alt={p.image.alt} w={p.image.w} h={p.image.h} /> : <BenchmarkScreen big />}
+          {custom ? <Screen p={p} big /> : p.image && <Img src={p.image.src} alt={p.image.alt} w={p.image.w} h={p.image.h} />}
         </div>
       </div>
       <div className={`mock-phone absolute bottom-[-18px] right-0 ${wide ? "w-[30%] max-w-[170px]" : "w-[32%] max-w-[130px]"}`} aria-hidden="true">
         <div className="aspect-[9/17]">
-          {ph ? <Img src={ph.src} alt="" w={ph.w} h={ph.h} /> : <BenchmarkScreen />}
+          {custom ? <Screen p={p} /> : ph && <Img src={ph.src} alt="" w={ph.w} h={ph.h} />}
         </div>
       </div>
     </div>

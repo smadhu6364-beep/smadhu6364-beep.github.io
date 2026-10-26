@@ -1,7 +1,11 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import CopyEmail from "@/components/CopyEmail";
+import DublinChart from "@/components/DublinChart";
 import ProjectGrid from "@/components/ProjectGrid";
-import { education, experience, profile, projects, skills } from "@/lib/data";
+import SkillsProof from "@/components/SkillsProof";
+import SqlInAction from "@/components/SqlInAction";
+import { education, experience, profile, projects } from "@/lib/data";
 
 const LEAD = "irish-property";
 const ordered = [...projects].sort((a, b) => Number(b.id === LEAD) - Number(a.id === LEAD));
@@ -26,7 +30,7 @@ function SectionHead({ n, label, id }: { n: string; label: string; id: string })
 export default function Home() {
   return (
     <>
-      <a href="#main" className="sr-only z-50 rounded-full bg-ink px-4 py-3 text-bg focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
+      <a href="#main" className="sr-only z-50 rounded-full border border-ink bg-surface px-4 py-3 text-ink focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
         Skip to content
       </a>
       <Header />
@@ -50,7 +54,7 @@ export default function Home() {
               I&rsquo;m Madhu. I spent two years in operations in Bengaluru, sorting out bookings and keeping shift figures in order. Now I&rsquo;m doing an MSc in Business Analytics at DCU in Dublin and building projects in SQL and Python.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-x-6 gap-y-3">
-              <a href="#work" className="inline-flex min-h-12 items-center rounded-full bg-ink px-6 text-[15px] font-medium text-bg hover:opacity-90">
+              <a href="#work" className="btn btn-soft">
                 See my work <span aria-hidden="true" className="ml-2">↓</span>
               </a>
               <a href="/Madhu_Sudhan_Srinivas_CV.pdf" download className="link-u inline-flex min-h-12 items-center text-[15px] font-medium">
@@ -88,9 +92,41 @@ export default function Home() {
           <ProjectGrid projects={ordered} />
         </section>
 
+        {/* Interactive chart */}
+        <section aria-labelledby="data" className="pb-24 lg:pb-32">
+          <SectionHead n="02" label="From the data" id="data" />
+          <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-end">
+            <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
+              Dublin&rsquo;s lead is <span className="serif-i text-[1.08em]">shrinking.</span>
+            </h2>
+            <p className="max-w-sm text-[15px] leading-relaxed text-ink/75 lg:justify-self-end lg:text-right">
+              In 2014 the median Dublin sale was 2.22 times the median in the rest of Ireland. By 2025 it was 1.49 times. Pick a year to see both.
+            </p>
+          </div>
+          <div className="mt-10 rounded-[28px] border border-line bg-surface p-5 sm:p-8 lg:p-10">
+            <DublinChart />
+          </div>
+        </section>
+
+        {/* SQL in action */}
+        <section aria-labelledby="sql" className="pb-24 lg:pb-32">
+          <SectionHead n="03" label="SQL in action" id="sql" />
+          <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-end">
+            <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
+              The queries <span className="serif-i text-[1.08em]">behind it.</span>
+            </h2>
+            <p className="max-w-sm text-[15px] leading-relaxed text-ink/75 lg:justify-self-end lg:text-right">
+              Four of the eight SQL files from the project, trimmed a little, with real rows from what they returned.
+            </p>
+          </div>
+          <div className="mt-10">
+            <SqlInAction />
+          </div>
+        </section>
+
         {/* About */}
         <section aria-labelledby="about" className="pb-24 lg:pb-32">
-          <SectionHead n="02" label="A little context" id="about" />
+          <SectionHead n="04" label="A little context" id="about" />
           <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-20">
             <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
               Learning by <span className="serif-i text-[1.08em]">making things.</span>
@@ -102,18 +138,24 @@ export default function Home() {
               <p>
                 At DCU I&rsquo;m studying statistics, Power BI and Python. Outside the modules I learn by building: an SQL study of every Irish house sale since 2010, an LLM benchmark co-authored with Kruthik Jadhav, and a few web apps.
               </p>
-              <ul className="flex flex-wrap gap-1.5 pt-2" aria-label="Main skills">
-                {["SQL", "Python", "Power BI", "Statistics", "pandas", "DuckDB", "Data visualisation", "Advanced Excel"].map((s) => (
-                  <li key={s} className="tag">{s}</li>
-                ))}
-              </ul>
+              <aside aria-labelledby="now-title" className="mt-4 rounded-[22px] bg-peach p-6">
+                <div className="flex items-baseline justify-between gap-4">
+                  <h3 id="now-title" className="font-serif text-2xl italic">Now</h3>
+                  <p className="text-xs text-muted">Last updated <time dateTime="2026-10">October 2026</time></p>
+                </div>
+                <dl className="mt-3 space-y-2 text-[15px]">
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-3"><dt className="text-muted">Studying</dt><dd>MSc Business Analytics at DCU, since September 2026</dd></div>
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-3"><dt className="text-muted">Built</dt><dd>An SQL study of every residential sale in Ireland since 2010</dd></div>
+                  <div className="grid grid-cols-[6.5rem_1fr] gap-3"><dt className="text-muted">Looking for</dt><dd>Data analyst roles in Ireland</dd></div>
+                </dl>
+              </aside>
             </div>
           </div>
         </section>
 
         {/* Timeline */}
         <section aria-labelledby="along" className="pb-24 lg:pb-32">
-          <SectionHead n="03" label="Along the way" id="along" />
+          <SectionHead n="05" label="Along the way" id="along" />
           <ol className="mt-8 border-t border-line">
             {timeline.map((t) => (
               <li key={t.title + t.place} className="grid gap-1 border-b border-line py-6 sm:grid-cols-[11rem_1fr] sm:gap-8 lg:grid-cols-[14rem_1fr_1fr]">
@@ -128,36 +170,36 @@ export default function Home() {
           </ol>
         </section>
 
-        {/* Toolkit */}
-        <section aria-labelledby="toolkit" className="pb-24 lg:pb-32">
-          <SectionHead n="04" label="Toolkit" id="toolkit" />
-          <dl className="mt-8 grid gap-x-10 gap-y-8 sm:grid-cols-2 lg:grid-cols-5">
-            {skills.map((g) => (
-              <div key={g.name}>
-                <dt className="font-serif text-2xl italic">{g.name}</dt>
-                <dd className="mt-3">
-                  <ul className="space-y-1.5 text-[15px] text-ink/80">
-                    {g.skills.map((s) => <li key={s}>{s}</li>)}
-                  </ul>
-                </dd>
-              </div>
-            ))}
-          </dl>
+        {/* Skills with proof */}
+        <section aria-labelledby="skills" className="pb-24 lg:pb-32">
+          <SectionHead n="06" label="Skills, with proof" id="skills" />
+          <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr] lg:items-end">
+            <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
+              Where I&rsquo;ve <span className="serif-i text-[1.08em]">used them.</span>
+            </h2>
+            <p className="max-w-sm text-[15px] leading-relaxed text-ink/75 lg:justify-self-end lg:text-right">
+              Click a skill to see the project, job or course that shows it. The number is how many there are.
+            </p>
+          </div>
+          <div className="mt-10">
+            <SkillsProof />
+          </div>
         </section>
       </main>
 
       {/* Contact */}
       <section aria-labelledby="contact" className="mx-auto max-w-[1240px] px-4 sm:px-8">
         <div className="rounded-[28px] bg-lime px-6 py-14 sm:px-12 sm:py-20 lg:px-16">
-          <p id="contact" className="label !text-ink/70">05 / Say hello</p>
+          <p id="contact" className="label !text-ink/70">07 / Say hello</p>
           <div className="mt-6 grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-end">
             <h2 className="text-4xl font-semibold leading-[1.05] tracking-[-0.035em] sm:text-6xl">
               A good conversation is a good <span className="serif-i text-[1.08em]">start.</span>
             </h2>
             <div className="flex flex-col items-start gap-4 lg:items-end">
-              <a href={`mailto:${profile.email}`} className="inline-flex min-h-12 max-w-full items-center rounded-full border border-ink px-6 text-[15px] font-medium hover:bg-ink hover:text-lime">
+              <a href={`mailto:${profile.email}`} className="btn max-w-full bg-surface/70">
                 <span className="truncate">{profile.email}</span> <span aria-hidden="true" className="ml-2">↗</span>
               </a>
+              <CopyEmail email={profile.email} />
               <ul className="flex flex-wrap gap-x-6 gap-y-1 text-[15px] font-medium">
                 <li><a className="link-u inline-flex min-h-10 items-center" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
                 <li><a className="link-u inline-flex min-h-10 items-center" href={profile.github} target="_blank" rel="noreferrer">GitHub</a></li>
