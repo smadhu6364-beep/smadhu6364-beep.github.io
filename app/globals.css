@@ -4,29 +4,34 @@
 
 /* Paper palette. Values are "r g b" so Tailwind can add alpha. */
 :root {
-  --bg: 245 244 239;
-  --surface: 251 250 246;
-  --ink: 24 23 20;
-  --muted: 88 85 78;
-  --line: 218 215 205;
+  --bg: 251 250 247;
+  --surface: 255 255 255;
+  --ink: 28 27 24;
+  --muted: 92 89 82;
+  --line: 232 229 221;
   --accent: 156 70 36;
-  --sage: 227 231 220;
-  --peach: 238 220 203;
-  --lime: 231 236 149;
+  --sage: 238 242 234;
+  --peach: 248 239 230;
+  --lime: 241 244 200;
   --dot: 46 140 74;
+  /* Chart series: Dublin and rest of Ireland */
+  --c1: 168 74 38;
+  --c2: 47 110 96;
   color-scheme: light;
 }
 .dark {
-  --bg: 27 26 23;
-  --surface: 36 34 30;
-  --ink: 238 234 224;
-  --muted: 172 166 154;
-  --line: 62 59 52;
-  --accent: 230 150 112;
-  --sage: 40 45 37;
-  --peach: 52 41 33;
-  --lime: 52 54 28;
-  --dot: 112 196 132;
+  --bg: 35 33 30;
+  --surface: 44 42 38;
+  --ink: 237 233 224;
+  --muted: 180 174 162;
+  --line: 66 63 57;
+  --accent: 232 158 120;
+  --sage: 45 50 43;
+  --peach: 56 48 41;
+  --lime: 60 62 40;
+  --dot: 120 200 140;
+  --c1: 236 150 110;
+  --c2: 128 196 176;
   color-scheme: dark;
 }
 
@@ -50,7 +55,13 @@ section[id] { scroll-margin-top: 88px; }
   color: rgb(var(--ink)); background: transparent; transition: background-color .2s, border-color .2s, color .2s;
 }
 .pill:hover { border-color: rgb(var(--ink) / .5); }
-.pill[aria-pressed="true"] { background: rgb(var(--ink)); border-color: rgb(var(--ink)); color: rgb(var(--bg)); }
+.pill[aria-pressed="true"], .pill[aria-selected="true"] { background: rgb(var(--lime)); border-color: rgb(var(--ink) / .55); color: rgb(var(--ink)); font-weight: 500; }
+
+/* Light buttons: soft tint for the main action, outline for the rest */
+.btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.4rem; border-radius: 999px; font-size: 15px; font-weight: 500; border: 1px solid rgb(var(--ink) / .7); color: rgb(var(--ink)); transition: background-color .2s, border-color .2s; }
+.btn:hover { background: rgb(var(--ink) / .05); border-color: rgb(var(--ink)); }
+.btn-soft { background: rgb(var(--lime)); border-color: rgb(var(--ink) / .55); }
+.btn-soft:hover { background: rgb(var(--lime)); border-color: rgb(var(--ink)); }
 
 .tag { display: inline-block; padding: .2rem .6rem; border: 1px solid rgb(var(--ink) / .14); border-radius: 999px; font-size: .75rem; color: rgb(var(--ink) / .8); }
 
@@ -58,8 +69,8 @@ section[id] { scroll-margin-top: 88px; }
 .notes-card {
   position: relative; background: rgb(var(--surface)); border: 1px solid rgb(var(--line));
   border-radius: 6px; transform: rotate(2.2deg);
-  box-shadow: 0 1px 0 rgb(0 0 0 / .03), 0 24px 40px -28px rgb(40 30 10 / .35);
-  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgb(var(--line) / .7) 31px 32px);
+  box-shadow: 0 1px 0 rgb(0 0 0 / .02), 0 24px 40px -30px rgb(40 30 10 / .25);
+  background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgb(var(--line) / .8) 31px 32px);
 }
 .dark .notes-card { box-shadow: 0 24px 40px -24px rgb(0 0 0 / .7); }
 .tape {
@@ -71,7 +82,7 @@ section[id] { scroll-margin-top: 88px; }
 .mock-browser { background: rgb(var(--surface)); border: 1px solid rgb(var(--ink) / .1); border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px -30px rgb(40 30 10 / .45); }
 .mock-bar { display: flex; gap: 6px; align-items: center; height: 26px; padding: 0 12px; border-bottom: 1px solid rgb(var(--ink) / .08); }
 .mock-bar i { width: 8px; height: 8px; border-radius: 99px; background: rgb(var(--ink) / .16); }
-.mock-phone { background: rgb(var(--ink)); padding: 5px; border-radius: 22px; box-shadow: 0 20px 40px -24px rgb(40 30 10 / .55); }
+.mock-phone { background: rgb(var(--surface)); border: 1px solid rgb(var(--ink) / .14); padding: 5px; border-radius: 22px; box-shadow: 0 20px 40px -24px rgb(40 30 10 / .35); }
 .mock-phone > div { border-radius: 17px; overflow: hidden; background: rgb(var(--surface)); }
 
 .proj-card { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
@@ -85,6 +96,15 @@ section[id] { scroll-margin-top: 88px; }
 
 .link-u { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .link-u:hover { text-decoration-thickness: 2px; }
+
+/* Tiny SQL highlighter colours */
+.sql { font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12.5px; line-height: 1.6; }
+.sql .k { color: rgb(var(--c2)); font-weight: 600; }
+.sql .f { color: rgb(var(--c1)); }
+.sql .s { color: rgb(120 90 20); }
+.dark .sql .s { color: rgb(224 196 120); }
+.sql .c { color: rgb(var(--muted)); font-style: italic; }
+.sql .n { color: rgb(var(--accent)); }
 
 @media print {
   body { background: #fff; color: #000; }

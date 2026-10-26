@@ -3,7 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
+import DublinChart from "@/components/DublinChart";
 import PipelineDiagram from "@/components/PipelineDiagram";
+import { CountyBars, MedianSalesChart, NewVsSecondChart } from "@/components/PropertyCharts";
+import SqlInAction from "@/components/SqlInAction";
 import { caseStudies, getCaseStudy } from "@/lib/caseStudies";
 import { AirbnbReport } from "@/lib/private/airbnb";
 import { profile, projects } from "@/lib/data";
@@ -26,10 +29,12 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
+const slugify = (t: string) => t.toLowerCase().replace(/[^a-z]+/g, "-").replace(/^-|-$/g, "");
+
 function Block({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
-  const id = title.toLowerCase().replace(/[^a-z]+/g, "-");
+  const id = slugify(title);
   return (
-    <section aria-labelledby={id} className="grid gap-4 border-t border-line py-12 lg:grid-cols-[16rem_1fr] lg:gap-16 lg:py-16">
+    <section id={`s-${id}`} aria-labelledby={id} className="grid gap-4 border-t border-line py-12 lg:grid-cols-[13rem_1fr] lg:gap-12 lg:py-16">
       <div>
         <p className="label">{n}</p>
         <h2 id={id} className="mt-2 text-2xl font-semibold tracking-[-0.02em] sm:text-3xl">{title}</h2>
@@ -49,6 +54,16 @@ function Bullets({ items }: { items: string[] }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+function ChartCard({ title, caption, children }: { title: string; caption: string; children: React.ReactNode }) {
+  return (
+    <figure className="rounded-2xl border border-line bg-surface p-5 sm:p-6">
+      <p className="visual-title">{title}</p>
+      <div className="mt-3">{children}</div>
+      <figcaption className="mt-3 text-sm text-muted">{caption}</figcaption>
+    </figure>
   );
 }
 
@@ -77,12 +92,16 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
   const words = c.title.split(" ");
   const head = words.slice(0, -1).join(" ");
   const tail = words[words.length - 1];
+  const charts = c.slug === "irish-property";
+  const text = [c.summary, c.role, ...c.overview, ...c.problem, ...c.built, ...(c.findings ?? []), ...c.learned, ...(c.next ?? []), ...c.status, ...c.decisions.flatMap((d) => [d.title, d.body])].join(" ");
+  const minutes = Math.max(1, Math.round(text.split(/\s+/).length / 220) + (charts ? 1 : 0));
+  const toc = ["Problem", "What I did", "What I found", ...(charts ? ["The SQL"] : []), ...(c.next ? ["What I'd do next"] : []), "Limitations"];
   let n = 0;
   const num = () => String(++n).padStart(2, "0");
 
   return (
     <>
-      <a href="#main" className="sr-only z-50 rounded-full bg-ink px-4 py-3 text-bg focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
+      <a href="#main" className="sr-only z-50 rounded-full border border-ink bg-surface px-4 py-3 text-ink focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
         Skip to content
       </a>
       <Header />
@@ -94,7 +113,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
         </nav>
 
         <header className="pb-12 pt-6 sm:pb-16">
-          <p className="label">Case study{p ? ` · ${p.kind}` : ""}</p>
+          <p className="label">Case study{p ? ` · ${p.kind}` : ""} · {minutes} min read</p>
           <h1 className="mt-5 max-w-5xl text-[44px] font-semibold leading-[1.02] tracking-[-0.04em] sm:text-7xl lg:text-[84px]">
             {head && <>{head} </>}
             <span className="serif-i text-[1.08em] tracking-[-0.02em]">{tail}</span>
@@ -124,7 +143,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
                     href={l.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`inline-flex min-h-11 items-center rounded-full px-5 text-[15px] font-medium ${i === 0 ? "bg-ink text-bg hover:opacity-90" : "border border-ink hover:bg-ink hover:text-bg"}`}
+                    className={`btn !min-h-11 ${i === 0 ? "btn-soft" : ""}`}
                   >
                     {l.label} <span aria-hidden="true" className="ml-2">↗</span>
                     <span className="sr-only"> (opens in a new tab)</span>
@@ -136,7 +155,9 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
         </header>
 
         <div className={`rounded-[28px] ${idx % 2 === 0 ? "bg-sage" : "bg-peach"} p-4 sm:p-10 lg:p-14`}>
-          {hero ? (
+          {charts ? (
+            <div className="rounded-2xl bg-surface p-5 sm:p-8"><DublinChart /></div>
+          ) : hero ? (
             <Frame {...hero} lazy={false} />
           ) : (
             <figure className="rounded-2xl bg-surface p-5 sm:p-8">
@@ -155,7 +176,18 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
           ))}
         </ul>
 
-        <div className="mt-16">
+        <div className="mt-16 xl:grid xl:grid-cols-[10rem_1fr] xl:gap-10">
+          <nav aria-label="On this page" className="hidden xl:block">
+            <div className="sticky top-28 pt-14">
+              <p className="label">On this page</p>
+              <ol className="mt-3 space-y-1 text-sm">
+                {toc.map((t) => (
+                  <li key={t}><a href={`#s-${slugify(t)}`} className="inline-flex min-h-8 items-center text-muted hover:text-ink">{t}</a></li>
+                ))}
+              </ol>
+            </div>
+          </nav>
+          <div className="min-w-0">
           <Block n={num()} title="Problem">
             <div className="max-w-[46rem] space-y-5 text-[17px] leading-relaxed text-ink/85">
               {[...c.overview, ...c.problem].map((t) => <p key={t}>{t}</p>)}
@@ -164,7 +196,7 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
 
           <Block n={num()} title="What I did">
             <Bullets items={c.built} />
-            {hero && (
+            {(hero || charts) && (
               <figure className="mt-10 rounded-2xl border border-line bg-surface p-5 sm:p-6">
                 <PipelineDiagram nodes={c.diagram.nodes} title={`${c.title} pipeline`} />
                 <figcaption className="mt-3 text-sm text-muted">{c.diagram.caption}</figcaption>
@@ -193,6 +225,24 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
           <Block n={num()} title="What I found">
             <Bullets items={c.findings ?? c.learned} />
             {isAirbnb && <div className="mt-10 space-y-4"><AirbnbReport /></div>}
+            {charts && (
+              <>
+                <h3 className="label mt-12">More charts</h3>
+                <div className="mt-5 grid gap-6 md:grid-cols-2">
+                  <ChartCard title="National median and number of sales" caption="Median price (line) and number of sales (bars) by year, 2010 to 2025.">
+                    <MedianSalesChart />
+                  </ChartCard>
+                  <ChartCard title="New against second-hand homes" caption="Median price by year. VAT is added back on new homes recorded without it.">
+                    <NewVsSecondChart />
+                  </ChartCard>
+                  <div className="md:col-span-2">
+                    <ChartCard title="Median sale price by county, 2025" caption="All 26 counties, from Dublin at €498,999 down to Longford at €185,000.">
+                      <div className="md:columns-2 md:gap-10 [&_ol]:md:space-y-1.5"><CountyBars /></div>
+                    </ChartCard>
+                  </div>
+                </div>
+              </>
+            )}
             {gallery.length > 0 && (
               <>
                 <h3 className="label mt-12">{isAirbnb ? "The Power BI report" : (c.galleryTitle ?? "More screens")}</h3>
@@ -211,6 +261,12 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
             )}
           </Block>
 
+          {charts && (
+            <Block n={num()} title="The SQL">
+              <SqlInAction />
+            </Block>
+          )}
+
           {c.next && (
             <Block n={num()} title="What I'd do next">
               <Bullets items={c.next} />
@@ -220,6 +276,10 @@ export default function CaseStudyPage({ params }: { params: { slug: string } }) 
           <Block n={num()} title="Limitations">
             <Bullets items={c.status} />
           </Block>
+          <p className="border-t border-line pt-6 text-sm">
+            <a href="#main" className="link-u inline-flex min-h-10 items-center">Back to top <span aria-hidden="true" className="ml-1">↑</span></a>
+          </p>
+          </div>
         </div>
 
         {caseStudies.length > 1 && (

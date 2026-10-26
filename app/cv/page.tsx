@@ -18,7 +18,7 @@ export default function CV() {
           <a
             href="/Madhu_Sudhan_Srinivas_CV.pdf"
             download
-            className="inline-flex min-h-10 items-center rounded-full border border-ink px-4 font-medium hover:bg-ink hover:text-bg"
+            className="btn !min-h-10 !px-4"
           >
             Download CV (PDF)
           </a>
