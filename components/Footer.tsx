@@ -1,29 +1,24 @@
+import Link from "next/link";
 import { profile } from "@/lib/data";
+import SoundToggle from "./SoundToggle";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Footer() {
   return (
-    <footer className="mx-auto max-w-[1440px] px-4 pb-8 sm:px-6">
-      <div className="card flex flex-col gap-2 px-4 py-3 text-xs leading-relaxed text-muted sm:px-5">
+    <footer className="mx-auto max-w-[1240px] px-4 pb-10 pt-8 sm:px-8">
+      <div className="flex flex-col gap-4 border-t border-line pt-6 text-sm text-muted md:flex-row md:items-center md:justify-between">
         <p>
-          © {new Date().getFullYear()} {profile.name}. Every number on this site comes from my CV or the project files.
+          <span className="font-medium text-ink">{profile.name}</span> · A portfolio <span className="serif-i text-[1.05em]">in progress</span>
         </p>
-        <p>
-          Background photos: Lewis Hamilton at the British Grand Prix, Silverstone, by Jen Ross and Andrew &amp; Alan Frost, colour-graded,{" "}
-          <a className="-my-3 inline-block py-3 underline hover:text-ink sm:my-0 sm:py-0" href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noreferrer">
-            CC BY 2.0
-          </a>
-          , via{" "}
-          <a
-            className="-my-3 inline-block py-3 underline hover:text-ink sm:my-0 sm:py-0"
-            href="https://commons.wikimedia.org/w/index.php?search=Lewis+Hamilton+British+Grand+Prix&title=Special:MediaSearch&type=image"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Wikimedia Commons
-          </a>
-          . Music and sounds are generated in your browser.
-        </p>
+        <ul className="flex flex-wrap items-center gap-x-5 gap-y-1">
+          <li><a className="inline-flex min-h-10 items-center hover:text-ink" href={profile.github} target="_blank" rel="noreferrer">GitHub</a></li>
+          <li><a className="inline-flex min-h-10 items-center hover:text-ink" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
+          <li><Link className="inline-flex min-h-10 items-center hover:text-ink" href="/cv/">Résumé</Link></li>
+          <li><SoundToggle /></li>
+          <li><ThemeToggle /></li>
+        </ul>
       </div>
+      <p className="mt-3 text-xs text-muted">Every number here comes from my CV or the project files. The music is made in your browser and stays off until you turn it on.</p>
     </footer>
   );
 }

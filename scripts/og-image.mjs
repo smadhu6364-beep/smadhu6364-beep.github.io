@@ -8,53 +8,48 @@ const require = createRequire(import.meta.url);
 const puppeteer = require(process.env.PUPPETEER_CORE || "puppeteer-core");
 const browserPath = process.env.BROWSER_PATH || "C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe";
 const pub = path.resolve("public");
-const FONT = `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", Inter, "Segoe UI", system-ui, sans-serif`;
+const SERIF = `"Instrument Serif", Georgia, "Times New Roman", serif`;
+const FONT = `Inter, -apple-system, "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif`;
 
-const og = `<!doctype html><html><head><style>
+const og = `<!doctype html><html><head><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@1&family=Inter:wght@400;600;700&display=swap"><style>
 *{margin:0;box-sizing:border-box}
-body{width:1200px;height:630px;background:#f5f5f7;font-family:${FONT};color:#1d1d1f;overflow:hidden}
-.top{height:84px;background:#fff;border-bottom:1px solid #e5e5ea;display:flex;align-items:center;padding:0 48px;gap:18px}
-.mono{width:50px;height:50px;border-radius:13px;background:#0071e3;color:#fff;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center}
-.nm{font-size:26px;font-weight:700}.sub{font-size:17px;color:#6e6e73}
-.tabs{margin-left:auto;display:flex;gap:28px;font-size:18px;color:#6e6e73}.tabs b{color:#1d1d1f;border-bottom:3px solid #0071e3;padding-bottom:6px}
-.wrap{padding:30px 48px}
-.line{font-size:27px;font-weight:600;line-height:1.3;max-width:1100px}
-.k{display:flex;gap:18px;margin-top:24px}
-.kp{flex:1;background:#fff;border:1px solid #e5e5ea;border-radius:18px;padding:20px 22px;height:142px}
-.kl{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e73;font-weight:600}
-.kv{font-size:52px;font-weight:700;letter-spacing:-1px;margin-top:8px}
-.row{display:flex;gap:18px;margin-top:18px}
-.chart{background:#fff;border:1px solid #e5e5ea;border-radius:18px;padding:16px 20px;width:520px;height:232px;position:relative}
-.ct{font-size:15px;font-weight:600}.leg{font-size:13px;color:#6e6e73;margin-top:2px}
-.chart svg{position:absolute;left:30px;bottom:12px;width:470px;height:160px}
-.cta{flex:1;background:#0071e3;color:#fff;border-radius:18px;padding:30px 34px;height:232px;display:flex;flex-direction:column;justify-content:space-between}
-.cta div{font-size:28px;font-weight:600;line-height:1.3}.cta span{font-size:30px;font-weight:700}
+body{width:1200px;height:630px;background:#f5f4ef;font-family:${FONT};color:#181714;overflow:hidden;position:relative}
+.top{display:flex;align-items:center;gap:16px;padding:44px 64px 0}
+.mono{width:52px;height:52px;border-radius:50%;background:#181714;color:#f5f4ef;font-family:${SERIF};font-style:italic;font-size:34px;display:flex;align-items:center;justify-content:center;padding-bottom:4px}
+.nm{font-size:24px;font-weight:600;letter-spacing:-.3px}
+.dot{margin-left:auto;font-size:19px;color:#3d3b36;display:flex;align-items:center;gap:10px}.dot i{width:12px;height:12px;border-radius:50%;background:#2e8c4a}
+h1{position:absolute;left:64px;top:170px;font-size:92px;line-height:1.02;font-weight:700;letter-spacing:-3.6px;width:700px}
+h1 em{font-family:${SERIF};font-weight:400;font-size:100px;letter-spacing:-1px}
+.sub{position:absolute;left:64px;bottom:56px;font-size:22px;color:#4a4842}
+.card{position:absolute;right:70px;top:150px;width:350px;height:330px;background:#fbfaf6;border:1px solid #dad7cd;border-radius:6px;transform:rotate(2.5deg);padding:44px 34px;box-shadow:0 30px 50px -30px rgba(40,30,10,.45);background-image:repeating-linear-gradient(180deg,transparent 0 31px,rgba(218,215,205,.7) 31px 32px)}
+.tape{position:absolute;top:-16px;left:50%;width:120px;height:32px;margin-left:-60px;transform:rotate(-3deg);background:rgba(231,236,149,.9)}
+.lb{font-size:13px;letter-spacing:.14em;color:#58554e;font-weight:600}
+.q{font-family:${SERIF};font-style:italic;font-size:34px;line-height:1.15;margin-top:22px}
+.cur{position:absolute;left:34px;right:34px;bottom:30px;border-top:1px dashed #dad7cd;padding-top:14px;font-size:16px}
+.band{position:absolute;right:0;bottom:0;width:470px;height:12px;background:#e7ec95}
 </style></head><body>
-<div class="top"><div class="mono">MS</div><div><div class="nm">Madhu Sudhan Srinivas</div><div class="sub">Business Analytics MSc · Dublin</div></div>
-<div class="tabs"><b>Overview</b><span>Projects</span><span>Experience</span><span>Skills</span><span>Contact</span></div></div>
-<div class="wrap"><div class="line">MSc Business Analytics at DCU. Power BI, Python and statistics. Looking for data analyst roles in Ireland.</div>
-<div class="k"><div class="kp"><div class="kl">Sales analysed in SQL</div><div class="kv">812,018</div></div>
-<div class="kp"><div class="kl">Projects</div><div class="kv">5</div></div>
-<div class="kp"><div class="kl">Business Analytics</div><div class="kv">MSc</div></div>
-<div class="kp"><div class="kl">Operations experience</div><div class="kv">2+ yrs</div></div></div>
-<div class="row"><div class="chart"><div class="ct">Median house price, 2010 to 2025</div><div class="leg"><span style="color:#0071e3">● Dublin</span> &nbsp; <span style="color:#af52de">● Rest of Ireland</span></div><svg width="430" height="190" viewBox="0 0 430 190"><polyline points="10.0,108.2 37.3,119.3 64.7,133.2 92.0,125.4 119.3,114.7 146.7,107.1 174.0,93.9 201.3,82.2 228.7,74.8 256.0,74.8 283.3,68.7 310.7,62.6 338.0,50.5 365.3,46.4 392.7,29.7 420.0,18.5" fill="none" stroke="#0071e3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10.0,144.2 37.3,157.9 64.7,167.9 92.0,172.2 119.3,172.7 146.7,167.9 174.0,161.8 201.3,152.9 228.7,145.6 256.0,139.5 283.3,138.3 310.7,129.4 338.0,118.1 365.3,109.2 392.7,99.0 420.0,84.9" fill="none" stroke="#af52de" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-<div class="cta"><div>An interactive portfolio that works like a report. Pick a skill and every visual filters.</div><span>smadhu6364-beep.github.io</span></div></div></div>
+<div class="top"><div class="mono">m</div><div class="nm">Madhu Sudhan Srinivas</div><div class="dot"><i></i>Open to data analyst roles in Ireland</div></div>
+<h1>From the front line <em>to the data.</em></h1>
+<div class="sub">MSc Business Analytics, DCU · SQL, Python, Power BI</div>
+<div class="card"><div class="tape"></div><div class="lb">FIELD NOTES · VOL. 01 / 2026</div><div class="q">&ldquo;Clean the data first. It usually changes the answer.&rdquo;</div><div class="cur">&#8627; Currently: MSc Business Analytics at DCU</div></div>
+<div class="band"></div>
 </body></html>`;
 
-const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0071e3"/><stop offset="1" stop-color="#af52de"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#g)"/><text x="32" y="41.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-weight="700" font-size="26" letter-spacing="-1" fill="#fff">MS</text></svg>`;
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="32" fill="#181714"/><text x="32" y="42" text-anchor="middle" font-family="Georgia,'Times New Roman',serif" font-style="italic" font-size="40" fill="#f5f4ef">m</text></svg>`;
 fs.writeFileSync(path.join(pub, "icon.svg"), svg);
 
 const browser = await puppeteer.launch({ executablePath: browserPath, headless: true });
 const page = await browser.newPage();
 await page.setViewport({ width: 1200, height: 630 });
-await page.setContent(og, { waitUntil: "load" });
+await page.setContent(og, { waitUntil: "networkidle0" }).catch(() => {});
+await page.evaluateHandle("document.fonts.ready");
 await page.screenshot({ path: path.join(pub, "og-image.png") });
 
 const pngs = {};
 for (const [name, size, pad] of [["icon-512.png", 512, 0], ["icon-192.png", 192, 0], ["apple-touch-icon.png", 180, 0], ["f32", 32, 0], ["f16", 16, 0]]) {
   await page.setViewport({ width: size, height: size });
   // apple-touch gets a full-bleed square (iOS rounds it); others use the rounded svg
-  const inner = name === "apple-touch-icon.png" ? svg.replace('rx="14"', 'rx="0"') : svg;
+  const inner = name === "apple-touch-icon.png" ? svg.replace('rx="32"', 'rx="0"') : svg;
   await page.setContent(`<html><body style="margin:0;background:transparent">${inner.replace("<svg ", `<svg width="${size}" height="${size}" `)}</body></html>`);
   const buf = await page.screenshot({ omitBackground: true });
   if (name.endsWith(".png")) fs.writeFileSync(path.join(pub, name), buf); else pngs[name] = buf;

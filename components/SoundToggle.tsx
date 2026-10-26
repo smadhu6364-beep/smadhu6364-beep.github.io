@@ -31,16 +31,9 @@ export default function SoundToggle() {
         e.stopPropagation();
         setSound(!on);
       }}
-      title={on ? "Sound on: soft music and UI sounds" : "Sound off"}
-      className="inline-flex h-10 items-center lg:h-9 gap-1.5 rounded-full border border-line px-3 text-xs font-medium text-muted transition hover:text-ink aria-pressed:border-accent aria-pressed:text-accent"
+      className="inline-flex min-h-10 items-center hover:text-ink"
     >
-      {on ? (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>
-      ) : (
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
-      )}
-      <span className="hidden sm:inline">Sound</span>
-      <span className="sr-only">{on ? "(on)" : "(off)"}</span>
+      Music: {on ? "on" : "off"}
     </button>
   );
 }

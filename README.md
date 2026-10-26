@@ -1,7 +1,7 @@
 # Madhu Sudhan Srinivas: portfolio
 
-Personal portfolio with a fan-made motor-racing theme set at Albert Park, Melbourne.
-Next.js 14 (App Router), TypeScript strict, Tailwind 3, framer-motion. Fully static export.
+Personal portfolio in a calm editorial "field notes" style (paper background, Inter with Instrument Serif italic accents).
+Next.js 14 (App Router), TypeScript strict, Tailwind 3. Fully static export.
 
 ## Run
 
