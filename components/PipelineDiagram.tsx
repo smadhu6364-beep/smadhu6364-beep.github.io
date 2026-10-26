@@ -5,9 +5,23 @@ import type { DiagramNode } from "@/lib/caseStudies";
  * Horizontal on wider screens, vertical on phones so the labels stay readable.
  * Colours come from the theme tokens, so it works in light and dark.
  */
-export default function PipelineDiagram({ nodes, title }: { nodes: DiagramNode[]; title: string }) {
+export default function PipelineDiagram({
+  nodes,
+  title,
+  active,
+  layout = "auto",
+}: {
+  nodes: DiagramNode[];
+  title: string;
+  /** Indexes of stages to highlight; the rest are dimmed. */
+  active?: number[];
+  /** "auto" switches to vertical on phones; "horizontal" always stays horizontal. */
+  layout?: "auto" | "horizontal";
+}) {
+  const dim = (i: number) => (active && !active.includes(i) ? 0.35 : 1);
+  const on = (i: number) => !!active && active.includes(i);
   const n = nodes.length;
-  const uid = title.replace(/\W+/g, "").slice(0, 24);
+  const uid = title.replace(/\W+/g, "").slice(0, 24) + (active ? active.join("") : "");
 
   // Horizontal layout
   const bw = 132, bh = 64, gap = 28;
@@ -25,7 +39,7 @@ export default function PipelineDiagram({ nodes, title }: { nodes: DiagramNode[]
 
   return (
     <figure role="img" aria-label={`${title}: ${nodes.map((x) => x.label).join(", then ")}`}>
-      <svg viewBox={`0 0 ${hw} ${hh}`} className="hidden h-auto w-full sm:block" aria-hidden="true">
+      <svg viewBox={`0 0 ${hw} ${hh}`} className={layout === "horizontal" ? "block h-auto w-full" : "hidden h-auto w-full sm:block"} aria-hidden="true">
         <defs>
           <marker id={`ah-h-${uid}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
             <path d="M0,0 L10,5 L0,10 z" className="fill-accent" />
@@ -34,8 +48,8 @@ export default function PipelineDiagram({ nodes, title }: { nodes: DiagramNode[]
         {nodes.map((node, i) => {
           const x = i * (bw + gap);
           return (
-            <g key={node.label}>
-              <rect x={x + 1} y={4} width={bw - 2} height={bh} rx={10} className={box} strokeWidth={1.5} />
+            <g key={node.label} opacity={dim(i)} style={{ transition: "opacity .4s" }}>
+              <rect x={x + 1} y={4} width={bw - 2} height={bh} rx={10} className={on(i) ? "fill-surface stroke-accent" : box} strokeWidth={on(i) ? 2.5 : 1.5} />
               <rect x={x + 1} y={4} width={4} height={bh} rx={2} className="fill-accent" />
               <text x={x + bw / 2 + 2} y={node.sub ? 32 : 40} textAnchor="middle" fontSize={13} fontWeight={600} className={label}>
                 {node.label}
@@ -53,7 +67,7 @@ export default function PipelineDiagram({ nodes, title }: { nodes: DiagramNode[]
         })}
       </svg>
 
-      <svg viewBox={`0 0 ${vw} ${vh}`} className="mx-auto block h-auto w-full max-w-xs sm:hidden" aria-hidden="true">
+      <svg viewBox={`0 0 ${vw} ${vh}`} className={layout === "horizontal" ? "hidden" : "mx-auto block h-auto w-full max-w-xs sm:hidden"} aria-hidden="true">
         <defs>
           <marker id={`ah-v-${uid}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
             <path d="M0,0 L10,5 L0,10 z" className="fill-accent" />
@@ -62,8 +76,8 @@ export default function PipelineDiagram({ nodes, title }: { nodes: DiagramNode[]
         {nodes.map((node, i) => {
           const y = 4 + i * (vbh + vgap);
           return (
-            <g key={node.label}>
-              <rect x={1} y={y} width={vw - 2} height={vbh} rx={10} className={box} strokeWidth={1.5} />
+            <g key={node.label} opacity={dim(i)} style={{ transition: "opacity .4s" }}>
+              <rect x={1} y={y} width={vw - 2} height={vbh} rx={10} className={on(i) ? "fill-surface stroke-accent" : box} strokeWidth={on(i) ? 2.5 : 1.5} />
               <rect x={1} y={y} width={4} height={vbh} rx={2} className="fill-accent" />
               <text x={vw / 2} y={node.sub ? y + 23 : y + 32} textAnchor="middle" fontSize={15} fontWeight={600} className={label}>
                 {node.label}

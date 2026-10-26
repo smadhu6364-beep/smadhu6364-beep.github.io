@@ -85,7 +85,7 @@ export const projects: Project[] = [
       "Inputs are real project planning documents from 21 World Bank and UK government sources.",
       "Reproducible pipeline with a strict no-leakage evaluation design, covered by 456 unit tests.",
     ],
-    note: "Targeting an IEEE conference.",
+    note: "Being prepared for an IEEE conference.",
     caseStudy: true,
   },
   {

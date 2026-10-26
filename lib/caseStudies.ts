@@ -27,7 +27,7 @@ export const caseStudies: CaseStudy[] = [
     role: "Co-author with Kruthik Jadhav · research code and data pipeline",
     overview: [
       "This is the code and data behind a paper we're preparing for an IEEE conference: \"Evaluating Large Language Models for Automated Risk Register Generation from Project Documentation: A Benchmark Study.\"",
-      "We compare three LLMs from different providers across three prompting strategies: zero-shot, few-shot and structured reasoning.",
+      "We compare three LLMs from different providers, each with three prompting strategies (zero-shot, few-shot and structured reasoning).",
     ],
     problem: [
       "Risk registers are written by hand from long planning documents. It's slow work, and it's tempting to hand it to an LLM. But nobody has a clear answer to how complete those AI-drafted registers are, or which kinds of risk they tend to miss or make up.",
@@ -39,7 +39,7 @@ export const caseStudies: CaseStudy[] = [
       "A tooling layer around the expensive part: an environment check before any spend, a cost estimate that makes no API calls, batch submission for two of the providers, and a builder for blinded rater packets.",
     ],
     diagram: {
-      caption: "Pipeline from source documents to scored results. Only planning documents reach the models; the human register is held out.",
+      caption: "Pipeline from source documents to scored results. Only planning documents reach the models. The human register is held out.",
       nodes: [
         { label: "Planning PDFs", sub: "21 projects" },
         { label: "Extract + audit", sub: "leakage check" },
@@ -79,7 +79,7 @@ export const caseStudies: CaseStudy[] = [
       "The batch code path is tested against mocked provider responses only. It hasn't been run against a live API.",
     ],
     learned: [
-      "Most of the work in an evaluation is making sure you aren't fooling yourself: keeping the answers away from the model and checking that keeps holding.",
+      "Most of the work in an evaluation is making sure you aren't fooling yourself. That means keeping the answers away from the model and checking it stays that way.",
       "Cheap offline tests pay for themselves when every real run costs money.",
       "Writing the methodology down and freezing it before running anything makes later decisions much easier to defend.",
     ],
@@ -91,7 +91,7 @@ export const caseStudies: CaseStudy[] = [
     summary: "Turn one photo of a local problem into a categorised report, a ready-to-send complaint letter and a pin on a community map.",
     role: "Full-stack: React front end, FastAPI back end, Gemini integration",
     overview: [
-      "Potholes, broken streetlights, illegal dumping: the small things that make a neighbourhood feel neglected rarely get reported, because reporting them is a hassle.",
+      "Potholes, broken streetlights and dumped rubbish rarely get reported, because reporting them is a hassle.",
       "CivicPulse makes it one step. You upload a photo, drop a pin and add a line of description. The app works out the rest.",
     ],
     problem: [
@@ -115,7 +115,7 @@ export const caseStudies: CaseStudy[] = [
     decisions: [
       {
         title: "Keep the department routing in code",
-        body: "Gemini decides the category; a plain lookup table decides the department. That keeps the routing predictable and easy to change, rather than leaving it to the model each time.",
+        body: "Gemini decides the category and a plain lookup table decides the department. That keeps the routing predictable and easy to change, rather than leaving it to the model each time.",
       },
       {
         title: "Fail soft when the AI is unavailable",
@@ -135,7 +135,7 @@ export const caseStudies: CaseStudy[] = [
     ],
     status: [
       "There's no hosted demo. Running it needs your own Gemini API key and Firebase project.",
-      "No user accounts or moderation yet: anyone can report and upvote.",
+      "No user accounts or moderation yet, so anyone can report and upvote.",
       "CI runs the back-end tests and the front-end build. It doesn't call Gemini or Firebase.",
     ],
     learned: [
@@ -156,7 +156,7 @@ export const caseStudies: CaseStudy[] = [
       "Foodiepy predicts how many orders a fulfilment centre should prepare for, and gives owners a simple place to track stock, customers and orders.",
     ],
     problem: [
-      "A food delivery business works with perishable stock. Order too much and it goes to waste; order too little and customers go elsewhere.",
+      "A food delivery business works with perishable stock. Order too much and it goes to waste. Order too little and customers go elsewhere.",
     ],
     built: [
       "A forecast form that takes meal category, cuisine, prices, promotions and centre details and passes them to a scikit-learn Gradient Boosting regression model, which returns the expected number of orders.",
@@ -227,7 +227,7 @@ export const caseStudies: CaseStudy[] = [
       "A booking flow with review, payment and confirmation screens, plus a user dashboard, auth screens, content pages, and light and dark themes.",
     ],
     diagram: {
-      caption: "Main user journey through the prototype.",
+      caption: "The main path through the prototype.",
       nodes: [
         { label: "Destinations", sub: "search, filters" },
         { label: "Planner", sub: "itinerary, costs" },
@@ -262,7 +262,7 @@ export const caseStudies: CaseStudy[] = [
       "Images are placeholders.",
     ],
     learned: [
-      "Building the whole journey as a clickable prototype first shows which back-end pieces actually matter.",
+      "Building the whole flow as a clickable prototype first shows which back-end pieces actually matter.",
       "Static export forces you to be honest about what's real and what's mocked.",
     ],
     links: [
