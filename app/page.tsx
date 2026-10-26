@@ -1,7 +1,9 @@
 import CloudBackdrop from "@/components/CloudBackdrop";
+import DeviceFrame from "@/components/DeviceFrame";
 import PipelineDiagram from "@/components/PipelineDiagram";
 import ThemeToggle from "@/components/ThemeToggle";
 import { getCaseStudy } from "@/lib/caseStudies";
+import { launches } from "@/lib/launch";
 import { education, experience, profile, projects, skills, type Project } from "@/lib/data";
 
 const nav = [
@@ -61,7 +63,7 @@ function CaseLink({ id, name }: { id: string; name: string }) {
       href={`/projects/${id}/`}
       className="inline-flex items-center gap-1 text-sm font-semibold text-accent underline-offset-4 hover:underline"
     >
-      Read case study<span className="sr-only">: {name}</span> <span aria-hidden="true">→</span>
+      Learn more<span className="sr-only"> about {name}</span> <span aria-hidden="true">→</span>
     </a>
   );
 }
@@ -77,16 +79,18 @@ function ProjectMedia({ p }: { p: Project }) {
         height={p.image.h}
         loading="lazy"
         decoding="async"
-        className="aspect-[16/10] h-auto w-full object-cover object-top"
       />
     );
   }
   const cs = getCaseStudy(p.id);
   if (!cs) return null;
   return (
-    <div className="w-full bg-bg/60 px-4 py-8 sm:px-6 sm:py-12">
+    <div className="story-diagram flex-col justify-center gap-[6%]">
+      <p className="text-center font-display text-[clamp(1.1rem,2.2vw,2rem)] font-semibold tracking-tight text-ink" aria-hidden="true">
+        {cs.diagram.nodes[0].label} → {cs.diagram.nodes[cs.diagram.nodes.length - 1].label}
+      </p>
       <div className="w-full">
-        <PipelineDiagram nodes={cs.diagram.nodes} title={`${p.name} pipeline`} />
+        <PipelineDiagram nodes={cs.diagram.nodes} title={`${p.name} pipeline`} layout="horizontal" />
       </div>
     </div>
   );
@@ -201,32 +205,24 @@ export default function Home() {
             <Heading id="projects">Projects</Heading>
             <div className="space-y-6">
               {featured.map((p) => (
-                <article key={p.id} className="glass overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
-                  {p.caseStudy ? (
-                    <a href={`/projects/${p.id}/`} tabIndex={-1} aria-hidden="true" className="block border-b border-line">
+                <article key={p.id} className="launch-card glass overflow-hidden p-6 sm:p-9">
+                  <p className="text-sm font-semibold text-accent">{launches[p.id]?.eyebrow ?? "Featured"}</p>
+                  <h3 className="mt-2 font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">{p.name}</h3>
+                  <p className="mt-3 text-lg leading-relaxed text-ink">{launches[p.id]?.headline ?? p.tagline}</p>
+                  <p className="mt-2 leading-relaxed text-muted">{p.tagline}</p>
+                  {p.note && <p className="mt-2 text-sm font-medium text-ink">{p.note}</p>}
+                  <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3">
+                    {p.caseStudy && <CaseLink id={p.id} name={p.name} />}
+                    <Ext href={p.repo}>View code</Ext>
+                    {p.demo && <Ext href={p.demo}>Live demo</Ext>}
+                  </div>
+                  <div className="mt-8">
+                    <DeviceFrame>
                       <ProjectMedia p={p} />
-                    </a>
-                  ) : (
-                    <div className="border-b border-line"><ProjectMedia p={p} /></div>
-                  )}
-                  <div className="p-6 sm:p-7">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-accent">Featured</p>
-                    <h3 className="mt-2 font-display text-xl font-semibold">{p.name}</h3>
-                    <p className="mt-2 font-medium text-ink">{p.tagline}</p>
-                    <ul className="mt-3 space-y-2 text-sm leading-relaxed text-muted">
-                      {p.detail.map((d) => (
-                        <li key={d}>{d}</li>
-                      ))}
-                    </ul>
-                    {p.note && <p className="mt-3 text-sm font-medium text-ink">{p.note}</p>}
-                    <div className="mt-5">
-                      <Chips items={p.stack} />
-                    </div>
-                    <div className="mt-5 flex flex-wrap items-center gap-5">
-                      {p.caseStudy && <CaseLink id={p.id} name={p.name} />}
-                      <Ext href={p.repo}>Code on GitHub</Ext>
-                      {p.demo && <Ext href={p.demo}>Live demo</Ext>}
-                    </div>
+                    </DeviceFrame>
+                  </div>
+                  <div className="mt-6">
+                    <Chips items={p.stack} />
                   </div>
                 </article>
               ))}
@@ -240,18 +236,12 @@ export default function Home() {
                       href={p.caseStudy ? `/projects/${p.id}/` : p.demo ?? p.repo}
                       tabIndex={-1}
                       aria-hidden="true"
-                      className="block shrink-0 overflow-hidden rounded-lg border border-line sm:w-40"
+                      className="block w-48 shrink-0 sm:w-44"
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={p.image.src}
-                        alt=""
-                        width={p.image.w}
-                        height={p.image.h}
-                        loading="lazy"
-                        decoding="async"
-                        className="aspect-[16/10] h-auto w-full object-cover object-top"
-                      />
+                      <DeviceFrame>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={p.image.src} alt="" width={p.image.w} height={p.image.h} loading="lazy" decoding="async" />
+                      </DeviceFrame>
                     </a>
                   )}
                   <div className="min-w-0 flex-1">
@@ -262,7 +252,7 @@ export default function Home() {
                     <p className="mt-2 text-xs text-muted">{p.stack.join(" · ")}</p>
                     <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
                       {p.caseStudy && <CaseLink id={p.id} name={p.name} />}
-                      <Ext href={p.repo}>Code</Ext>
+                      <Ext href={p.repo}>View code</Ext>
                       {p.demo && <Ext href={p.demo}>Live demo</Ext>}
                     </div>
                   </div>
@@ -320,7 +310,7 @@ export default function Home() {
 
           <footer className="mt-24 border-t border-line pt-6 text-xs text-muted">
             <p>© 2026 {profile.name}. Built with Next.js and Tailwind CSS.</p>
-            <p className="mt-1">The faint line in the background is the Albert Park circuit, Melbourne.</p>
+            <p className="mt-1">Background photos: Lewis Hamilton at the British Grand Prix, Silverstone, by Jen Ross and Andrew &amp; Alan Frost, colour-graded, <a className="underline hover:text-ink" href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noreferrer">CC BY 2.0</a>, via <a className="underline hover:text-ink" href="https://commons.wikimedia.org/w/index.php?search=Lewis+Hamilton+British+Grand+Prix&amp;title=Special:MediaSearch&amp;type=image" target="_blank" rel="noreferrer">Wikimedia Commons</a>.</p>
           </footer>
         </main>
       </div>
