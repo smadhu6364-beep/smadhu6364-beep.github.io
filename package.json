@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3000",
+    "dev": "node scripts/private.mjs && next dev -p 3000",
+    "prebuild": "node scripts/private.mjs",
     "build": "next build && node scripts/sitemap.mjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/private.mjs && tsc --noEmit",
     "serve": "npx serve out -l 4600",
     "cv:pdf": "node scripts/cv-pdf.mjs",
     "og:image": "node scripts/og-image.mjs"

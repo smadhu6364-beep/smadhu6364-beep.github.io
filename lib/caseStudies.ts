@@ -1,3 +1,6 @@
+import { PUBLISH_AIRBNB } from "./data";
+import { airbnbCaseStudy } from "./private/airbnb";
+
 // Case-study copy. Every fact here comes from the project's README or code.
 
 export type DiagramNode = { label: string; sub?: string };
@@ -7,9 +10,15 @@ export type CaseStudy = {
   title: string;
   summary: string;
   role: string;
+  /** Headline numbers for the report header. Taken from the README, data.ts or source files. */
+  kpis: { value: string; label: string }[];
   overview: string[];
   problem: string[];
   built: string[];
+  /** Optional key findings, shown in their own section */
+  findings?: string[];
+  /** Heading for the image gallery (defaults to "More screens") */
+  galleryTitle?: string;
   diagram: { caption: string; nodes: DiagramNode[] };
   decisions: { title: string; body: string }[];
   stack: { layer: string; tech: string }[];
@@ -19,12 +28,18 @@ export type CaseStudy = {
   images?: { src: string; alt: string; w: number; h: number; caption: string }[];
 };
 
-export const caseStudies: CaseStudy[] = [
+const allCaseStudies: CaseStudy[] = [
   {
     slug: "benchmark",
     title: "LLM Risk Register Benchmark",
     summary: "A reproducible benchmark that tests whether large language models can draft a project risk register from real planning documents.",
     role: "Co-author with Kruthik Jadhav · research code and data pipeline",
+    kpis: [
+      { value: "456", label: "unit tests, all run offline" },
+      { value: "21", label: "real projects in the corpus" },
+      { value: "3 × 3", label: "models by prompting strategies" },
+      { value: "3", label: "ways of evaluating the output" },
+    ],
     overview: [
       "This is the code and data behind a paper we're preparing for an IEEE conference: \"Evaluating Large Language Models for Automated Risk Register Generation from Project Documentation: A Benchmark Study.\"",
       "We compare three LLMs from different providers, each with three prompting strategies (zero-shot, few-shot and structured reasoning).",
@@ -86,10 +101,108 @@ export const caseStudies: CaseStudy[] = [
     links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/public-reproducible-benchmark" }],
   },
   {
+    slug: "irish-property",
+    title: "Irish property prices",
+    summary: "An SQL analysis of every residential sale on Ireland's Property Price Register from January 2010 to October 2026, asking how prices and sales have changed and where they have moved most.",
+    role: "Solo project. All the analysis is SQL run in DuckDB. Python only downloads the file, runs the SQL in order and draws the charts.",
+    kpis: [
+      { value: "812,018", label: "sales after cleaning (from 813,106 rows)" },
+      { value: "€380,000", label: "national median in 2025, up from €148,000 in 2013" },
+      { value: "€498,999", label: "Dublin median in 2025, against €335,000 elsewhere" },
+      { value: "1.49x", label: "Dublin to rest of Ireland in 2025, down from 2.22x in 2014" },
+      { value: "12.6%", label: "of a year's sales close in December, on average" },
+    ],
+    overview: [
+      "The Property Price Register lists every home sold in Ireland since 2010 with its price, date, address and county. I wanted to see what it says about the market once the data is cleaned properly.",
+    ],
+    problem: [
+      "Headlines quote one number for house prices, but the picture is very different in Dublin, in the commuter counties and in the west. The raw file is also awkward: prices stored as text, dates as DD/MM/YYYY, Irish and English descriptions, and VAT left out on most new homes.",
+      "The question: how have prices and sales changed since 2010, and where in the country have they moved most?",
+    ],
+    built: [
+      "Eight numbered SQL files, one per question: load and clean, yearly overview, counties, Dublin against the rest, new against second-hand, seasonality, rolling medians and data quality.",
+      "Cleaning in SQL. The file is read as Windows-1252 so the euro sign survives, prices are stripped to digits with regexp_replace, dates go through try_strptime so bad rows can be counted instead of crashing the query, and 1,088 exact duplicates are removed.",
+      "Non-market sales (41,190) and prices under €10,000 or over €10m (1,284) stay in the sales table but are left out of a single market_sales view, so every price query uses the same rules.",
+      "VAT is added back at 13.5% on new homes recorded without it. Without that step the 2025 new-home median would read €387,665 instead of €440,000.",
+      "CTEs build each query in readable steps. Window functions do the rest: LAG for year-on-year change, RANK for county order and the busiest month, PARTITION BY for each month's share of its year, and a 12-month rolling median using RANGE over dates.",
+      "Fifteen data-quality checks stacked with UNION ALL into one report, plus pytest checks on the cleaning logic that run on a 1,000-row sample.",
+    ],
+    findings: [
+      "The national median sale price was €380,000 in 2025, up from a low of €148,000 in 2013 (+157%) and well above the 2010 level of €215,650.",
+      "Growth is slowing. The rolling 12-month median reached €395,000 by October 2026, up 5.3% on a year earlier, down from a peak of 11.3% in May 2025.",
+      "Dublin is still the dearest county at €498,999, but the rest of the country is catching up. A Dublin home cost 2.22 times the median elsewhere in 2014 and 1.49 times in 2025. In euro the gap has stayed at about €150,000 to €175,000 since 2016.",
+      "Smaller, cheaper counties rose fastest after 2020. Sligo's median more than doubled (+107%, €122,500 to €254,000), with Leitrim (+96%) and Roscommon (+91%) close behind. Dublin rose least (+33%).",
+      "New homes were 22.9% of sales in 2025, up from 12.3% in 2013, and their premium over second-hand homes fell from 55.6% in 2020 to 27.5% (€440,000 against €345,000).",
+      "December is by far the busiest month for completed sales: 12.6% of a year's sales on average, against 5.6% in January. It was the busiest month in 15 of the 16 full years.",
+    ],
+    diagram: {
+      caption: "How the pipeline runs, from download to charts.",
+      nodes: [
+        { label: "Register CSV", sub: "813,106 rows" },
+        { label: "01 clean", sub: "sales, market_sales" },
+        { label: "02 to 08 SQL", sub: "CTEs, windows" },
+        { label: "results/ CSVs", sub: "one per file" },
+        { label: "Charts", sub: "matplotlib" },
+      ],
+    },
+    decisions: [
+      {
+        title: "Medians, not means",
+        body: "A few homes sell for millions and drag the average up. In 2025 the mean was €434,741 and the median €380,000. The CSO and Daft report medians for the same reason.",
+      },
+      {
+        title: "Filter once, in a view",
+        body: "Non-market and extreme sales are left out in the market_sales view instead of in each query, so no query can forget the filter.",
+      },
+      {
+        title: "A rolling median over all sales",
+        body: "The 12-month median is taken over every sale in the window, not as a median of 12 monthly medians, which would give quiet months as much weight as busy ones.",
+      },
+      {
+        title: "Keep the outliers",
+        body: "1.7% of market sales sit above Q3 + 3 x IQR. They stay in, because a €1.5m house in Dublin 4 is real, and the median handles them.",
+      },
+    ],
+    stack: [
+      { layer: "Analysis", tech: "SQL in DuckDB" },
+      { layer: "Glue", tech: "Python runs the SQL files in order and saves results with pandas" },
+      { layer: "Charts", tech: "matplotlib" },
+      { layer: "Tests", tech: "pytest on a 1,000-row sample" },
+      { layer: "Data", tech: "Residential Property Price Register (PSRA), downloaded 26 Oct 2026" },
+    ],
+    status: [
+      "These are sale prices declared for stamp duty, not asking prices, so the register says nothing about bidding wars.",
+      "VAT is added back at the standard 13.5% residential rate wherever the flag says the price excludes it. That assumes the rate applied to every such sale.",
+      "Sales are dated when they closed, not when they were agreed, and late filings mean recent months can be revised upwards. 2026 is a part year, so 2025 is the latest full year.",
+      "There is no floor area (size bands exist for only 6.5% of rows), no bedrooms and no house or apartment split, so a rising median can partly reflect a change in what was sold. The CSO's price index adjusts for that mix.",
+      "Some bulk deals slip past the filters, and 287 addresses name a different county from the county column.",
+      "The register is a guide only. The PSRA makes it available for re-use and its data on data.gov.ie is under CC BY 4.0. The raw file is not in the repo; a script downloads it.",
+    ],
+    learned: [
+      "Most of the work is in the cleaning. The encoding, the text prices and the VAT each changed the answer before any analysis started.",
+      "Window functions let one query answer questions that would otherwise need several, like each month's share of its own year.",
+      "Writing the data-quality checks as a query of their own makes it easy to say what the data cannot answer.",
+    ],
+    links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/irish-property-sql" }],
+    galleryTitle: "More charts",
+    images: [
+      { src: "/projects/irish-property.webp", alt: "Line chart of median sale price by year, 2010 to 2025, for Dublin and the rest of Ireland", w: 1200, h: 630, caption: "Median sale price by year, Dublin against the rest of Ireland." },
+      { src: "/projects/irish-property-median.webp", alt: "Chart of the national median sale price by year as a line, with the number of sales as bars, 2010 to 2025", w: 1228, h: 649, caption: "National median price (line) and number of sales (bars) by year." },
+      { src: "/projects/irish-property-counties.webp", alt: "Bar chart of median sale price by county in 2025, from Dublin at 498,999 euro down to Longford at 185,000 euro", w: 1107, h: 996, caption: "Median sale price by county, 2025." },
+      { src: "/projects/irish-property-new.webp", alt: "Chart comparing new and second-hand home medians by year, with VAT added back on new homes", w: 1149, h: 649, caption: "New against second-hand homes." },
+    ],
+  },
+  {
     slug: "civicpulse",
     title: "CivicPulse",
     summary: "Turn one photo of a local problem into a categorised report, a ready-to-send complaint letter and a pin on a community map.",
     role: "Full-stack: React front end, FastAPI back end, Gemini integration",
+    kpis: [
+      { value: "11", label: "issue categories" },
+      { value: "3", label: "severity levels" },
+      { value: "1 photo", label: "is all a report needs" },
+      { value: "0", label: "credentials needed for CI" },
+    ],
     overview: [
       "Potholes, broken streetlights and dumped rubbish rarely get reported, because reporting them is a hassle.",
       "CivicPulse makes it one step. You upload a photo, drop a pin and add a line of description. The app works out the rest.",
@@ -148,73 +261,16 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
   {
-    slug: "foodiepy",
-    title: "Foodiepy",
-    summary: "Food-demand forecasting and inventory management for restaurants and fulfilment centres, built in Django.",
-    role: "University group project with Darshan Bhavsar, Jigar Parmar and Nirmal Trivedi",
-    overview: [
-      "Foodiepy predicts how many orders a fulfilment centre should prepare for, and gives owners a simple place to track stock, customers and orders.",
-    ],
-    problem: [
-      "A food delivery business works with perishable stock. Order too much and it goes to waste. Order too little and customers go elsewhere.",
-    ],
-    built: [
-      "A forecast form that takes meal category, cuisine, prices, promotions and centre details and passes them to a scikit-learn Gradient Boosting regression model, which returns the expected number of orders.",
-      "An inventory side: sign up, log in, add products and customers, and track each order through pending, out for delivery and delivered. Orders can be filtered with django-filter.",
-      "In 2026 it was upgraded from Django 3.1 to Django 5.2 LTS, with CI that runs the system check, migrations and tests on Python 3.11 and 3.13.",
-    ],
-    diagram: {
-      caption: "How a forecast request is handled.",
-      nodes: [
-        { label: "Forecast form", sub: "meal, price, centre" },
-        { label: "Django view", sub: "builds features" },
-        { label: "Gradient Boosting", sub: "scikit-learn .pkl" },
-        { label: "Expected orders", sub: "shown to owner" },
-      ],
-    },
-    decisions: [
-      {
-        title: "Fail clearly when the model is missing",
-        body: "The trained model file was never committed. Rather than letting the page crash, the forecast view now checks for it and shows a clear message.",
-      },
-      {
-        title: "Upgrade to a long-term-support release",
-        body: "Moving to Django 5.2 LTS means the app sits on a supported version, and CI catches anything that breaks on newer Python.",
-      },
-      {
-        title: "Secrets from the environment",
-        body: "The secret key, debug flag and allowed hosts come from environment variables, with debug off by default.",
-      },
-    ],
-    stack: [
-      { layer: "Back end", tech: "Python, Django 5.2 LTS, SQLite" },
-      { layer: "ML", tech: "scikit-learn Gradient Boosting, trained in a Colab notebook" },
-      { layer: "Front end", tech: "Django templates, Bootstrap 5" },
-      { layer: "CI", tech: "GitHub Actions on Python 3.11 and 3.13" },
-    ],
-    status: [
-      "Forecasting is switched off in the current repo. The trained model file (gradientboostmodel.pkl) was never committed, so it needs retraining from the Colab notebook with the current scikit-learn.",
-      "The inventory side, system check, migrations and tests all work and pass in CI.",
-      "It was a university group project and isn't tuned for any real company's data.",
-    ],
-    learned: [
-      "A model isn't shipped until the trained artefact is versioned with the code. This one was lost because nobody committed it.",
-      "Upgrading an old project is a good way to learn a framework properly: every deprecation tells you something about how it works.",
-    ],
-    links: [
-      { label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/foodiepy" },
-      { label: "Demo video", href: "https://youtu.be/45kdILuQyTs" },
-    ],
-    images: [
-      { src: "/projects/foodiepy.webp", alt: "Foodiepy landing page: forecast food demand for the next few weeks", w: 1280, h: 800, caption: "Landing page." },
-      { src: "/projects/foodiepy-forecast.webp", alt: "Foodiepy forecast form with fields for meal and centre details", w: 1280, h: 800, caption: "The forecast form." },
-    ],
-  },
-  {
     slug: "roam",
     title: "Roam",
     summary: "A trip-planning and booking interface: browse destinations, build an itinerary, watch the cost add up and walk through checkout.",
     role: "Front-end build",
+    kpis: [
+      { value: "4", label: "main screens in the flow" },
+      { value: "0", label: "API routes, so it exports as static HTML" },
+      { value: "Next.js 16", label: "with React 19 and TypeScript" },
+      { value: "Live", label: "on GitHub Pages" },
+    ],
     overview: [
       "Roam is a front-end prototype of a travel planning site. Every page and component is built and interactive, and it's live on GitHub Pages.",
     ],
@@ -275,6 +331,8 @@ export const caseStudies: CaseStudy[] = [
     ],
   },
 ];
+
+export const caseStudies = PUBLISH_AIRBNB && airbnbCaseStudy ? [airbnbCaseStudy, ...allCaseStudies] : allCaseStudies;
 
 export function getCaseStudy(slug: string) {
   return caseStudies.find((c) => c.slug === slug);

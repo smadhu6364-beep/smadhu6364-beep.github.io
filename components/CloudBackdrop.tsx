@@ -1,16 +1,27 @@
-// Fixed page background in the style of iCloud.com: soft, slowly drifting
-// colour glows (Apple blue, purple, pink, teal) on a light grey canvas, with a
-// faint highlight at the top. Cards above it use frosted glass (see globals.css).
-// Decorative only; the drift stops for visitors who prefer reduced motion.
+// Fixed page background: Lewis Hamilton at Silverstone, crossfading slowly,
+// colour-graded to a warm sunset so the frosted cards and text sit on top.
+// The photos are daytime shots; the sunset look comes from the grading layer.
+// Photos: Jen Ross and Andrew & Alan Frost, CC BY 2.0, via Wikimedia Commons
+// (credited in the footer). Decorative only; the crossfade stops for
+// visitors who prefer reduced motion.
+export const BG_PHOTOS = ["hamilton-2024", "hamilton-wave", "hamilton-2016", "hamilton-low"];
+
 export default function CloudBackdrop() {
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      <div className="cloud-blob cloud-blue" />
-      <div className="cloud-blob cloud-purple" />
-      <div className="cloud-blob cloud-pink" />
-      <div className="cloud-blob cloud-teal" />
-      {/* soft top highlight, like light through frosted glass */}
-      <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white/60 to-transparent dark:from-white/[0.04]" />
+      <div className="race-photos">
+        {BG_PHOTOS.map((name, i) => (
+          <div
+            key={name}
+            className="race-photo"
+            style={{ backgroundImage: `url(/bg/${name}.webp)`, animationDelay: `${i * 8}s` }}
+          />
+        ))}
+      </div>
+      {/* golden-hour grade: amber sky into pink into dusk purple */}
+      <div className="sunset-grade" />
+      {/* wash so the photos sit back behind the content */}
+      <div className="race-wash" />
     </div>
   );
 }

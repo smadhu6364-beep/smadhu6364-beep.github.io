@@ -2,15 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import CloudBackdrop from "@/components/CloudBackdrop";
-import DeviceFrame from "@/components/DeviceFrame";
-import HeroRise from "@/components/HeroRise";
+import Footer from "@/components/Footer";
 import PipelineDiagram from "@/components/PipelineDiagram";
-import Reveal from "@/components/Reveal";
-import StoryScroller from "@/components/StoryScroller";
-import ThemeToggle from "@/components/ThemeToggle";
+import TopBar from "@/components/TopBar";
+import { Kpi } from "@/components/Visuals";
 import { caseStudies, getCaseStudy } from "@/lib/caseStudies";
-import { profile } from "@/lib/data";
-import { launches, type StoryVisual } from "@/lib/launch";
+import { AirbnbReport } from "@/lib/private/airbnb";
+import { profile, projects } from "@/lib/data";
 
 export const dynamicParams = false;
 
@@ -21,257 +19,210 @@ export function generateStaticParams() {
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
   const c = getCaseStudy(params.slug);
   if (!c) return {};
+  const title = `${c.title} | ${profile.name}`;
   return {
-    title: `${c.title} case study | ${profile.name}`,
+    title,
     description: c.summary,
+    alternates: { canonical: `/projects/${c.slug}/` },
+    openGraph: { url: `/projects/${c.slug}/`, title, description: c.summary },
   };
 }
 
-function Block({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
+function Section({ title, children, className = "" }: { title: string; children: React.ReactNode; className?: string }) {
   return (
-    <section aria-labelledby={id} className="mt-24 sm:mt-32">
-      <Reveal>
-        <div className="glass inline-block px-6 py-3 sm:px-8 sm:py-4">
-          <h2 id={id} className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
-            {title}
-          </h2>
-        </div>
-      </Reveal>
-      <div className="mt-8">{children}</div>
+    <section className={`card p-4 sm:p-5 ${className}`} aria-label={title}>
+      <h2 className="visual-title mb-3">{title}</h2>
+      {children}
     </section>
   );
 }
 
-const btnPrimary =
-  "inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white transition hover:opacity-90 dark:text-[#0b111c]";
-const btnGhost =
-  "inline-flex items-center gap-2 rounded-full border border-accent px-5 py-2.5 text-sm font-medium text-accent transition hover:bg-accent/10";
-
-export default function CaseStudyPage({ params }: { params: { slug: string } }) {
+export default function ReportPage({ params }: { params: { slug: string } }) {
   const c = getCaseStudy(params.slug);
   if (!c) notFound();
-  const l = launches[c.slug];
-
+  const p = projects.find((x) => x.id === c.slug);
   const idx = caseStudies.findIndex((x) => x.slug === c.slug);
+  const prev = caseStudies[(idx - 1 + caseStudies.length) % caseStudies.length];
   const next = caseStudies[(idx + 1) % caseStudies.length];
-  const nextLaunch = launches[next.slug];
-
-  const diagram = (active?: number[]) => (
-    <div className="story-diagram flex-col justify-center gap-[6%]">
-      {active ? (
-        <div className="text-center" aria-hidden="true">
-          <p className="font-display text-[clamp(1.25rem,3vw,2.6rem)] font-semibold leading-tight tracking-tight text-ink">
-            {active.map((a) => c.diagram.nodes[a].label).join(" → ")}
-          </p>
-          <p className="mt-2 text-[clamp(.8rem,1.4vw,1.1rem)] text-muted">
-            {active.map((a) => c.diagram.nodes[a].sub).filter(Boolean).join(" · ")}
-          </p>
-        </div>
-      ) : (
-        <p className="text-center font-display text-[clamp(1.25rem,3vw,2.6rem)] font-semibold tracking-tight text-ink" aria-hidden="true">
-          {c.diagram.nodes[0].label} → {c.diagram.nodes[c.diagram.nodes.length - 1].label}
-        </p>
-      )}
-      <div className="w-full">
-        <PipelineDiagram nodes={c.diagram.nodes} title={`${c.title} pipeline`} active={active} layout="horizontal" />
-      </div>
-    </div>
-  );
-  const image = (i: number, eager = false) => {
-    const im = c.images?.[i];
-    if (!im) return diagram();
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={im.src} alt={im.alt} width={im.w} height={im.h} loading={eager ? "eager" : "lazy"} decoding="async" />
-    );
-  };
-  const visual = (v: StoryVisual) => (v.kind === "image" ? image(v.index) : diagram(v.active));
-  const mobile = l.story.map((s) =>
-    s.visual.kind === "image"
-      ? { node: image(s.visual.index), framed: true }
-      : {
-          node: (
-            <div className="rounded-2xl border border-line bg-bg/40 p-4">
-              <PipelineDiagram nodes={c.diagram.nodes} title={`${c.title} pipeline`} active={s.visual.active} />
-            </div>
-          ),
-          framed: false,
-        },
-  );
+  const hero = c.images?.[0];
+  const isAirbnb = c.slug === "airbnb";
 
   return (
     <>
-      <a
-        href="#main"
-        className="sr-only z-50 rounded bg-accent px-4 py-2 text-white focus:not-sr-only focus:fixed focus:left-3 focus:top-3"
-      >
+      <a href="#main" className="sr-only z-50 rounded bg-accent px-4 py-3 text-white focus:not-sr-only focus:fixed focus:left-3 focus:top-3">
         Skip to content
       </a>
       <CloudBackdrop />
-
-      <div className="mx-auto max-w-6xl px-4 pb-20 pt-6 sm:px-8">
-        <nav aria-label="Breadcrumb" className="glass flex items-center justify-between gap-4 !rounded-full px-5 py-2">
-          <Link href="/#projects" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
-            ← All projects
-          </Link>
-          <span className="hidden text-sm font-semibold text-ink sm:inline">{c.title}</span>
-          <ThemeToggle />
+      <TopBar current="projects" />
+      <div className="mx-auto max-w-[1440px] px-4 pb-10 pt-4 sm:px-6">
+        <nav aria-label="Breadcrumb" className="mb-3 text-xs text-muted">
+          <Link href="/?page=projects" className="-my-3 inline-flex min-h-10 items-center py-3 font-medium text-accent hover:underline lg:my-0 lg:min-h-0 lg:py-0">
+            Projects
+          </Link>{" "}
+          <span aria-hidden="true">/</span> <span className="text-ink">{c.title}</span>
         </nav>
 
-        <main id="main">
-          <header className="mx-auto mt-10 max-w-3xl text-center sm:mt-16">
-            <div className="glass px-6 py-10 sm:px-12 sm:py-14">
-              <p className="text-sm font-semibold uppercase tracking-widest text-accent">{l.eyebrow}</p>
-              <h1 className="mt-4 font-display text-4xl font-semibold leading-[1.05] tracking-tight text-ink sm:text-6xl lg:text-7xl">
-                {l.headline}
-              </h1>
-              <p className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-ink sm:text-xl">{l.subhead}</p>
-              <p className="mt-3 text-sm text-muted">{c.role}</p>
-              <div className="mt-8 flex flex-wrap justify-center gap-3">
-                {c.links.map((link, i) => (
-                  <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className={i === 0 ? btnPrimary : btnGhost}>
-                    {link.label} <span aria-hidden="true">↗</span>
-                    <span className="sr-only">(opens in a new tab)</span>
-                  </a>
-                ))}
+        <main id="main" className="space-y-3">
+          <header className="card p-4 sm:p-6">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="max-w-3xl">
+                {p && <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">{p.kind}</p>}
+                <h1 className="mt-1 text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{c.title}</h1>
+                <p className="mt-2 text-[15px] leading-relaxed text-ink">{c.summary}</p>
+                <p className="mt-2 text-sm text-muted">{c.role}</p>
               </div>
+              {c.links.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {c.links.map((l, i) => (
+                    <a
+                      key={l.href}
+                      href={l.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={
+                        i === 0
+                          ? "rounded-full bg-accent px-4 py-2 text-sm font-semibold text-white hover:opacity-90 dark:text-[#06101c]"
+                          : "rounded-full border border-accent px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/10"
+                      }
+                    >
+                      {l.label} <span aria-hidden="true">↗</span>
+                      <span className="sr-only">(opens in a new tab)</span>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </header>
 
-          <div className="mx-auto mt-12 max-w-5xl sm:mt-16">
-            <HeroRise>
-              <DeviceFrame>{c.images?.[0] ? image(0, true) : diagram()}</DeviceFrame>
-            </HeroRise>
+          <div className={`grid grid-cols-2 gap-3 ${c.kpis.length === 5 ? "sm:grid-cols-3 xl:grid-cols-5" : "lg:grid-cols-4"}`}>
+            {c.kpis.map((k) => (
+              <Kpi key={k.label} value={k.value} label={k.label} />
+            ))}
           </div>
 
-          <section aria-labelledby="why" className="mt-24 sm:mt-32">
-            <Reveal>
-              <div className="glass mx-auto max-w-3xl p-6 sm:p-10">
-                <h2 id="why" className="font-display text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                  Why I built it
-                </h2>
-                <div className="mt-5 space-y-4 text-lg leading-relaxed text-muted">
-                  {[...c.overview, ...c.problem].map((p) => (
-                    <p key={p}>{p}</p>
-                  ))}
+          <div className="grid gap-3 lg:grid-cols-[1.5fr_1fr]">
+            <section className="card overflow-hidden" aria-label="Main visual">
+              {hero ? (
+                <figure>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={hero.src} alt={hero.alt} width={hero.w} height={hero.h} className="block h-auto w-full" />
+                  <figcaption className="border-t border-line/70 px-4 py-2 text-xs text-muted">{hero.caption}</figcaption>
+                </figure>
+              ) : (
+                <div className="flex h-full flex-col justify-center gap-4 p-4 sm:p-6">
+                  <h2 className="visual-title">How it fits together</h2>
+                  <PipelineDiagram nodes={c.diagram.nodes} title={`${c.title} pipeline`} />
+                  <p className="visual-sub">{c.diagram.caption}</p>
                 </div>
+              )}
+            </section>
+            <Section title="The problem">
+              <div className="space-y-3 text-sm leading-relaxed text-ink">
+                {[...c.overview, ...c.problem].map((t) => (
+                  <p key={t}>{t}</p>
+                ))}
               </div>
-            </Reveal>
-          </section>
+            </Section>
+          </div>
 
-          <Block id="how" title="How it works">
-            <StoryScroller steps={l.story} visuals={l.story.map((s) => visual(s.visual))} mobile={mobile} />
-          </Block>
+          {hero && (
+            <Section title="How it fits together">
+              <PipelineDiagram nodes={c.diagram.nodes} title={`${c.title} pipeline`} />
+              <p className="visual-sub mt-2">{c.diagram.caption}</p>
+            </Section>
+          )}
 
-          <Block id="facts" title="In numbers">
-            <ul className={`grid grid-cols-2 gap-3 sm:gap-4 ${l.facts.length === 4 ? "" : "lg:grid-cols-3"}`}>
-              {l.facts.map((f, i) => (
-                <li key={f.label} className={i === 0 && l.facts.length % 2 === 1 ? "col-span-2 lg:col-span-1 lg:row-span-2" : ""}>
-                  <Reveal className="h-full">
-                    <div className="glass flex h-full min-h-[9rem] flex-col justify-end p-5 sm:min-h-[11rem] sm:p-7">
-                      <p
-                        className={`font-display font-semibold leading-none tracking-tight text-ink ${
-                          f.value.length > 7
-                            ? "text-2xl sm:text-4xl"
-                            : i === 0
-                              ? "text-6xl sm:text-8xl"
-                              : "text-4xl sm:text-6xl"
-                        }`}
-                      >
-                        {f.value}
-                      </p>
-                      <p className="mt-3 text-sm font-medium text-muted sm:text-base">{f.label}</p>
-                    </div>
-                  </Reveal>
-                </li>
-              ))}
-            </ul>
-          </Block>
-
-          <Block id="decisions" title="Key decisions">
-            <div className="grid gap-4 md:grid-cols-2">
-              {c.decisions.map((d) => (
-                <Reveal key={d.title} className="h-full">
-                  <div className="glass h-full p-6 sm:p-8">
-                    <h3 className="font-display text-xl font-semibold text-ink">{d.title}</h3>
-                    <p className="mt-3 leading-relaxed text-muted">{d.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </div>
-          </Block>
-
-          <Block id="stack" title="Tech stack">
-            <Reveal>
-              <dl className="glass divide-y divide-line px-6 sm:px-8">
-                {c.stack.map((s) => (
-                  <div key={s.layer} className="grid gap-1 py-4 sm:grid-cols-[12rem_1fr] sm:gap-6">
-                    <dt className="font-semibold text-ink">{s.layer}</dt>
-                    <dd className="text-muted">{s.tech}</dd>
+          <div className="grid gap-3 lg:grid-cols-2">
+            <Section title="Approach">
+              <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-ink">
+                {c.built.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </Section>
+            <Section title="Key decisions">
+              <dl className="space-y-3 text-sm leading-relaxed">
+                {c.decisions.map((d) => (
+                  <div key={d.title}>
+                    <dt className="font-semibold text-ink">{d.title}</dt>
+                    <dd className="mt-0.5 text-muted">{d.body}</dd>
                   </div>
                 ))}
               </dl>
-            </Reveal>
-          </Block>
-
-          <div className="mt-24 grid gap-4 sm:mt-32 md:grid-cols-2">
-            <section aria-labelledby="status" className="glass p-6 sm:p-8">
-              <h2 id="status" className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                Status and limitations
-              </h2>
-              <ul className="mt-5 list-disc space-y-3 pl-5 leading-relaxed text-muted">
-                {c.status.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </section>
-            <section aria-labelledby="learned" className="glass p-6 sm:p-8">
-              <h2 id="learned" className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                What I learned
-              </h2>
-              <ul className="mt-5 list-disc space-y-3 pl-5 leading-relaxed text-muted">
-                {c.learned.map((s) => (
-                  <li key={s}>{s}</li>
-                ))}
-              </ul>
-            </section>
+            </Section>
           </div>
 
-          <Link href={`/projects/${next.slug}/`} className="launch-card glass group mt-24 block p-8 text-center sm:mt-32 sm:p-14">
-            <span className="text-sm font-semibold uppercase tracking-widest text-accent">Next project</span>
-            <span className="mt-3 block font-display text-3xl font-semibold tracking-tight text-ink sm:text-5xl">
-              {next.title}{" "}
-              <span aria-hidden="true" className="inline-block transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </span>
-            <span className="mt-3 block text-lg text-muted">{nextLaunch.headline}</span>
-          </Link>
+          {c.findings && (
+            <Section title="Key findings">
+              <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-ink">
+                {c.findings.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </Section>
+          )}
 
-          <footer className="mt-16 flex flex-col gap-4 border-t border-line pt-6 text-xs text-muted">
-            <Link href="/#projects" className="text-sm font-medium text-accent underline-offset-4 hover:underline">
-              ← All projects
-            </Link>
-            <p>
-              Background photos: Lewis Hamilton at the British Grand Prix, Silverstone, by Jen Ross and Andrew &amp; Alan
-              Frost, colour-graded,{" "}
-              <a className="underline hover:text-ink" href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noreferrer">
-                CC BY 2.0
-              </a>
-              , via{" "}
-              <a
-                className="underline hover:text-ink"
-                href="https://commons.wikimedia.org/w/index.php?search=Lewis+Hamilton+British+Grand+Prix&amp;title=Special:MediaSearch&amp;type=image"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Wikimedia Commons
-              </a>
-              .
-            </p>
-          </footer>
+          {isAirbnb && <AirbnbReport />}
+
+          {c.images && c.images.length > 1 && (
+            <section aria-label="More screens">
+              <h2 className="visual-title mb-2 pt-2">{isAirbnb ? "The Power BI report" : (c.galleryTitle ?? "More screens")}</h2>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {c.images.slice(isAirbnb ? 0 : 1).map((im) => (
+                  <li key={im.src} className="card overflow-hidden">
+                    <figure>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={im.src} alt={im.alt} width={im.w} height={im.h} loading="lazy" decoding="async" className="block h-auto w-full" />
+                      <figcaption className="border-t border-line/70 px-4 py-2 text-xs text-muted">{im.caption}</figcaption>
+                    </figure>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <div className="grid gap-3 lg:grid-cols-3">
+            <Section title="Stack">
+              <dl className="divide-y divide-line/70 text-sm">
+                {c.stack.map((s) => (
+                  <div key={s.layer} className="grid grid-cols-[7rem_1fr] gap-2 py-2">
+                    <dt className="text-muted">{s.layer}</dt>
+                    <dd className="text-ink">{s.tech}</dd>
+                  </div>
+                ))}
+              </dl>
+            </Section>
+            <Section title="Status and limitations">
+              <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-ink">
+                {c.status.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </Section>
+            <Section title="What I learned">
+              <ul className="list-disc space-y-2 pl-4 text-sm leading-relaxed text-ink">
+                {c.learned.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
+            </Section>
+          </div>
+
+          {caseStudies.length > 1 && (
+            <nav aria-label="Other projects" className="grid gap-3 sm:grid-cols-2">
+              <Link href={`/projects/${prev.slug}/`} className="card block p-4 transition hover:border-accent">
+                <span className="text-xs text-muted">← Previous report</span>
+                <span className="mt-1 block font-semibold text-ink">{prev.title}</span>
+              </Link>
+              <Link href={`/projects/${next.slug}/`} className="card block p-4 text-right transition hover:border-accent">
+                <span className="text-xs text-muted">Next report →</span>
+                <span className="mt-1 block font-semibold text-ink">{next.title}</span>
+              </Link>
+            </nav>
+          )}
         </main>
       </div>
+      <Footer />
     </>
   );
 }
