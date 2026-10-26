@@ -52,7 +52,7 @@ section[id] { scroll-margin-top: 80px; }
 .glass { border: 1px solid; border-radius: 22px; }
 
 /* drifting colour glows behind everything */
-.cloud-blob { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .55; will-change: transform; animation: cloud-drift 26s ease-in-out infinite alternate; }
+.cloud-blob { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .32; will-change: transform; animation: cloud-drift 26s ease-in-out infinite alternate; }
 .dark .cloud-blob { opacity: .28; }
 .cloud-blue   { width: 52vw; height: 52vw; left: -12vw; top: -14vw; background: #0a84ff; }
 .cloud-purple { width: 44vw; height: 44vw; right: -10vw; top: 6vh; background: #af52de; animation-duration: 32s; animation-delay: -8s; }
