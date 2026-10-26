@@ -2,7 +2,7 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   darkMode: "class",
-  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}"],
+  content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
     extend: {
       colors: {
@@ -12,11 +12,14 @@ const config: Config = {
         muted: "rgb(var(--muted) / <alpha-value>)",
         line: "rgb(var(--line) / <alpha-value>)",
         accent: "rgb(var(--accent) / <alpha-value>)",
+        sage: "rgb(var(--sage) / <alpha-value>)",
+        peach: "rgb(var(--peach) / <alpha-value>)",
+        lime: "rgb(var(--lime) / <alpha-value>)",
+        dot: "rgb(var(--dot) / <alpha-value>)",
       },
       fontFamily: {
-        // Apple's own font on Apple devices (as on iCloud.com), self-hosted Inter elsewhere
-        sans: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Text"', "var(--font-inter)", "system-ui", "sans-serif"],
-        display: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Display"', "var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
       },
     },
   },

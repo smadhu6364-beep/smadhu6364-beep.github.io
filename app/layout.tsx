@@ -1,11 +1,12 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"], display: "swap", variable: "--font-inter" });
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-inter" });
+const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: "italic", display: "swap", variable: "--font-serif" });
 
 const SITE = "https://smadhu6364-beep.github.io";
-const TITLE = "Madhu Sudhan Srinivas · Data & Analytics";
+const TITLE = "Madhu Sudhan Srinivas · Field notes on data";
 const DESCRIPTION =
   "MSc Business Analytics student at DCU, building data and AI tools. Operations background; now using Python, SQL and LLMs to turn messy information into something people can act on.";
 
@@ -45,8 +46,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f4ef" },
+    { media: "(prefers-color-scheme: dark)", color: "#1b1a17" },
   ],
 };
 
@@ -54,11 +55,11 @@ const themeScript = `try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IE" suppressHydrationWarning className={inter.variable}>
+    <html lang="en-IE" suppressHydrationWarning className={`${inter.variable} ${serif.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
-      <body className="font-sans antialiased">{children}</body>
+      <body className="bg-bg font-sans text-ink antialiased">{children}</body>
     </html>
   );
 }

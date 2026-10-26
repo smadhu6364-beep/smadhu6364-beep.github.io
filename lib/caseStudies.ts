@@ -24,6 +24,8 @@ export type CaseStudy = {
   stack: { layer: string; tech: string }[];
   status: string[];
   learned: string[];
+  /** Next steps, only where they follow directly from the limitations above */
+  next?: string[];
   links: { label: string; href: string }[];
   images?: { src: string; alt: string; w: number; h: number; caption: string }[];
 };
@@ -97,6 +99,10 @@ const allCaseStudies: CaseStudy[] = [
       "Most of the work in an evaluation is making sure you aren't fooling yourself. That means keeping the answers away from the model and checking it stays that way.",
       "Cheap offline tests pay for themselves when every real run costs money.",
       "Writing the methodology down and freezing it before running anything makes later decisions much easier to defend.",
+    ],
+    next: [
+      "Recruit the human raters for the expert-rating part of the study.",
+      "Run the batch code path against the live APIs, not only mocked responses.",
     ],
     links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/public-reproducible-benchmark" }],
   },
@@ -183,6 +189,10 @@ const allCaseStudies: CaseStudy[] = [
       "Window functions let one query answer questions that would otherwise need several, like each month's share of its own year.",
       "Writing the data-quality checks as a query of their own makes it easy to say what the data cannot answer.",
     ],
+    next: [
+      "Compare the medians with the CSO's price index, which adjusts for the mix of homes sold.",
+      "Rerun the queries once late filings for 2026 are in, since recent months can be revised upwards.",
+    ],
     links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/irish-property-sql" }],
     galleryTitle: "More charts",
     images: [
@@ -255,6 +265,10 @@ const allCaseStudies: CaseStudy[] = [
       "An LLM is most useful for the fuzzy step (what's in this photo?) and least useful for rules you can write down yourself.",
       "Designing the fallback path first made the whole app easier to test.",
     ],
+    next: [
+      "Add user accounts and moderation, so reports and upvotes can be trusted.",
+      "Host a demo so people can try it without their own keys.",
+    ],
     links: [{ label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/civicpulse" }],
     images: [
       { src: "/projects/civicpulse.webp", alt: "CivicPulse report form with photo upload, description and a map for picking the location", w: 1280, h: 800, caption: "The report form: photo, description and a map picker." },
@@ -320,6 +334,10 @@ const allCaseStudies: CaseStudy[] = [
     learned: [
       "Building the whole flow as a clickable prototype first shows which back-end pieces actually matter.",
       "Static export forces you to be honest about what's real and what's mocked.",
+    ],
+    next: [
+      "Connect flight search, payments and accounts to a real back end.",
+      "Replace the placeholder images and sample data.",
     ],
     links: [
       { label: "Live demo", href: "https://smadhu6364-beep.github.io/roam-travel/" },
