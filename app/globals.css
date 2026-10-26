@@ -88,7 +88,7 @@ section[id] { scroll-margin-top: 80px; }
 .xf { transition: opacity .35s ease, filter .35s ease, transform .35s ease; }
 .xf-off { opacity: .28; filter: grayscale(1); }
 .xf-bar { transition: width .45s cubic-bezier(.2,.7,.2,1), x .45s, opacity .35s; }
-.tab-panel { animation: tab-in .32s ease both; }
+.tab-anim .tab-panel { animation: tab-in .32s ease both; }
 @keyframes tab-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
 .chip {
