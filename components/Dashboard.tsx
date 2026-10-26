@@ -69,6 +69,8 @@ export default function Dashboard() {
 
   const goTab = useCallback(
     (t: Tab) => {
+      // animate tab changes only, never the first paint (keeps load fast)
+      document.documentElement.classList.add("tab-anim");
       setTab(t);
       writeUrl(t, filter, true);
       window.scrollTo({ top: 0, behavior: "instant" as ScrollBehavior });
