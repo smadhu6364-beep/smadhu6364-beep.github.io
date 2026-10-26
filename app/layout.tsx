@@ -1,18 +1,52 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
+const inter = Inter({ subsets: ["latin"], weight: ["400", "500", "600"], display: "swap", variable: "--font-inter" });
+
+const SITE = "https://smadhu6364-beep.github.io";
+const TITLE = "Madhu Sudhan Srinivas · Data & Analytics";
+const DESCRIPTION =
+  "MSc Business Analytics student at DCU, building data and AI tools. Operations background; now using Python, SQL and LLMs to turn messy information into something people can act on.";
+
 export const metadata: Metadata = {
-  title: "Madhu Sudhan Srinivas | Data & Analytics",
-  description:
-    "Madhu Sudhan Srinivas: MSc Business Analytics student at DCU, Dublin. Operations background, now building data and AI tools.",
+  metadataBase: new URL(SITE),
+  title: TITLE,
+  description: DESCRIPTION,
+  alternates: { canonical: "/" },
+  authors: [{ name: "Madhu Sudhan Srinivas", url: SITE }],
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Madhu Sudhan Srinivas",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_IE",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Madhu Sudhan Srinivas · MSc Business Analytics, DCU" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafaf9" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b111c" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -20,17 +54,9 @@ const themeScript = `try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-IE" suppressHydrationWarning>
+    <html lang="en-IE" suppressHydrationWarning className={inter.variable}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* eslint-disable-next-line @next/next/no-page-custom-font */}
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap"
-        />
       </head>
       <body className="font-sans antialiased">{children}</body>
     </html>
