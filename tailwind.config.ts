@@ -14,8 +14,9 @@ const config: Config = {
         accent: "rgb(var(--accent) / <alpha-value>)",
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        display: ['"Fraunces"', "Georgia", "serif"],
+        // Apple's own font on Apple devices (as on iCloud.com), self-hosted Inter elsewhere
+        sans: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Text"', "var(--font-inter)", "system-ui", "sans-serif"],
+        display: ["-apple-system", "BlinkMacSystemFont", '"SF Pro Display"', "var(--font-inter)", "system-ui", "sans-serif"],
       },
     },
   },
