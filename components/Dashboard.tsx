@@ -382,6 +382,10 @@ export default function Dashboard() {
               <dd><a className="inline-block break-all py-2.5 font-medium text-accent hover:underline lg:py-0" href={profile.github} target="_blank" rel="noopener noreferrer">github.com/{profile.githubHandle}</a></dd>
             </div>
             <div className="grid grid-cols-[5.5rem_1fr] gap-2 py-2">
+              <dt className="text-muted">LinkedIn</dt>
+              <dd><a className="inline-block break-all py-2.5 font-medium text-accent hover:underline lg:py-0" href={profile.linkedin} target="_blank" rel="noopener noreferrer">linkedin.com/in/{profile.linkedinHandle}</a></dd>
+            </div>
+            <div className="grid grid-cols-[5.5rem_1fr] gap-2 py-2">
               <dt className="text-muted">Location</dt>
               <dd className="text-ink">{profile.location}</dd>
             </div>
