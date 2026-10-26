@@ -12,21 +12,33 @@ const FONT = `-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Var
 
 const og = `<!doctype html><html><head><style>
 *{margin:0;box-sizing:border-box}
-body{width:1200px;height:630px;background:#f5f5f7;font-family:${FONT};position:relative;overflow:hidden;color:#1d1d1f}
-.g{position:absolute;border-radius:50%;filter:blur(90px);opacity:.55}
-.card{position:absolute;left:90px;top:95px;width:1020px;height:440px;border-radius:40px;background:rgba(255,255,255,.62);
- border:1px solid rgba(255,255,255,.9);box-shadow:0 30px 80px rgba(0,0,0,.08);backdrop-filter:blur(30px);padding:70px 80px;display:flex;flex-direction:column}
-.mono{width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg,#0071e3,#af52de);color:#fff;font-weight:700;font-size:36px;display:flex;align-items:center;justify-content:center;letter-spacing:-1px}
-h1{font-size:76px;font-weight:700;letter-spacing:-2.5px;margin-top:36px}
-p{font-size:34px;color:#424245;margin-top:14px;font-weight:500}
-.url{margin-top:auto;font-size:26px;color:#0071e3;font-weight:600}
+body{width:1200px;height:630px;background:#f5f5f7;font-family:${FONT};color:#1d1d1f;overflow:hidden}
+.top{height:84px;background:#fff;border-bottom:1px solid #e5e5ea;display:flex;align-items:center;padding:0 48px;gap:18px}
+.mono{width:50px;height:50px;border-radius:13px;background:#0071e3;color:#fff;font-weight:700;font-size:22px;display:flex;align-items:center;justify-content:center}
+.nm{font-size:26px;font-weight:700}.sub{font-size:17px;color:#6e6e73}
+.tabs{margin-left:auto;display:flex;gap:28px;font-size:18px;color:#6e6e73}.tabs b{color:#1d1d1f;border-bottom:3px solid #0071e3;padding-bottom:6px}
+.wrap{padding:30px 48px}
+.line{font-size:27px;font-weight:600;line-height:1.3;max-width:1100px}
+.k{display:flex;gap:18px;margin-top:24px}
+.kp{flex:1;background:#fff;border:1px solid #e5e5ea;border-radius:18px;padding:20px 22px;height:142px}
+.kl{font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#6e6e73;font-weight:600}
+.kv{font-size:52px;font-weight:700;letter-spacing:-1px;margin-top:8px}
+.row{display:flex;gap:18px;margin-top:18px}
+.chart{background:#fff;border:1px solid #e5e5ea;border-radius:18px;padding:16px 20px;width:520px;height:232px;position:relative}
+.ct{font-size:15px;font-weight:600}.leg{font-size:13px;color:#6e6e73;margin-top:2px}
+.chart svg{position:absolute;left:30px;bottom:12px;width:470px;height:160px}
+.cta{flex:1;background:#0071e3;color:#fff;border-radius:18px;padding:30px 34px;height:232px;display:flex;flex-direction:column;justify-content:space-between}
+.cta div{font-size:28px;font-weight:600;line-height:1.3}.cta span{font-size:30px;font-weight:700}
 </style></head><body>
-<div class="g" style="width:520px;height:520px;background:#0071e3;left:-120px;top:-160px"></div>
-<div class="g" style="width:460px;height:460px;background:#af52de;right:-80px;top:-120px"></div>
-<div class="g" style="width:420px;height:420px;background:#ff2d55;right:180px;bottom:-240px"></div>
-<div class="g" style="width:420px;height:420px;background:#30b0c7;left:160px;bottom:-260px"></div>
-<div class="card"><div class="mono">MS</div><h1>Madhu Sudhan Srinivas</h1>
-<p>MSc Business Analytics, DCU · data and AI tools</p><div class="url">smadhu6364-beep.github.io</div></div>
+<div class="top"><div class="mono">MS</div><div><div class="nm">Madhu Sudhan Srinivas</div><div class="sub">Business Analytics MSc · Dublin</div></div>
+<div class="tabs"><b>Overview</b><span>Projects</span><span>Experience</span><span>Skills</span><span>Contact</span></div></div>
+<div class="wrap"><div class="line">MSc Business Analytics at DCU. Power BI, Python and statistics. Looking for data analyst roles in Ireland.</div>
+<div class="k"><div class="kp"><div class="kl">Sales analysed in SQL</div><div class="kv">812,018</div></div>
+<div class="kp"><div class="kl">Projects</div><div class="kv">5</div></div>
+<div class="kp"><div class="kl">Business Analytics</div><div class="kv">MSc</div></div>
+<div class="kp"><div class="kl">Operations experience</div><div class="kv">2+ yrs</div></div></div>
+<div class="row"><div class="chart"><div class="ct">Median house price, 2010 to 2025</div><div class="leg"><span style="color:#0071e3">● Dublin</span> &nbsp; <span style="color:#af52de">● Rest of Ireland</span></div><svg width="430" height="190" viewBox="0 0 430 190"><polyline points="10.0,108.2 37.3,119.3 64.7,133.2 92.0,125.4 119.3,114.7 146.7,107.1 174.0,93.9 201.3,82.2 228.7,74.8 256.0,74.8 283.3,68.7 310.7,62.6 338.0,50.5 365.3,46.4 392.7,29.7 420.0,18.5" fill="none" stroke="#0071e3" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><polyline points="10.0,144.2 37.3,157.9 64.7,167.9 92.0,172.2 119.3,172.7 146.7,167.9 174.0,161.8 201.3,152.9 228.7,145.6 256.0,139.5 283.3,138.3 310.7,129.4 338.0,118.1 365.3,109.2 392.7,99.0 420.0,84.9" fill="none" stroke="#af52de" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+<div class="cta"><div>An interactive portfolio that works like a report. Pick a skill and every visual filters.</div><span>smadhu6364-beep.github.io</span></div></div></div>
 </body></html>`;
 
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0071e3"/><stop offset="1" stop-color="#af52de"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#g)"/><text x="32" y="41.5" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Helvetica,Arial,sans-serif" font-weight="700" font-size="26" letter-spacing="-1" fill="#fff">MS</text></svg>`;
