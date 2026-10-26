@@ -27,7 +27,8 @@ export default function CV() {
           <h1 className="font-display text-4xl font-semibold">{profile.name}</h1>
           <p className="mt-1 text-neutral-700">
             {profile.location} · <a className="underline" href={`mailto:${profile.email}`}>{profile.email}</a> ·{" "}
-            <a className="underline" href={profile.github}>github.com/{profile.githubHandle}</a>
+            <a className="underline" href={profile.github}>github.com/{profile.githubHandle}</a> ·{" "}
+            <a className="underline" href={profile.linkedin}>linkedin.com/in/{profile.linkedinHandle}</a>
           </p>
           <p className="mt-3">{profile.positioning}</p>
         </header>

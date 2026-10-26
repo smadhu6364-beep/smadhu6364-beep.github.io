@@ -15,6 +15,8 @@ export const profile = {
   email: "smadhu6364@gmail.com",
   github: "https://github.com/smadhu6364-beep",
   githubHandle: "smadhu6364-beep",
+  linkedin: "https://www.linkedin.com/in/madhu-sudhan-a966b3225/",
+  linkedinHandle: "madhu-sudhan-a966b3225",
   positioning:
     "I've run day-to-day operations on busy front lines, and now I build data and AI tools. I'm looking for data and analytics roles in Ireland.",
 };
