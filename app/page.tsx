@@ -3,6 +3,8 @@ import { profile } from "@/lib/data";
 
 import MenuButton from "@/components/MenuButton";
 import VtThemeToggle from "@/components/VtThemeToggle";
+import RaceMusic from "@/components/RaceMusic";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import CarLoader from "@/components/CarLoader";
 import Journey from "@/components/Journey";
 import { L } from "@/lib/dummy";
@@ -43,19 +45,22 @@ export default function Home() {
   return (
     <div className="vt">
       <CarLoader />
+      <WhatsAppButton />
       {/* Fixed chrome */}
-      <header className="fixed inset-x-0 top-0 z-40 flex items-start justify-between px-4 py-4 sm:px-8">
-        <a href="#top" className={`${display.className} leading-[0.8] text-white mix-blend-difference`} aria-label="Madhu Sudhan, home">
-          <span className="block text-[26px] tracking-tight">MADHU</span>
-          <span className={`${block.className} block text-[13px] tracking-wide`}>SUDHAN</span>
-        </a>
-        <span aria-hidden="true" className={`${display.className} absolute left-1/2 top-5 -translate-x-1/2 text-xl italic text-white mix-blend-difference`}>
-          MS
-        </span>
+      {/* Logo sits outside the header so its blend mode sees the page behind it */}
+      <a href="#top" className={`${display.className} fixed left-4 top-4 z-40 leading-[0.8] sm:left-8 text-white mix-blend-difference`} aria-label="Madhu Sudhan, home">
+        <span className="block text-[26px] tracking-tight">MADHU</span>
+        <span className={`${block.className} block text-[13px] tracking-wide`}>SUDHAN</span>
+      </a>
+      <span aria-hidden="true" className={`${display.className} fixed left-1/2 top-5 z-40 hidden -translate-x-1/2 text-xl italic sm:block text-white mix-blend-difference`}>
+        MS
+      </span>
+      <header className="fixed inset-x-0 top-0 z-40 flex items-start justify-end px-4 py-4 sm:px-8">
         <div className="flex items-center gap-3">
           <a href="/cv" className={`${block.className} rounded-md bg-red px-4 py-2.5 text-sm tracking-wider text-white shadow-sm transition hover:brightness-110`}>
             CV
           </a>
+          <RaceMusic />
           <VtThemeToggle />
           <MenuButton items={NAV} fontClass={block.className} />
         </div>
@@ -84,7 +89,7 @@ export default function Home() {
             <p className={`${display.className} mt-2 text-lg leading-tight`}>MSc Business Analytics</p>
             <p className={`${block.className} mt-2 text-[10px] tracking-widest`}>DCU · 2026</p>
           </div>
-          <p className={`${block.className} absolute bottom-2 right-4 z-20 text-[22vw] leading-none text-red sm:right-8 sm:text-[9vw]`} aria-hidden="true">
+          <p className={`${block.className} absolute bottom-24 right-4 z-20 text-[22vw] sm:bottom-2 leading-none text-red sm:right-32 sm:text-[9vw]`} aria-hidden="true">
             26
           </p>
         </section>
