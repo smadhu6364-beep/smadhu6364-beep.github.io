@@ -109,3 +109,8 @@ section[id] { scroll-margin-top: 88px; }
 @media print {
   body { background: #fff; color: #000; }
 }
+
+/* Verstappen-style theme tokens (light / dark) */
+:root { --vt-navy: 15 27 61; --vt-sky: 228 234 243; --vt-cream: 244 242 236; --vt-slate: 89 97 115; --vt-deep: 15 27 61; --vt-card: 255 255 255; }
+.dark { --vt-navy: 228 234 243; --vt-sky: 10 16 32; --vt-cream: 16 22 40; --vt-slate: 28 36 56; --vt-deep: 5 9 20; --vt-card: 24 33 56; }
+.vt section, .vt footer, .vt [id] { transition: background-color .4s ease, color .4s ease; }
