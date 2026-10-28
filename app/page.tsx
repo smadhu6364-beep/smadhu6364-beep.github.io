@@ -15,8 +15,8 @@ const block = Anton({ subsets: ["latin"], weight: "400", display: "swap" });
 
 const NAV = [
   ["About", "#about"],
-  ["Experience", "#experience"],
   ["Education", "#education"],
+  ["Experience", "#experience"],
   ["Projects", "#projects"],
   ["Off the clock", "#hobbies"],
   ["Contact", "#contact"],
@@ -62,7 +62,7 @@ export default function Home() {
           </a>
           <RaceMusic />
           <VtThemeToggle />
-          <MenuButton items={NAV} fontClass={block.className} />
+          <MenuButton items={NAV} fontClass={display.className} />
         </div>
       </header>
 
