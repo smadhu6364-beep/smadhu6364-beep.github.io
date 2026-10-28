@@ -73,17 +73,9 @@ export default function Home() {
             <span className={`${display.className} block text-[26vw] font-medium leading-[0.8] text-red sm:text-[19vw]`}>MADHU</span>
             <span className={`${block.className} -mt-[2vw] block text-[17vw] leading-[0.9] text-navy sm:text-[13vw]`}>SUDHAN</span>
           </h1>
-          {/* Portrait placeholder: swap for a cut-out photo later */}
-          <div className="absolute bottom-0 left-1/2 z-10 flex h-[46%] w-[min(58vw,360px)] sm:h-[62%] -translate-x-1/2 flex-col items-center justify-end">
-            <div className="relative h-full w-full overflow-hidden rounded-t-[48%] bg-gradient-to-b from-[#2a3a63] to-[#0f1b3d] shadow-2xl">
-              <div className="absolute left-1/2 top-[14%] h-[30%] w-[42%] -translate-x-1/2 rounded-full bg-sky/25" />
-              <div className="absolute bottom-0 left-1/2 h-[46%] w-[86%] -translate-x-1/2 rounded-t-[50%] bg-sky/15" />
-              <p className={`${block.className} absolute inset-x-0 top-[50%] text-center text-xs tracking-[0.3em] text-sky/70`}>PHOTO COMING SOON</p>
-            </div>
-            <p className={`${block.className} absolute bottom-6 rounded-sm bg-deep px-4 py-2 text-[11px] tracking-[0.2em] text-white`}>
-              DATA ANALYST. DUBLIN BASED.
-            </p>
-          </div>
+          <p className={`${block.className} absolute bottom-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-deep px-4 py-2 text-[11px] tracking-[0.2em] text-white`}>
+            DATA ANALYST. DUBLIN BASED.
+          </p>
           <div className="absolute bottom-6 left-4 z-20 hidden w-36 rounded-md border border-navy/30 bg-card/50 p-3 text-center text-navy backdrop-blur sm:left-8 sm:block">
             <p className={`${block.className} text-[10px] tracking-widest`}>NOW</p>
             <p className={`${display.className} mt-2 text-lg leading-tight`}>MSc Business Analytics</p>
