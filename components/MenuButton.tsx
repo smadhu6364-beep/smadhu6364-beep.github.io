@@ -12,7 +12,10 @@ function jump(href: string) {
   const i = Number(el.dataset.panel);
   const total = wrap.offsetHeight - window.innerHeight;
   const at = i === 0 ? HOLD : HOLD + i; // education: after the plane lands
-  window.scrollTo({ top: wrap.offsetTop + (at / (PANELS - 1 + HOLD)) * total, behavior: "smooth" });
+  const top = wrap.offsetTop + (at / (PANELS - 1 + HOLD)) * total;
+  const lenis = (window as unknown as { __lenis?: { scrollTo: (y: number, o?: object) => void } }).__lenis;
+  if (lenis) lenis.scrollTo(top, { duration: 1.6 });
+  else window.scrollTo({ top, behavior: "smooth" });
   return true;
 }
 
@@ -35,7 +38,7 @@ export default function MenuButton({ items, fontClass }: { items: string[][]; fo
           <ul className="space-y-1 text-center">
             {items.map(([label, href], i) => (
               <li key={href}>
-                <a href={href} onClick={(e) => { setOpen(false); if (jump(href)) e.preventDefault(); }} className={`${fontClass} group flex items-baseline justify-center gap-3 py-1.5 text-3xl font-medium text-mist transition hover:text-red sm:text-4xl`}>
+                <a href={href} onClick={(e) => { setOpen(false); if (jump(href)) e.preventDefault(); else { const l = (window as unknown as { __lenis?: { scrollTo: (t: string) => void } }).__lenis; if (l) { e.preventDefault(); l.scrollTo(href); } } }} className={`${fontClass} group flex items-baseline justify-center gap-3 py-1.5 text-3xl font-medium text-mist transition hover:text-red sm:text-4xl`}>
                   <span className="font-sans text-xs tracking-widest text-mist/40 group-hover:text-red">{String(i + 1).padStart(2, "0")}</span>
                   <span className="italic">{label}</span>
                 </a>
