@@ -5,6 +5,7 @@ import MenuButton from "@/components/MenuButton";
 import VtThemeToggle from "@/components/VtThemeToggle";
 import RaceMusic from "@/components/RaceMusic";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import DublinClock from "@/components/DublinClock";
 import CarLoader from "@/components/CarLoader";
 import Journey from "@/components/Journey";
 import { L } from "@/lib/dummy";
@@ -76,6 +77,7 @@ export default function Home() {
           <p className={`${block.className} absolute bottom-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-deep px-4 py-2 text-[11px] tracking-[0.2em] text-white`}>
             DATA ANALYST. DUBLIN BASED.
           </p>
+          <DublinClock className={`${block.className} absolute left-4 top-24 z-10 text-navy sm:left-8 sm:top-28`} />
           <div className="absolute bottom-6 left-4 z-20 hidden w-36 rounded-md border border-navy/30 bg-card/50 p-3 text-center text-navy backdrop-blur sm:left-8 sm:block">
             <p className={`${block.className} text-[10px] tracking-widest`}>NOW</p>
             <p className={`${display.className} mt-2 text-lg leading-tight`}>MSc Business Analytics</p>

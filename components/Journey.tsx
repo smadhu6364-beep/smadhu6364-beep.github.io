@@ -113,17 +113,25 @@ export default function Journey({ display, block }: { display: string; block: st
             <div className="mx-auto w-full max-w-6xl">
               <p className={label}>PROJECTS</p>
               <h2 className={`${block} mt-2 text-[12vw] leading-none sm:text-[5.5vw]`}>BUILT <span className={`${display} font-medium italic text-red`}>for real</span></h2>
-              <ol className="mt-6 divide-y divide-mist/15 border-y border-mist/15">
+              {/* Projects as little app windows */}
+              <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
                 {projects.map((pr, i) => (
-                  <li key={pr.id} className="grid grid-cols-[3rem_1fr] items-baseline gap-3 py-3 sm:grid-cols-[5rem_1fr] sm:py-4">
-                    <span className={`${block} text-2xl text-red sm:text-4xl`}>{String(i + 1).padStart(2, "0")}</span>
-                    <span>
-                      <a href={pr.repo} target="_blank" rel="noreferrer" className={`${block} block text-xl tracking-wide transition hover:text-red sm:text-3xl`}>{pr.name.toUpperCase()} <span className="text-sm text-mist/50">↗</span></a>
-                      <span className="hidden text-sm text-mist/70 sm:block">{pr.tagline}</span>
-                    </span>
-                  </li>
+                  <a key={pr.id} href={pr.repo} target="_blank" rel="noreferrer" className={`group overflow-hidden rounded-lg border border-mist/15 bg-[#0b1430] shadow-xl transition hover:-translate-y-1 hover:border-red`}>
+                    <div className="flex items-center gap-2 border-b border-mist/10 bg-mist/5 px-3 py-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-red" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#f5b301]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#1f9d55]" />
+                      <span className="ml-2 truncate font-mono text-[9px] text-mist/50 sm:text-[10px]">{pr.repo.replace("https://", "")}</span>
+                    </div>
+                    <div className="flex items-baseline gap-3 px-4 py-2.5 sm:block sm:p-5">
+                      <p className={`${block} text-sm text-red`}>{String(i + 1).padStart(2, "0")}</p>
+                      <p className={`${block} text-lg leading-tight tracking-wide transition group-hover:text-red sm:mt-1 sm:text-2xl`}>{pr.name.toUpperCase()}</p>
+                      <p className="mt-2 hidden text-sm leading-relaxed text-mist/70 sm:block">{pr.tagline}</p>
+                      <p className="mt-3 hidden font-mono text-[11px] text-mist/50 group-hover:text-mist sm:block">open repo ↗</p>
+                    </div>
+                  </a>
                 ))}
-              </ol>
+              </div>
             </div>
           </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { MUSIC_EVENT } from "./CarLoader";
 
 // Original race-style loop made with the Web Audio API (no audio files):
 // driving 16th-note bass, kick, offbeat hats and a bright arpeggio over Am-F-C-G.
@@ -106,6 +107,17 @@ export default function RaceMusic() {
     timer.current = window.setInterval(schedule, 25);
     setOn(true);
   };
+
+  // "Enter with sound" on the loading screen starts the music.
+  const toggleRef = useRef(toggle);
+  toggleRef.current = toggle;
+  const onRef = useRef(on);
+  onRef.current = on;
+  useEffect(() => {
+    const start = () => { if (!onRef.current) toggleRef.current(); };
+    window.addEventListener(MUSIC_EVENT, start);
+    return () => window.removeEventListener(MUSIC_EVENT, start);
+  }, []);
 
   return (
     <button
