@@ -6,7 +6,8 @@ import { useEffect, useRef } from "react";
 /*
   Page-wide feel, all opt-in through data attributes so the markup stays plain:
   - smooth, weighted scrolling (Lenis), exposed as window.__lenis for menu jumps
-  - [data-depth="n"]   moves with the mouse (parallax) and drifts on scroll
+  - [data-depth="n"]   moves with the mouse (parallax) and drifts on scroll;
+                       [data-sx] adds a sideways slide as you scroll
   - [data-reveal]      glides in when it enters the viewport
   - [data-tilt]        tilts in 3D under the cursor
   - a custom cursor that grows over links and buttons
@@ -55,8 +56,9 @@ export default function Immersive() {
       const sy = window.scrollY;
       for (const el of layers) {
         const d = Number(el.dataset.depth);
-        const fade = Math.max(0, 1 - sy / (window.innerHeight * 0.9));
-        el.style.transform = `translate3d(${cx * d * 40}px, ${cy * d * 30 + sy * d * 0.25}px, 0) scale(${1 + (sy / window.innerHeight) * d * 0.15})`;
+        const fade = Math.max(0, 1 - sy / (window.innerHeight * 1.1));
+        const sx = Number(el.dataset.sx || 0); // sideways drift per px scrolled
+        el.style.transform = `translate3d(${cx * d * 40 + sy * sx}px, ${cy * d * 30 + sy * d * 0.25}px, 0) scale(${1 + (sy / window.innerHeight) * d * 0.15})`;
         el.style.opacity = String(el.dataset.fade === "no" ? 1 : fade);
       }
       if (ring.current) {
