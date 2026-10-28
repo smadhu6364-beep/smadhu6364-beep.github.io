@@ -32,11 +32,12 @@ export default function MenuButton({ items, fontClass }: { items: string[][]; fo
       </button>
       {open && (
         <nav className="fixed inset-0 z-40 flex items-center justify-center bg-deep/95 backdrop-blur">
-          <ul className="text-center">
-            {items.map(([label, href]) => (
+          <ul className="space-y-1 text-center">
+            {items.map(([label, href], i) => (
               <li key={href}>
-                <a href={href} onClick={(e) => { setOpen(false); if (jump(href)) e.preventDefault(); }} className={`${fontClass} block py-2 text-5xl text-mist transition hover:text-red sm:text-7xl`}>
-                  {label.toUpperCase()}
+                <a href={href} onClick={(e) => { setOpen(false); if (jump(href)) e.preventDefault(); }} className={`${fontClass} group flex items-baseline justify-center gap-3 py-1.5 text-3xl font-medium text-mist transition hover:text-red sm:text-4xl`}>
+                  <span className="font-sans text-xs tracking-widest text-mist/40 group-hover:text-red">{String(i + 1).padStart(2, "0")}</span>
+                  <span className="italic">{label}</span>
                 </a>
               </li>
             ))}
