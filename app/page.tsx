@@ -73,8 +73,8 @@ export default function Home() {
         {/* Hero */}
         <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-sky pt-20">
           <h1 className="relative z-0 select-none text-center">
-            <span data-depth="0.6" className={`${display.className} block text-[26vw] font-medium leading-[0.8] text-red sm:text-[19vw]`}>MADHU</span>
-            <span data-depth="1.3" className={`${block.className} -mt-[2vw] block text-[17vw] leading-[0.9] text-navy sm:text-[13vw]`}>SUDHAN</span>
+            <span data-depth="0.6" className={`${display.className} block text-[20vw] font-medium leading-[0.8] text-red sm:text-[11vw]`}>MADHU</span>
+            <span data-depth="1.3" className={`${block.className} -mt-[1vw] block text-[13vw] leading-[0.9] text-navy sm:text-[7.5vw]`}>SUDHAN</span>
           </h1>
           <p className={`${block.className} absolute bottom-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-deep px-4 py-2 text-[11px] tracking-[0.2em] text-white`}>
             DATA ANALYST. DUBLIN BASED.
@@ -85,7 +85,7 @@ export default function Home() {
             <p className={`${display.className} mt-2 text-lg leading-tight`}>MSc Business Analytics</p>
             <p className={`${block.className} mt-2 text-[10px] tracking-widest`}>DCU · 2026</p>
           </div>
-          <p data-depth="-0.8" data-fade="no" className={`${block.className} absolute bottom-24 right-4 z-20 text-[22vw] sm:bottom-2 leading-none text-red sm:right-32 sm:text-[9vw]`} aria-hidden="true">
+          <p data-depth="-0.8" data-fade="no" className={`${block.className} absolute bottom-24 right-4 z-20 text-[22vw] sm:bottom-2 leading-none text-red sm:right-32 sm:text-[6vw]`} aria-hidden="true">
             26
           </p>
         </section>
