@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { playDriveBy } from "@/lib/engine";
 import CarSvg from "./CarSvg";
 
 // Loading screen: a red car drives across left to right while a short boot log
@@ -22,6 +23,23 @@ export const MUSIC_EVENT = "race-music-on";
 export default function CarLoader() {
   const [state, setState] = useState<"drive" | "gate" | "leaving" | "gone">("drive");
   const [lines, setLines] = useState(0);
+  const wheels = useRef<SVGGElement[]>([]);
+  const addWheel = (el: SVGGElement | null) => { if (el && !wheels.current.includes(el)) wheels.current.push(el); };
+
+  // Spin the wheels: fast while driving, easing off as the car stops in the middle
+  useEffect(() => {
+    let raf = 0, a = 0;
+    const t0 = performance.now();
+    const loop = (now: number) => {
+      const p = (now - t0) / DRIVE_MS;
+      const speed = p < 0.45 ? 38 - p * 50 : p < 0.62 ? 4 : 30;
+      a = (a + speed) % 360;
+      wheels.current.forEach((w) => w.setAttribute("transform", `rotate(${a})`));
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   useEffect(() => {
     let seen = false;
@@ -43,7 +61,10 @@ export default function CarLoader() {
 
   const enter = (sound: boolean) => {
     // Dispatched inside the click, so the browser allows audio to start.
-    if (sound) window.dispatchEvent(new Event(MUSIC_EVENT));
+    if (sound) {
+      playDriveBy();
+      window.dispatchEvent(new Event(MUSIC_EVENT));
+    }
     setState("leaving");
     try { sessionStorage.setItem(KEY, "1"); } catch {}
     window.setTimeout(() => {
@@ -64,10 +85,12 @@ export default function CarLoader() {
       <div aria-hidden="true" className="relative mt-8 h-24 w-full sm:h-36">
         <div className="absolute inset-x-0 bottom-2 h-px bg-navy/20" />
         <div className="car-drive absolute bottom-2 left-0 h-full">
+          <div className="car-rumble h-full">
           <span className="absolute right-[92%] top-1/2 h-1 w-[40vw] -translate-y-1/2 bg-gradient-to-r from-transparent to-red/60" />
           <svg viewBox="-60 -260 960 300" className="h-full w-auto">
-            <CarSvg />
+            <CarSvg spins={addWheel} />
           </svg>
+          </div>
         </div>
       </div>
 
@@ -98,6 +121,8 @@ export default function CarLoader() {
       </div>
 
       <style>{`
+        .car-rumble { animation: rumble .09s linear infinite alternate; }
+        @keyframes rumble { to { transform: translateY(1.5px); } }
         .car-drive { animation: drive ${DRIVE_MS}ms linear forwards; }
         @keyframes drive { 0% { transform: translateX(-110%); animation-timing-function: cubic-bezier(.2,.7,.3,1); } 45% { transform: translateX(calc(50vw - 50%)); } 62% { transform: translateX(calc(50vw - 50%)); animation-timing-function: cubic-bezier(.7,0,.9,.4); } 100% { transform: translateX(110vw); } }
       `}</style>

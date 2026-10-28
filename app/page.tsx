@@ -7,6 +7,7 @@ import RaceMusic from "@/components/RaceMusic";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import DublinClock from "@/components/DublinClock";
 import CarLoader from "@/components/CarLoader";
+import Immersive from "@/components/Immersive";
 import Journey from "@/components/Journey";
 import { L } from "@/lib/dummy";
 
@@ -46,6 +47,7 @@ export default function Home() {
   return (
     <div className="vt">
       <CarLoader />
+      <Immersive />
       <WhatsAppButton />
       {/* Fixed chrome */}
       {/* Logo sits outside the header so its blend mode sees the page behind it */}
@@ -71,8 +73,8 @@ export default function Home() {
         {/* Hero */}
         <section className="relative flex min-h-[100svh] items-center justify-center overflow-hidden bg-sky pt-20">
           <h1 className="relative z-0 select-none text-center">
-            <span className={`${display.className} block text-[26vw] font-medium leading-[0.8] text-red sm:text-[19vw]`}>MADHU</span>
-            <span className={`${block.className} -mt-[2vw] block text-[17vw] leading-[0.9] text-navy sm:text-[13vw]`}>SUDHAN</span>
+            <span data-depth="0.6" className={`${display.className} block text-[26vw] font-medium leading-[0.8] text-red sm:text-[19vw]`}>MADHU</span>
+            <span data-depth="1.3" className={`${block.className} -mt-[2vw] block text-[17vw] leading-[0.9] text-navy sm:text-[13vw]`}>SUDHAN</span>
           </h1>
           <p className={`${block.className} absolute bottom-10 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-sm bg-deep px-4 py-2 text-[11px] tracking-[0.2em] text-white`}>
             DATA ANALYST. DUBLIN BASED.
@@ -83,7 +85,7 @@ export default function Home() {
             <p className={`${display.className} mt-2 text-lg leading-tight`}>MSc Business Analytics</p>
             <p className={`${block.className} mt-2 text-[10px] tracking-widest`}>DCU · 2026</p>
           </div>
-          <p className={`${block.className} absolute bottom-24 right-4 z-20 text-[22vw] sm:bottom-2 leading-none text-red sm:right-32 sm:text-[9vw]`} aria-hidden="true">
+          <p data-depth="-0.8" data-fade="no" className={`${block.className} absolute bottom-24 right-4 z-20 text-[22vw] sm:bottom-2 leading-none text-red sm:right-32 sm:text-[9vw]`} aria-hidden="true">
             26
           </p>
         </section>
@@ -94,15 +96,12 @@ export default function Home() {
           <div className="relative mx-auto max-w-5xl">
             <p className={`${block.className} text-xs tracking-[0.3em]`}>ABOUT ME</p>
             <h2 className={`${block.className} mt-8 text-[11vw] leading-[0.95] sm:text-[6.4vw]`}>
-              STARTED IN <span className={`${display.className} italic font-medium`}>OPERATIONS.</span>
-              <br />
-              BUILT ON <span className={`${display.className} italic font-medium`}>DATA.</span>
-              <br />
-              NOW IN DUBLIN.
-              <br />
-              STILL ASKING <span className={`${display.className} italic font-medium text-red`}>WHY.</span>
+              <span data-reveal className="block">STARTED IN <span className={`${display.className} italic font-medium`}>OPERATIONS.</span></span>
+              <span data-reveal style={{ ["--d" as string]: ".12s" }} className="block">BUILT ON <span className={`${display.className} italic font-medium`}>DATA.</span></span>
+              <span data-reveal style={{ ["--d" as string]: ".24s" }} className="block">NOW IN DUBLIN.</span>
+              <span data-reveal style={{ ["--d" as string]: ".36s" }} className="block">STILL ASKING <span className={`${display.className} italic font-medium text-red`}>WHY.</span></span>
             </h2>
-            <p className="mx-auto mt-10 max-w-2xl text-lg leading-relaxed text-mist/80">
+            <p data-reveal style={{ ["--d" as string]: ".5s" }} className="mx-auto mt-10 max-w-2xl text-lg leading-relaxed text-mist/80">
               {L}
             </p>
           </div>
@@ -115,7 +114,7 @@ export default function Home() {
           <div className="mx-auto flex max-w-6xl flex-col gap-10 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className={`${block.className} text-xs tracking-[0.3em]`}>CONTACT</p>
-              <p className={`${display.className} mt-4 text-5xl italic sm:text-7xl`}>Let&rsquo;s talk data.</p>
+              <p data-reveal className={`${display.className} mt-4 text-5xl italic sm:text-7xl`}>Let&rsquo;s talk data.</p>
             </div>
             <ul className={`${block.className} space-y-2 text-lg tracking-wider`}>
               <li><a className="hover:underline" href={`mailto:${profile.email}`}>{profile.email.toUpperCase()}</a></li>

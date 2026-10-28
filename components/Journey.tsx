@@ -96,7 +96,7 @@ export default function Journey({ display, block }: { display: string; block: st
             <p className={`${label} mt-3 text-center text-white/70`}>EXPERIENCE</p>
             <div className="mx-auto mt-10 grid w-full max-w-6xl gap-4 sm:grid-cols-3 sm:gap-8">
               {experience.map((j, i) => (
-                <article key={j.company} className={`rounded-sm bg-card p-4 text-navy shadow-xl sm:p-6 ${i % 2 ? "sm:mt-12 sm:rotate-1" : "sm:-rotate-1"}`}>
+                <article key={j.company} data-tilt data-reveal style={{ ["--d" as string]: `${i * 0.12}s` }} className={`rounded-sm bg-card p-4 text-navy shadow-xl sm:p-6 ${i % 2 ? "sm:mt-12 sm:rotate-1" : "sm:-rotate-1"}`}>
                   <p className={`${block} text-[10px] tracking-[0.2em] text-navy/60`}>{j.place.toUpperCase()} · {j.dates.toUpperCase()}</p>
                   <h3 className={`${block} mt-2 text-2xl leading-none sm:mt-4 sm:text-3xl`}>{j.role.toUpperCase()}</h3>
                   <p className={`${display} mt-1 text-lg italic text-red`}>{j.company}</p>
@@ -116,7 +116,7 @@ export default function Journey({ display, block }: { display: string; block: st
               {/* Projects as little app windows */}
               <div className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
                 {projects.map((pr, i) => (
-                  <a key={pr.id} href={pr.repo} target="_blank" rel="noreferrer" className={`group overflow-hidden rounded-lg border border-mist/15 bg-[#0b1430] shadow-xl transition hover:-translate-y-1 hover:border-red`}>
+                  <a key={pr.id} data-tilt data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }} href={pr.repo} target="_blank" rel="noreferrer" className={`group overflow-hidden rounded-lg border border-mist/15 bg-[#0b1430] shadow-xl transition hover:-translate-y-1 hover:border-red`}>
                     <div className="flex items-center gap-2 border-b border-mist/10 bg-mist/5 px-3 py-2">
                       <span className="h-2.5 w-2.5 rounded-full bg-red" />
                       <span className="h-2.5 w-2.5 rounded-full bg-[#f5b301]" />
@@ -141,7 +141,7 @@ export default function Journey({ display, block }: { display: string; block: st
             <p className={`${block} text-[15vw] leading-none sm:text-[8vw]`}>HOBBIES</p>
             <div className="mx-auto mt-8 grid w-full max-w-6xl grid-cols-2 gap-4 text-left lg:grid-cols-4 lg:gap-6">
               {hobbies.map((h, i) => (
-                <div key={h.title} className="rounded-md border border-navy/20 bg-card/60 p-4 sm:p-6">
+                <div key={h.title} data-tilt data-reveal style={{ ["--d" as string]: `${i * 0.1}s` }} className="rounded-md border border-navy/20 bg-card/60 p-4 sm:p-6">
                   <p className={`${block} text-4xl text-red`}>{String(i + 1).padStart(2, "0")}</p>
                   <p className={`${block} mt-3 text-xl`}>{h.title.toUpperCase()}</p>
                   <p className="mt-2 text-xs leading-relaxed text-navy/70 sm:text-sm">{h.note}</p>
