@@ -109,10 +109,13 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const land = document.createElement("canvas");
     const cl = land.getContext("2d")!;
+    const landF = document.createElement("canvas");
+    const cf = landF.getContext("2d")!;
     const aur = document.createElement("canvas");
     const cu = aur.getContext("2d")!;
-    const greens = strip([[0, "rgba(160,90,255,0)"], [0.35, "rgba(170,90,230,0.35)"], [0.75, "rgba(60,240,160,0.75)"], [0.93, "rgba(170,255,210,1)"], [1, "rgba(80,255,170,0)"]]);
-    const pale = strip([[0, "rgba(120,200,255,0)"], [0.6, "rgba(90,255,190,0.5)"], [0.95, "rgba(200,255,230,0.9)"], [1, "rgba(0,0,0,0)"]]);
+    // real aurora: oxygen green body, faint red-violet crown, pink-magenta lower fringe
+    const greens = strip([[0, "rgba(190,60,120,0)"], [0.3, "rgba(170,60,150,0.22)"], [0.55, "rgba(60,255,140,0.55)"], [0.86, "rgba(110,255,160,1)"], [0.94, "rgba(255,120,200,0.75)"], [1, "rgba(255,90,180,0)"]]);
+    const pale = strip([[0, "rgba(60,255,140,0)"], [0.6, "rgba(60,255,140,0.45)"], [0.95, "rgba(170,255,200,0.85)"], [1, "rgba(0,0,0,0)"]]);
 
     const skyStatic = document.createElement("canvas");
     const cs = skyStatic.getContext("2d")!;
@@ -124,6 +127,7 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     let near = new Float32Array(2), farR = new Float32Array(2), midR = new Float32Array(2);
     let cabins: { x: number; y: number; s: number }[] = [];
     let deerX = -0.1;
+    let trainT = 20; // first train shows up soon after load
 
     const groundY = (x: number) => H * 0.8 + sample(near, x / W) * H * 0.03;
 
@@ -136,6 +140,10 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       land.height = H * dpr;
       cl.setTransform(dpr, 0, 0, dpr, 0, 0);
       cl.clearRect(0, 0, W, H);
+      landF.width = W * dpr;
+      landF.height = H * dpr;
+      cf.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cf.clearRect(0, 0, W, H);
 
       const layer = (p: Float32Array, base: number, amp: number, top: string, bottom: string) => {
         let minY = H;
@@ -193,7 +201,7 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         const edge = Math.abs(x / W - 0.5) * 2; // 0 middle, 1 edges
         if (fr() > edge * edge * 1.1 + 0.04) continue;
         const y = groundY(x) + fr() * H * 0.05;
-        spruce(cl, fr, x, y, H * (0.05 + fr() * 0.09) * (0.6 + edge * 0.6), isNight ? "#050b12" : "#2a3a3f", isNight ? "rgba(220,232,250,0.55)" : "rgba(255,255,255,0.8)");
+        spruce(cf, fr, x, y, H * (0.05 + fr() * 0.09) * (0.6 + edge * 0.6), isNight ? "#050b12" : "#2a3a3f", isNight ? "rgba(220,232,250,0.55)" : "rgba(255,255,255,0.8)");
       }
 
       cabins = [{ x: 0.3, y: 0, s: 1 }, { x: 0.37, y: 0, s: 0.8 }, { x: 0.71, y: 0, s: 0.9 }].map((c) => ({ ...c, y: groundY(c.x * W) + H * 0.012 }));
@@ -201,42 +209,42 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       // cabins
       for (const c of cabins) {
         const x = c.x * W, y = c.y, s = (H / 900) * c.s;
-        cl.save();
-        cl.translate(x, y);
-        cl.scale(s, s);
-        cl.fillStyle = isNight ? "#5a1b17" : "#9a2f28";
-        cl.fillRect(-40, -38, 80, 38);
-        cl.fillStyle = "rgba(0,0,0,.25)";
-        for (let k = -32; k < 0; k += 7) cl.fillRect(-40, k, 80, 1.5);
-        cl.fillStyle = isNight ? "#dfe8f6" : "#ffffff";
-        cl.beginPath();
-        cl.moveTo(-48, -36); cl.lineTo(0, -66); cl.lineTo(48, -36); cl.lineTo(44, -32); cl.lineTo(-44, -32); cl.closePath();
-        cl.fill();
-        cl.fillStyle = "#2b1d19";
-        cl.fillRect(22, -70, 8, 18);
-        cl.fillRect(-5, -24, 12, 24);
-        cl.restore();
+        cf.save();
+        cf.translate(x, y);
+        cf.scale(s, s);
+        cf.fillStyle = isNight ? "#2e1d14" : "#5b3a26"; // dark timber, like the village log cabins
+        cf.fillRect(-40, -38, 80, 38);
+        cf.fillStyle = "rgba(0,0,0,.25)";
+        for (let k = -32; k < 0; k += 6) cf.fillRect(-40, k, 80, 2); // log courses
+        cf.fillStyle = isNight ? "#dfe8f6" : "#ffffff";
+        cf.beginPath();
+        cf.moveTo(-48, -36); cf.lineTo(0, -66); cf.lineTo(48, -36); cf.lineTo(44, -32); cf.lineTo(-44, -32); cf.closePath();
+        cf.fill();
+        cf.fillStyle = "#2b1d19";
+        cf.fillRect(22, -70, 8, 18);
+        cf.fillRect(-5, -24, 12, 24);
+        cf.restore();
       }
 
       // Arctic Circle sign
       const sx = W * 0.53, sy = groundY(W * 0.53) + H * 0.006, ss = H / 900;
-      cl.save();
-      cl.translate(sx, sy);
-      cl.scale(ss, ss);
-      cl.fillStyle = "#2b1d19";
-      cl.fillRect(-2.5, -58, 5, 58);
-      cl.fillStyle = "#1c4a7c";
-      cl.fillRect(-52, -64, 104, 30);
-      cl.strokeStyle = "#e9eef6";
-      cl.lineWidth = 1.5;
-      cl.strokeRect(-52, -64, 104, 30);
-      cl.fillStyle = "#e9eef6";
-      cl.font = "600 10px ui-monospace, monospace";
-      cl.textAlign = "center";
-      cl.fillText("ARCTIC CIRCLE", 0, -51);
-      cl.fillStyle = "#ffd36e";
-      cl.fillText("66°33′N", 0, -39);
-      cl.restore();
+      cf.save();
+      cf.translate(sx, sy);
+      cf.scale(ss, ss);
+      cf.fillStyle = "#2b1d19";
+      cf.fillRect(-2.5, -58, 5, 58);
+      cf.fillStyle = "#1c4a7c";
+      cf.fillRect(-52, -64, 104, 30);
+      cf.strokeStyle = "#e9eef6";
+      cf.lineWidth = 1.5;
+      cf.strokeRect(-52, -64, 104, 30);
+      cf.fillStyle = "#e9eef6";
+      cf.font = "600 10px ui-monospace, monospace";
+      cf.textAlign = "center";
+      cf.fillText("ARCTIC CIRCLE", 0, -51);
+      cf.fillStyle = "#ffd36e";
+      cf.fillText("66°33′N", 0, -39);
+      cf.restore();
       // sky drawn once per size/mode; only a few stars twinkle live
       skyStatic.width = W;
       skyStatic.height = H;
@@ -362,6 +370,52 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
 
       ca.drawImage(land, 0, 0, W, H);
 
+      // the Santa Claus Express: a night train crossing the snowfield now and then
+      const track = (x: number) => groundY(x) - H * 0.006;
+      ca.strokeStyle = night ? "rgba(20,28,45,0.6)" : "rgba(90,90,110,0.45)";
+      ca.lineWidth = 1;
+      ca.beginPath();
+      for (let x = 0; x <= W; x += 8) (x ? ca.lineTo(x, track(x)) : ca.moveTo(x, track(x)));
+      ca.stroke();
+      if (moving) trainT += dt;
+      const cycle = 75, run = 45, ph = trainT % cycle;
+      if (ph < run) {
+        const carW = H * 0.045, carH = H * 0.014, cars = 7, len = cars * (carW + 2);
+        const head = W + len - (ph / run) * (W + 2 * len);
+        for (let k = 0; k < cars; k++) {
+          const x0 = head + k * (carW + 2);
+          if (x0 > W || x0 + carW < 0) continue;
+          const y0 = track(x0 + carW / 2) - carH;
+          ca.fillStyle = night ? "#0c1220" : "#2d3a52";
+          ca.fillRect(x0, y0, carW, carH);
+          ca.fillStyle = k === 0 ? "#b2283a" : night ? "#1b6b4a" : "#2f8a5f";
+          ca.fillRect(x0, y0 + carH * 0.72, carW, carH * 0.18);
+          if (k > 0) {
+            ca.fillStyle = night ? "rgba(255,214,140,0.95)" : "rgba(255,236,190,0.9)";
+            for (let wx = 3; wx < carW - 4; wx += carW / 6) ca.fillRect(x0 + wx, y0 + carH * 0.22, carW / 10, carH * 0.32);
+          } else if (night) {
+            const hl = ca.createRadialGradient(x0, y0 + carH / 2, 0, x0, y0 + carH / 2, carW * 1.6);
+            hl.addColorStop(0, "rgba(255,240,200,0.6)");
+            hl.addColorStop(1, "rgba(255,240,200,0)");
+            ca.fillStyle = hl;
+            ca.fillRect(x0 - carW * 1.6, y0 - carW, carW * 1.7, carW * 2);
+          }
+        }
+      }
+
+      ca.drawImage(landF, 0, 0, W, H);
+
+      // the Arctic Circle line, marked across the snow with small lamps
+      for (let x = 12; x < W; x += 46) {
+        const ly = groundY(x) + H * 0.045;
+        const tw = 0.75 + 0.25 * Math.sin(t * 2 + x);
+        const lg = ca.createRadialGradient(x, ly, 0, x, ly, 9);
+        lg.addColorStop(0, `rgba(255,210,120,${(night ? 0.9 : 0.5) * tw})`);
+        lg.addColorStop(1, "rgba(255,210,120,0)");
+        ca.fillStyle = lg;
+        ca.fillRect(x - 9, ly - 9, 18, 18);
+      }
+
       if (night) {
         // the aurora lights the snow a little green
         ca.save();
@@ -386,6 +440,13 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         ca.fillStyle = `rgba(255,${night ? 205 : 225},${night ? 110 : 160},${flick})`;
         ca.fillRect(x - 30 * s, y - 26 * s, 12 * s, 10 * s);
         ca.fillRect(x + 16 * s, y - 26 * s, 12 * s, 10 * s);
+        // string lights along the roof edges, as in the village
+        for (let k = 0; k <= 10; k++) {
+          const f = k / 10, side = f < 0.5 ? f * 2 : (1 - f) * 2;
+          const lx = x + (-48 + 96 * f) * s, ly = y + (-36 - 30 * side) * s;
+          ca.fillStyle = `hsla(${[40, 0, 120, 45][k % 4]}, 100%, ${night ? 70 : 60}%, ${0.55 + 0.45 * Math.sin(t * 3 + k)})`;
+          ca.fillRect(lx - 1.2, ly - 1.2, 2.4, 2.4);
+        }
         if (moving && Math.random() < 0.06) puffs.push({ x: x + 26 * s, y: y - 70 * s, r: 3 * s, a: 0.5 });
       }
       for (const p of puffs) {
