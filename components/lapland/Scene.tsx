@@ -3,36 +3,245 @@
 import { useEffect, useRef } from "react";
 
 /*
-  Lapland backdrop, drawn in code:
-  - back canvas: sky, stars and (at night) the northern lights
-  - SVG: fells, pines, red cabins with lit windows, chimney smoke, a reindeer,
-    and the Arctic Circle sign from Santa Claus Village
-  - front canvas: falling snow
+  Lapland backdrop, drawn in code with canvas:
+  - sky with stars, the Milky Way and (at night) soft northern lights with rays
+  - fractal fells, spruce forest, snow lit by the aurora
+  - small red cabins with warm windows and chimney smoke, the Arctic Circle
+    sign from Santa Claus Village, and a reindeer crossing the snow
+  - falling snow in front
   `night` switches polar night / blue hour, `lively` pauses all motion.
+  The landscape is seeded, so it looks the same on every visit.
 */
 
-type Star = { x: number; y: number; r: number; p: number };
+type Star = { x: number; y: number; r: number; p: number; c: string };
 type Flake = { x: number; y: number; r: number; v: number; w: number };
+type Puff = { x: number; y: number; r: number; a: number };
+
+function rng(seed: number) {
+  return () => {
+    seed |= 0; seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// midpoint displacement: a natural looking ridge line, values in -1..1
+function ridge(rand: () => number, k: number, rough: number) {
+  const n = (1 << k) + 1;
+  const p = new Float32Array(n);
+  p[0] = rand() * 2 - 1;
+  p[n - 1] = rand() * 2 - 1;
+  let scale = 1;
+  for (let size = n - 1; size > 1; size >>= 1, scale *= rough) {
+    for (let i = size >> 1; i < n; i += size) p[i] = (p[i - (size >> 1)] + p[i + (size >> 1)]) / 2 + (rand() * 2 - 1) * scale;
+  }
+  return p;
+}
+
+const sample = (p: Float32Array, f: number) => {
+  const i = Math.max(0, Math.min(p.length - 1.001, f * (p.length - 1)));
+  const a = Math.floor(i);
+  return p[a] + (p[a + 1] - p[a]) * (i - a);
+};
+
+function spruce(c: CanvasRenderingContext2D, rand: () => number, x: number, y: number, h: number, fill: string, snow: string | null) {
+  const w = h * (0.17 + rand() * 0.07);
+  const tiers = Math.max(5, Math.round(h / 5));
+  const right: [number, number][] = [];
+  const left: [number, number][] = [];
+  for (let i = 1; i <= tiers; i++) {
+    const f = i / tiers;
+    const yy = y - h + f * h * 0.94;
+    const ww = w * Math.pow(f, 0.9) * (0.75 + rand() * 0.5);
+    right.push([x + ww, yy], [x + ww * 0.3, yy - h * 0.025]);
+    const wl = w * Math.pow(f, 0.9) * (0.75 + rand() * 0.5);
+    left.push([x - wl, yy], [x - wl * 0.3, yy - h * 0.025]);
+  }
+  c.fillStyle = fill;
+  c.beginPath();
+  c.moveTo(x, y - h - h * 0.04);
+  for (const [px, py] of right) c.lineTo(px, py);
+  c.lineTo(x + w * 0.08, y);
+  c.lineTo(x - w * 0.08, y);
+  for (let i = left.length - 1; i >= 0; i--) c.lineTo(left[i][0], left[i][1]);
+  c.closePath();
+  c.fill();
+  if (snow && h > 14) {
+    c.strokeStyle = snow;
+    c.lineWidth = Math.max(1, h / 60);
+    c.beginPath();
+    for (let i = 2; i < right.length; i += 4) {
+      const [px, py] = right[i];
+      c.moveTo(x + (px - x) * 0.25, py - h * 0.01);
+      c.lineTo(px - 1, py - h * 0.004);
+    }
+    c.stroke();
+  }
+}
+
+// Vertical light strip used for every aurora ray (bright lower edge, fading up)
+function strip(colors: [number, string][]) {
+  const s = document.createElement("canvas");
+  s.width = 1;
+  s.height = 256;
+  const c = s.getContext("2d")!;
+  const g = c.createLinearGradient(0, 0, 0, 256);
+  for (const [o, col] of colors) g.addColorStop(o, col);
+  c.fillStyle = g;
+  c.fillRect(0, 0, 1, 256);
+  return s;
+}
+
+// Path2D only exists in the browser, so build it inside the effect
+const REINDEER_D = "M0 -24 C 6 -32, 34 -32, 42 -24 L 50 -36 L 54 -34 L 48 -22 C 48 -18, 44 -16, 40 -18 L 40 0 L 37 0 L 35 -14 L 10 -14 L 8 0 L 5 0 L 4 -16 C -2 -18, -4 -22, 0 -24 Z M50 -36 L 45 -50 L 47 -50 L 51 -39 L 58 -49 L 60 -48 L 52 -36 Z";
 
 export default function Scene({ night, lively }: { night: boolean; lively: boolean }) {
-  const sky = useRef<HTMLCanvasElement>(null);
-  const snow = useRef<HTMLCanvasElement>(null);
+  const back = useRef<HTMLCanvasElement>(null);
+  const front = useRef<HTMLCanvasElement>(null);
   const state = useRef({ night, lively });
   state.current = { night, lively };
 
   useEffect(() => {
-    const a = sky.current!, b = snow.current!;
-    const ca = a.getContext("2d")!, cb = b.getContext("2d")!;
+    const A = back.current!, B = front.current!;
+    const ca = A.getContext("2d")!, cb = B.getContext("2d")!;
+    const REINDEER = new Path2D(REINDEER_D);
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let W = 0, H = 0, dpr = 1;
+    const land = document.createElement("canvas");
+    const cl = land.getContext("2d")!;
+    const aur = document.createElement("canvas");
+    const cu = aur.getContext("2d")!;
+    const greens = strip([[0, "rgba(160,90,255,0)"], [0.35, "rgba(170,90,230,0.35)"], [0.75, "rgba(60,240,160,0.75)"], [0.93, "rgba(170,255,210,1)"], [1, "rgba(80,255,170,0)"]]);
+    const pale = strip([[0, "rgba(120,200,255,0)"], [0.6, "rgba(90,255,190,0.5)"], [0.95, "rgba(200,255,230,0.9)"], [1, "rgba(0,0,0,0)"]]);
+
+    let W = 0, H = 0, dpr = 1, builtFor = "";
     let stars: Star[] = [];
     let flakes: Flake[] = [];
+    let puffs: Puff[] = [];
+    let near = new Float32Array(2), farR = new Float32Array(2), midR = new Float32Array(2);
+    let cabins: { x: number; y: number; s: number }[] = [];
+    let deerX = -0.1;
+
+    const groundY = (x: number) => H * 0.8 + sample(near, x / W) * H * 0.03;
+
+    const build = (isNight: boolean) => {
+      const rand = rng(66);
+      farR = ridge(rand, 9, 0.55);
+      midR = ridge(rand, 9, 0.5);
+      near = ridge(rand, 7, 0.4);
+      land.width = W * dpr;
+      land.height = H * dpr;
+      cl.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cl.clearRect(0, 0, W, H);
+
+      const layer = (p: Float32Array, base: number, amp: number, top: string, bottom: string) => {
+        let minY = H;
+        cl.beginPath();
+        cl.moveTo(0, H);
+        for (let x = 0; x <= W; x += 3) {
+          const y = H * base + sample(p, x / W) * H * amp;
+          minY = Math.min(minY, y);
+          cl.lineTo(x, y);
+        }
+        cl.lineTo(W, H);
+        cl.closePath();
+        const g = cl.createLinearGradient(0, minY, 0, H * (base + amp));
+        g.addColorStop(0, top);
+        g.addColorStop(1, bottom);
+        cl.fillStyle = g;
+        cl.fill();
+      };
+
+      // far fells: moonlit snow tops fading into blue haze
+      layer(farR, 0.6, 0.09, isNight ? "#6f86a8" : "#e7e1ec", isNight ? "#1d2f4a" : "#a9b6d0");
+      // mid ridge and its forest line
+      layer(midR, 0.69, 0.04, isNight ? "#2b3f5c" : "#b8c3d9", isNight ? "#142238" : "#8f9fbc");
+      const tr = rng(7);
+      for (let x = -10; x < W + 10; x += 2 + tr() * 5) {
+        const y = H * 0.69 + sample(midR, x / W) * H * 0.04 + 4;
+        if (tr() < 0.75) spruce(cl, tr, x, y, H * (0.018 + tr() * 0.022), isNight ? "#0b1626" : "#5d6d86", null);
+      }
+      // near snowfield
+      let minY = H;
+      cl.beginPath();
+      cl.moveTo(0, H);
+      for (let x = 0; x <= W; x += 3) { const y = groundY(x); minY = Math.min(minY, y); cl.lineTo(x, y); }
+      cl.lineTo(W, H);
+      cl.closePath();
+      const sg = cl.createLinearGradient(0, minY, 0, H);
+      sg.addColorStop(0, isNight ? "#a9bad3" : "#fbf6f3");
+      sg.addColorStop(0.45, isNight ? "#7f93b3" : "#e6dfe8");
+      sg.addColorStop(1, isNight ? "#53678a" : "#c9c7da");
+      cl.fillStyle = sg;
+      cl.fill();
+      // soft wind-blown shadows in the snow
+      cl.globalAlpha = isNight ? 0.18 : 0.12;
+      cl.fillStyle = isNight ? "#2c3d5e" : "#9aa3c4";
+      for (let i = 0; i < 7; i++) {
+        const y = minY + (H - minY) * (0.25 + i * 0.1);
+        cl.beginPath();
+        cl.ellipse(W * tr(), y, W * (0.15 + tr() * 0.2), (H - minY) * 0.025, 0, 0, Math.PI * 2);
+        cl.fill();
+      }
+      cl.globalAlpha = 1;
+      // dense forest on both flanks, thinning towards the middle
+      const fr = rng(21);
+      for (let x = -20; x < W + 20; x += 3 + fr() * 6) {
+        const edge = Math.abs(x / W - 0.5) * 2; // 0 middle, 1 edges
+        if (fr() > edge * edge * 1.1 + 0.04) continue;
+        const y = groundY(x) + fr() * H * 0.05;
+        spruce(cl, fr, x, y, H * (0.05 + fr() * 0.09) * (0.6 + edge * 0.6), isNight ? "#050b12" : "#2a3a3f", isNight ? "rgba(220,232,250,0.55)" : "rgba(255,255,255,0.8)");
+      }
+
+      cabins = [{ x: 0.3, y: 0, s: 1 }, { x: 0.37, y: 0, s: 0.8 }, { x: 0.71, y: 0, s: 0.9 }].map((c) => ({ ...c, y: groundY(c.x * W) + H * 0.012 }));
+
+      // cabins
+      for (const c of cabins) {
+        const x = c.x * W, y = c.y, s = (H / 900) * c.s;
+        cl.save();
+        cl.translate(x, y);
+        cl.scale(s, s);
+        cl.fillStyle = isNight ? "#5a1b17" : "#9a2f28";
+        cl.fillRect(-40, -38, 80, 38);
+        cl.fillStyle = "rgba(0,0,0,.25)";
+        for (let k = -32; k < 0; k += 7) cl.fillRect(-40, k, 80, 1.5);
+        cl.fillStyle = isNight ? "#dfe8f6" : "#ffffff";
+        cl.beginPath();
+        cl.moveTo(-48, -36); cl.lineTo(0, -66); cl.lineTo(48, -36); cl.lineTo(44, -32); cl.lineTo(-44, -32); cl.closePath();
+        cl.fill();
+        cl.fillStyle = "#2b1d19";
+        cl.fillRect(22, -70, 8, 18);
+        cl.fillRect(-5, -24, 12, 24);
+        cl.restore();
+      }
+
+      // Arctic Circle sign
+      const sx = W * 0.53, sy = groundY(W * 0.53) + H * 0.006, ss = H / 900;
+      cl.save();
+      cl.translate(sx, sy);
+      cl.scale(ss, ss);
+      cl.fillStyle = "#2b1d19";
+      cl.fillRect(-2.5, -58, 5, 58);
+      cl.fillStyle = "#1c4a7c";
+      cl.fillRect(-52, -64, 104, 30);
+      cl.strokeStyle = "#e9eef6";
+      cl.lineWidth = 1.5;
+      cl.strokeRect(-52, -64, 104, 30);
+      cl.fillStyle = "#e9eef6";
+      cl.font = "600 10px ui-monospace, monospace";
+      cl.textAlign = "center";
+      cl.fillText("ARCTIC CIRCLE", 0, -51);
+      cl.fillStyle = "#ffd36e";
+      cl.fillText("66°33′N", 0, -39);
+      cl.restore();
+      builtFor = `${W}x${H}:${isNight}`;
+    };
 
     const resize = () => {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
       W = window.innerWidth;
       H = window.innerHeight;
-      for (const c of [a, b]) {
+      for (const c of [A, B]) {
         c.width = W * dpr;
         c.height = H * dpr;
         c.style.width = W + "px";
@@ -40,83 +249,158 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       }
       ca.setTransform(dpr, 0, 0, dpr, 0, 0);
       cb.setTransform(dpr, 0, 0, dpr, 0, 0);
-      stars = Array.from({ length: Math.round((W * H) / 5200) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.7, r: Math.random() * 1.3 + 0.2, p: Math.random() * 6 }));
-      flakes = Array.from({ length: Math.round(W / 9) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 2.2 + 0.6, v: Math.random() * 0.6 + 0.35, w: Math.random() * 6 }));
+      aur.width = Math.ceil(W / 3);
+      aur.height = Math.ceil(H / 3);
+      const sr = rng(3);
+      stars = Array.from({ length: Math.round((W * H) / 2600) }, () => {
+        // a third of them crowd into a diagonal band: the Milky Way
+        let x = sr() * W, y = sr() * H * 0.72;
+        if (sr() < 0.35) { const t = sr(); x = t * W; y = H * (0.05 + t * 0.4) + (sr() - 0.5) * H * 0.12; }
+        const warm = sr();
+        return { x, y, r: sr() < 0.04 ? 1.4 : sr() * 0.9 + 0.2, p: sr() * 6, c: warm < 0.1 ? "#ffe6c4" : warm < 0.2 ? "#cfe0ff" : "#f2f6ff" };
+      });
+      flakes = Array.from({ length: Math.round(W / 8) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + 0.4, v: Math.random() * 0.5 + 0.25, w: Math.random() * 6 }));
+      builtFor = "";
     };
     resize();
     window.addEventListener("resize", resize);
 
-    // one aurora curtain: a wavy line of vertical light strokes
-    const curtain = (t: number, base: number, amp: number, hue: [string, string], speed: number, alpha: number) => {
-      ca.globalCompositeOperation = "lighter";
-      const step = 5;
-      for (let x = -40; x < W + 40; x += step) {
-        const k = x / W;
-        const y = H * base + Math.sin(k * 5 + t * speed) * H * amp + Math.sin(k * 13 - t * speed * 1.7) * H * amp * 0.35;
-        const len = H * (0.16 + 0.1 * Math.sin(k * 9 + t * speed * 0.8));
-        const fade = 0.55 + 0.45 * Math.sin(k * 7 - t * speed * 1.3);
-        const g = ca.createLinearGradient(0, y - len, 0, y + 20);
-        g.addColorStop(0, "rgba(0,0,0,0)");
-        g.addColorStop(0.55, hue[1]);
-        g.addColorStop(1, hue[0]);
-        ca.globalAlpha = alpha * fade;
-        ca.fillStyle = g;
-        ca.fillRect(x, y - len, step + 1, len + 20);
+    // aurora: rays along a slowly folding curtain, drawn small then scaled up (soft, like long exposure)
+    const curtain = (t: number, base: number, amp: number, len: number, speed: number, alpha: number, img: HTMLCanvasElement) => {
+      const w = aur.width, h = aur.height;
+      for (let x = -4; x < w + 4; x += 1) {
+        const k = x / w;
+        const y = h * base + Math.sin(k * 4.2 + t * speed) * h * amp + Math.sin(k * 11 - t * speed * 1.6) * h * amp * 0.4;
+        const rays = 0.5 + 0.5 * Math.sin(k * 90 + t * 0.6) * Math.sin(k * 37 - t * 0.4);
+        const L = h * len * (0.7 + 0.5 * Math.sin(k * 6 + t * speed * 0.7)) * (0.75 + rays * 0.5);
+        cu.globalAlpha = alpha * (0.35 + 0.65 * Math.max(0, Math.sin(k * 3.1 - t * speed * 0.9) * 0.5 + 0.5)) * (0.6 + rays * 0.4);
+        cu.drawImage(img, x, y - L, 1.6, L + 2);
       }
-      ca.globalAlpha = 1;
-      ca.globalCompositeOperation = "source-over";
     };
 
     let raf = 0, t = 0, last = performance.now();
     const frame = (now: number) => {
       const { night, lively } = state.current;
       const moving = lively && !reduced;
-      if (moving) t += (now - last) / 1000;
+      const dt = Math.min(0.05, (now - last) / 1000);
+      if (moving) t += dt;
       last = now;
+      if (builtFor !== `${W}x${H}:${night}`) build(night);
 
       // sky
-      const g = ca.createLinearGradient(0, 0, 0, H);
-      if (night) {
-        g.addColorStop(0, "#030714");
-        g.addColorStop(0.55, "#0a1a33");
-        g.addColorStop(1, "#16304d");
-      } else {
-        g.addColorStop(0, "#7d9cc8");
-        g.addColorStop(0.5, "#c9b6cf");
-        g.addColorStop(1, "#f6d3c3");
-      }
+      const g = ca.createLinearGradient(0, 0, 0, H * 0.8);
+      if (night) { g.addColorStop(0, "#02040c"); g.addColorStop(0.5, "#071428"); g.addColorStop(1, "#16304f"); }
+      else { g.addColorStop(0, "#6f8fbf"); g.addColorStop(0.55, "#b9aecb"); g.addColorStop(1, "#f3cdbd"); }
       ca.fillStyle = g;
       ca.fillRect(0, 0, W, H);
 
+      let glow = 0;
       if (night) {
+        // Milky Way haze
+        ca.save();
+        ca.translate(W / 2, H * 0.25);
+        ca.rotate(Math.atan2(H * 0.4, W));
+        const mw = ca.createLinearGradient(0, -H * 0.09, 0, H * 0.09);
+        mw.addColorStop(0, "rgba(160,180,255,0)");
+        mw.addColorStop(0.5, "rgba(170,185,240,0.07)");
+        mw.addColorStop(1, "rgba(160,180,255,0)");
+        ca.fillStyle = mw;
+        ca.fillRect(-W, -H * 0.09, W * 2, H * 0.18);
+        ca.restore();
         for (const s of stars) {
-          ca.globalAlpha = 0.45 + 0.55 * Math.abs(Math.sin(s.p + t * 0.9));
-          ca.fillStyle = "#e9f1ff";
-          ca.beginPath();
-          ca.arc(s.x, s.y, s.r, 0, 6.283);
-          ca.fill();
+          ca.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(s.p + t * 0.7));
+          ca.fillStyle = s.c;
+          ca.fillRect(s.x, s.y, s.r, s.r);
         }
         ca.globalAlpha = 1;
-        curtain(t, 0.3, 0.07, ["rgba(70,255,170,0.95)", "rgba(40,210,150,0.4)"], 0.22, 0.75);
-        curtain(t + 40, 0.18, 0.05, ["rgba(120,255,210,0.85)", "rgba(150,110,255,0.4)"], 0.16, 0.55);
-        curtain(t + 90, 0.44, 0.04, ["rgba(60,230,160,0.7)", "rgba(200,90,220,0.22)"], 0.28, 0.25);
+        // moon glow, top right
+        const mg = ca.createRadialGradient(W * 0.86, H * 0.12, 0, W * 0.86, H * 0.12, H * 0.22);
+        mg.addColorStop(0, "rgba(235,240,255,0.9)");
+        mg.addColorStop(0.04, "rgba(235,240,255,0.5)");
+        mg.addColorStop(0.08, "rgba(200,215,255,0.12)");
+        mg.addColorStop(1, "rgba(200,215,255,0)");
+        ca.fillStyle = mg;
+        ca.fillRect(0, 0, W, H * 0.5);
+
+        cu.clearRect(0, 0, aur.width, aur.height);
+        cu.globalCompositeOperation = "lighter";
+        curtain(t, 0.42, 0.07, 0.34, 0.12, 0.55, greens);
+        curtain(t + 30, 0.3, 0.06, 0.26, 0.09, 0.35, greens);
+        curtain(t + 70, 0.5, 0.04, 0.18, 0.16, 0.3, pale);
+        cu.globalCompositeOperation = "source-over";
+        cu.globalAlpha = 1;
+        ca.save();
+        ca.globalCompositeOperation = "screen";
+        ca.imageSmoothingQuality = "high";
+        ca.filter = "blur(2px)";
+        ca.drawImage(aur, 0, 0, W, H);
+        ca.filter = "none";
+        ca.restore();
+        glow = 0.7 + 0.3 * Math.sin(t * 0.3);
       } else {
-        // low winter sun, sitting on the horizon
-        const sg = ca.createRadialGradient(W * 0.78, H * 0.62, 0, W * 0.78, H * 0.62, H * 0.35);
+        const sg = ca.createRadialGradient(W * 0.78, H * 0.6, 0, W * 0.78, H * 0.6, H * 0.45);
         sg.addColorStop(0, "rgba(255,226,190,0.95)");
-        sg.addColorStop(0.15, "rgba(255,200,170,0.55)");
+        sg.addColorStop(0.12, "rgba(255,205,175,0.55)");
         sg.addColorStop(1, "rgba(255,200,170,0)");
         ca.fillStyle = sg;
         ca.fillRect(0, 0, W, H);
       }
 
-      // snow
+      ca.drawImage(land, 0, 0, W, H);
+
+      if (night) {
+        // the aurora lights the snow a little green
+        ca.save();
+        ca.globalCompositeOperation = "soft-light";
+        const rg = ca.createLinearGradient(0, H * 0.72, 0, H);
+        rg.addColorStop(0, `rgba(80,255,170,${0.35 * glow})`);
+        rg.addColorStop(1, "rgba(80,255,170,0)");
+        ca.fillStyle = rg;
+        ca.fillRect(0, H * 0.72, W, H * 0.28);
+        ca.restore();
+      }
+
+      // cabin windows and smoke
+      for (const c of cabins) {
+        const x = c.x * W, y = c.y, s = (H / 900) * c.s;
+        const flick = 0.85 + 0.15 * Math.sin(t * 7 + c.x * 50) * Math.sin(t * 3.3);
+        const wg = ca.createRadialGradient(x, y - 18 * s, 0, x, y - 18 * s, 90 * s);
+        wg.addColorStop(0, `rgba(255,190,90,${(night ? 0.45 : 0.15) * flick})`);
+        wg.addColorStop(1, "rgba(255,190,90,0)");
+        ca.fillStyle = wg;
+        ca.fillRect(x - 90 * s, y - 108 * s, 180 * s, 180 * s);
+        ca.fillStyle = `rgba(255,${night ? 205 : 225},${night ? 110 : 160},${flick})`;
+        ca.fillRect(x - 30 * s, y - 26 * s, 12 * s, 10 * s);
+        ca.fillRect(x + 16 * s, y - 26 * s, 12 * s, 10 * s);
+        if (moving && Math.random() < 0.06) puffs.push({ x: x + 26 * s, y: y - 70 * s, r: 3 * s, a: 0.5 });
+      }
+      for (const p of puffs) {
+        if (moving) { p.y -= 0.35; p.x += 0.18; p.r += 0.05; p.a -= 0.0035; }
+        ca.fillStyle = night ? `rgba(190,200,220,${Math.max(0, p.a) * 0.6})` : `rgba(255,255,255,${Math.max(0, p.a) * 0.8})`;
+        ca.beginPath();
+        ca.arc(p.x, p.y, p.r, 0, 6.283);
+        ca.fill();
+      }
+      puffs = puffs.filter((p) => p.a > 0);
+
+      // reindeer crossing the snowfield, slowly
+      if (moving) deerX += dt / 90;
+      if (deerX > 1.1) deerX = -0.1;
+      const dx = deerX * W, s = H / 1100;
+      ca.save();
+      ca.translate(dx, groundY(dx) + H * 0.035 + (moving ? Math.sin(t * 9) * 0.6 : 0));
+      ca.scale(s, s);
+      ca.fillStyle = night ? "#120c0a" : "#4a3427";
+      ca.fill(REINDEER);
+      ca.restore();
+
+      // snow in front of everything
       cb.clearRect(0, 0, W, H);
-      cb.fillStyle = night ? "rgba(235,242,255,0.85)" : "rgba(255,255,255,0.9)";
+      cb.fillStyle = night ? "rgba(235,242,255,0.8)" : "rgba(255,255,255,0.9)";
       for (const f of flakes) {
         if (moving) {
           f.y += f.v;
-          f.x += Math.sin(t * 0.8 + f.w) * 0.35;
+          f.x += Math.sin(t * 0.8 + f.w) * 0.3;
           if (f.y > H + 4) { f.y = -4; f.x = Math.random() * W; }
         }
         cb.beginPath();
@@ -130,90 +414,10 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
   }, []);
 
-  const lit = night ? "#ffcf6e" : "#f2d9a8";
-
   return (
-    <div aria-hidden="true" className={`lap-scene fixed inset-0 z-0 overflow-hidden ${lively ? "" : "lap-still"}`}>
-      <canvas ref={sky} className="absolute inset-0" />
-      <svg className="absolute inset-x-0 bottom-0 h-[46vh] min-h-[260px] w-full" viewBox="0 0 1600 500" preserveAspectRatio="xMidYMax slice">
-        <defs>
-          <linearGradient id="fellFar" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor={night ? "#24405f" : "#b9c4dc"} />
-            <stop offset="1" stopColor={night ? "#1a314d" : "#d9d6e4"} />
-          </linearGradient>
-          <linearGradient id="snowGround" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor={night ? "#c9d7ee" : "#fbf7f4"} />
-            <stop offset="1" stopColor={night ? "#8ea4c6" : "#e9e2ea"} />
-          </linearGradient>
-          <radialGradient id="glow">
-            <stop offset="0" stopColor={lit} stopOpacity={night ? 0.7 : 0.25} />
-            <stop offset="1" stopColor={lit} stopOpacity="0" />
-          </radialGradient>
-          <symbol id="pine" viewBox="-30 -120 60 124">
-            <rect x="-3" y="-8" width="6" height="12" fill="#3b2a22" />
-            <path d="M0 -120 L18 -84 L9 -86 L25 -54 L12 -56 L30 -20 L-30 -20 L-12 -56 L-25 -54 L-9 -86 L-18 -84 Z" fill={night ? "#0f2a2a" : "#2f4a45"} />
-            <path d="M0 -120 L10 -100 L3 -98 L0 -104 L-3 -98 L-10 -100 Z M-14 -58 L-4 -64 L4 -60 L14 -58 L8 -54 L0 -58 L-8 -54 Z M-22 -24 L-8 -30 L2 -26 L22 -24 L12 -20 L-12 -20 Z" fill={night ? "#dfe9fa" : "#ffffff"} />
-          </symbol>
-          <symbol id="cabin" viewBox="0 0 120 100">
-            <rect x="10" y="40" width="100" height="58" fill={night ? "#7a1f1f" : "#a8322c"} />
-            <path d="M10 46 h100 M10 56 h100 M10 66 h100 M10 76 h100 M10 86 h100" stroke="#00000025" strokeWidth="2" />
-            <path d="M0 44 L60 6 L120 44 Z" fill={night ? "#e3ecf9" : "#ffffff"} />
-            <path d="M4 44 L60 12 L116 44" fill="none" stroke="#2a1a16" strokeWidth="3" />
-            <rect x="80" y="10" width="12" height="22" fill="#3a2a25" />
-            <rect x="24" y="56" width="20" height="18" fill={lit} stroke="#f3efe6" strokeWidth="3" />
-            <rect x="76" y="56" width="20" height="18" fill={lit} stroke="#f3efe6" strokeWidth="3" />
-            <rect x="50" y="62" width="18" height="36" fill="#3a2422" />
-          </symbol>
-        </defs>
-
-        {/* far fells */}
-        <path d="M0 300 L120 230 L230 270 L380 180 L520 260 L640 220 L780 280 L930 200 L1080 270 L1230 190 L1380 260 L1500 220 L1600 250 L1600 500 L0 500 Z" fill="url(#fellFar)" />
-        <path d="M380 180 L410 198 L395 196 L372 192 Z M930 200 L960 216 L940 214 Z M1230 190 L1262 208 L1240 206 Z" fill={night ? "#d5e2f5" : "#ffffff"} opacity="0.8" />
-
-        {/* far pines */}
-        {[60, 140, 210, 470, 560, 690, 1010, 1130, 1320, 1450, 1540].map((x, i) => (
-          <use key={x} href="#pine" x={x - 15} y={268 + (i % 3) * 8} width="30" height="62" opacity="0.75" />
-        ))}
-
-        {/* snow ground */}
-        <path d="M0 360 C 260 320, 480 350, 760 330 S 1300 320, 1600 345 L1600 500 L0 500 Z" fill="url(#snowGround)" />
-
-        {/* cabins with window glow and smoke */}
-        {[[300, 288, 1], [470, 300, 0.8], [1180, 292, 0.9]].map(([x, y, s], i) => (
-          <g key={x} transform={`translate(${x} ${y}) scale(${s})`}>
-            <ellipse cx="60" cy="72" rx="110" ry="60" fill="url(#glow)" className="lap-flicker" style={{ animationDelay: `${i * 0.7}s` }} />
-            <use href="#cabin" width="120" height="100" />
-            {[0, 1, 2].map((k) => (
-              <circle key={k} cx="86" cy="8" r="7" fill={night ? "#cfd8e6" : "#ffffff"} className="lap-smoke" style={{ animationDelay: `${k * 1.3 + i * 0.5}s` }} />
-            ))}
-          </g>
-        ))}
-
-        {/* Arctic Circle sign, Santa Claus Village */}
-        <g transform="translate(820 300)">
-          <rect x="-3" y="0" width="6" height="74" fill="#3a2a25" />
-          <rect x="-58" y="6" width="116" height="34" rx="3" fill={night ? "#173a63" : "#1d4d80"} stroke="#f3efe6" strokeWidth="2" />
-          <text x="0" y="22" textAnchor="middle" fontSize="11" fill="#f3efe6" fontFamily="ui-monospace, monospace" letterSpacing="1">ARCTIC CIRCLE</text>
-          <text x="0" y="35" textAnchor="middle" fontSize="11" fill="#ffd36e" fontFamily="ui-monospace, monospace">66°33′N</text>
-        </g>
-        <path d="M0 386 C 400 376, 1200 396, 1600 382" stroke={night ? "#ffd36e" : "#d1a24a"} strokeWidth="2" strokeDasharray="10 10" fill="none" opacity="0.6" />
-
-        {/* reindeer walking along the snow */}
-        <g className="lap-reindeer">
-          <g transform="translate(0 368)">
-            <g className="lap-trot">
-              <path d="M0 -24 C 6 -32, 34 -32, 42 -24 L 50 -36 L 54 -34 L 48 -22 C 48 -18, 44 -16, 40 -18 L 40 0 L 36 0 L 35 -14 L 10 -14 L 8 0 L 4 0 L 4 -16 C -2 -18, -4 -22, 0 -24 Z" fill={night ? "#2a1d18" : "#5b3f30"} />
-              <path d="M50 -36 L 46 -50 M 50 -36 L 58 -48 M 46 -44 L 40 -48 M 55 -44 L 62 -42" stroke={night ? "#2a1d18" : "#5b3f30"} strokeWidth="2.4" strokeLinecap="round" fill="none" />
-            </g>
-          </g>
-        </g>
-
-        {/* near pines */}
-        {[20, 150, 640, 980, 1420, 1560].map((x, i) => (
-          <use key={x} href="#pine" x={x - 30} y={318 + (i % 2) * 14} width="60" height="124" />
-        ))}
-      </svg>
-      <canvas ref={snow} className="pointer-events-none absolute inset-0" />
+    <div aria-hidden="true" className="fixed inset-0 z-0 overflow-hidden">
+      <canvas ref={back} className="absolute inset-0" />
+      <canvas ref={front} className="pointer-events-none absolute inset-0" />
     </div>
   );
 }
