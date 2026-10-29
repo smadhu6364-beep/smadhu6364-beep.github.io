@@ -1,9 +1,10 @@
-import { Fraunces, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, JetBrains_Mono, Manrope } from "next/font/google";
 import LaplandHome from "@/components/lapland/Home";
 
-const serif = Fraunces({ subsets: ["latin"], weight: ["400", "500", "600"], display: "swap" });
+const display = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], display: "swap" });
+const sans = Manrope({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap" });
 const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "500"], display: "swap" });
 
 export default function Home() {
-  return <LaplandHome serif={serif.className} mono={mono.className} />;
+  return <LaplandHome display={display.className} sans={sans.className} mono={mono.className} />;
 }
