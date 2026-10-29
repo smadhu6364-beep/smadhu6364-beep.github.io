@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import WhatsAppButton from "@/components/WhatsAppButton";
+import SqlInAction from "@/components/SqlInAction";
 import { education, experience, profile, projects, skills } from "@/lib/data";
 import Scene from "./Scene";
 import { AuroraGame, Clocks, PostOffice, useLaplandSound } from "./Widgets";
@@ -23,6 +23,39 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
     </p>
   );
 }
+
+const BADGES = [
+  {
+    role: "Author",
+    org: "HackerNoon",
+    when: "Oct 2026",
+    title: "How we caught an LLM scoring bug and fixed it without compromising our research",
+    note: "Published with Kruthik Jadhav. The story of a parser bug in our benchmark and how we fixed it in the open.",
+    cta: "Read it",
+    href: "https://hackernoon.com/how-we-caught-an-llm-scoring-bug-and-fixed-it-without-compromising-our-research",
+    color: "#7fe3bf",
+  },
+  {
+    role: "Researcher",
+    org: "LLM Risk Register Benchmark",
+    when: "2026",
+    title: "Can LLMs draft a project risk register?",
+    note: "Co-authored with Kruthik Jadhav. 21 real planning documents, a no-leakage evaluation, 456 unit tests. Being prepared for an IEEE conference.",
+    cta: "See the repo",
+    href: "https://github.com/smadhu6364-beep/public-reproducible-benchmark",
+    color: "#f2c57c",
+  },
+  {
+    role: "Student",
+    org: "Dublin City University",
+    when: "2026 – now",
+    title: "MSc in Business Analytics",
+    note: "Statistics, Power BI, and machine learning in Python, after two years in operations in Bengaluru.",
+    cta: "See my CV",
+    href: "/cv",
+    color: "#b9a6ff",
+  },
+];
 
 // Small hand-drawn emblem for each project, like the art on a card
 function Emblem({ id }: { id: string }) {
@@ -86,7 +119,6 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   return (
     <div className={`lap ${night ? "lap-night" : "lap-day"} ${sans} min-h-screen`}>
       <Scene night={night} lively={lively} />
-      <WhatsAppButton />
 
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 pt-6 sm:px-6">
         <a href="#top" className="flex items-center gap-3">
@@ -106,13 +138,14 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <button type="button" className={pill} onClick={sound.toggle} aria-pressed={sound.on}>
             <span aria-hidden="true">♪</span>{sound.on ? "Sound on" : "Sound off"}
           </button>
+          <a href="/cv" className={`${pill} border-[color:var(--lap-accent)]`}>In a hurry? Recruiter view →</a>
           <span className={`${pill} hidden sm:inline-flex`} title={`Season in Lapland: ${en}`}>
             <span aria-hidden="true">✦</span>{fi}
           </span>
         </div>
       </header>
 
-      <main id="top" className="mx-auto grid max-w-6xl gap-4 px-4 pb-[38vh] pt-8 sm:px-6 lg:grid-cols-12">
+      <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-8 sm:px-6 lg:grid-cols-12">
         {/* Intro */}
         <section data-reveal className={`${card} lg:col-span-7`}>
           <Label fi="Minä" en="Madhu Sudhan" mono={mono} />
@@ -191,6 +224,43 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           </a>
         ))}
 
+        {/* Proof: real queries with their real result rows */}
+        <section data-reveal className={`${card} lap-sql lg:col-span-12`}>
+          <Label fi="Näyttö" en="Proof · SQL in action" mono={mono} />
+          <h2 className={`${display} mt-3 text-3xl sm:text-4xl`}>Real queries, real rows.</h2>
+          <p className="mb-5 mt-2 max-w-2xl text-sm opacity-75">From my Irish property project: 812,018 sales from the Property Price Register, cleaned and queried in DuckDB. Pick a question to see the SQL and what it returned.</p>
+          <SqlInAction />
+        </section>
+
+        {/* Badges, hung like event lanyards */}
+        <section className="pt-4 lg:col-span-12">
+          <Label fi="Kortit" en="Badges I've earned" mono={mono} />
+          <div className="relative mt-5">
+            <div aria-hidden className="absolute inset-x-0 top-[6px] h-[5px] rounded-full bg-gradient-to-b from-[#cfd8e6] to-[#8a97ad] shadow" />
+            <div className="relative flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-4 sm:justify-around sm:overflow-visible">
+              {BADGES.map((b, i) => (
+                <a key={b.role} href={b.href} target="_blank" rel="noreferrer" className="lap-lanyard flex w-[230px] shrink-0 snap-center flex-col items-center" style={{ animationDelay: `${i * 0.6}s` }}>
+                  <span aria-hidden className="h-4 w-4 rounded-full border-[3px] border-[#a9b4c6]" />
+                  <span aria-hidden className="-mt-1 block w-[12px] rounded-sm" style={{ height: 70 + i * 18, background: `repeating-linear-gradient(0deg, ${b.color} 0 14px, rgb(255 255 255 / .35) 14px 16px)` }} />
+                  <span aria-hidden className="-mt-1 h-4 w-8 rounded-md bg-gradient-to-b from-[#e2e6ee] to-[#9aa3b3]" />
+                  <span className="lap-card -mt-1 block w-full overflow-hidden rounded-2xl text-left">
+                    <span className="block px-4 py-3 text-[#06121f]" style={{ background: b.color }}>
+                      <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-80`}>{b.org}</span>
+                      <span className="mt-1 block text-[26px] font-extrabold uppercase leading-none tracking-tight">{b.role}</span>
+                    </span>
+                    <span className="block px-4 pb-4 pt-3">
+                      <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-60`}>Madhu Sudhan · {b.when}</span>
+                      <span className="mt-1 block text-[15px] font-semibold leading-snug">{b.title}</span>
+                      <span className="mt-1.5 block text-xs leading-relaxed opacity-70">{b.note}</span>
+                      <span className={`${mono} mt-3 block text-[11px] text-[color:var(--lap-accent)]`}>{b.cta} ↗</span>
+                    </span>
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Skills */}
         <section data-reveal className={`${card} lg:col-span-5`}>
           <Label fi="Taidot" en="Toolkit" mono={mono} />
@@ -217,9 +287,12 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
 
         {/* Hobbies */}
         <section data-reveal style={{ ["--d" as string]: ".2s" }} className={`${card} lg:col-span-3`}>
-          <Label fi="Vapaa-aika" en="Off the clock" mono={mono} />
-          <p className={`${display} mt-4 text-2xl`}>Coming soon.</p>
-          <p className="mt-2 text-sm opacity-70">I&rsquo;m writing this one myself.</p>
+          <Label fi="Juuri nyt" en="Right now" mono={mono} />
+          <ul className="mt-4 space-y-3 text-sm leading-snug">
+            <li><span className="text-[color:var(--lap-accent)]">●</span> MSc Business Analytics at DCU</li>
+            <li><span className="text-[color:var(--lap-accent)]">●</span> A second HackerNoon piece in editorial review</li>
+            <li><span className="text-[color:var(--lap-accent)]">●</span> Looking for data analyst roles in Ireland</li>
+          </ul>
         </section>
 
         {/* Post office */}

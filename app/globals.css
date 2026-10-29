@@ -168,3 +168,13 @@ section[id] { scroll-margin-top: 88px; }
 .lap-spark { animation: lapSpark 1.3s ease-out forwards; }
 @keyframes lapSpark { 0% { transform: translate(-50%, -50%) scale(.3); opacity: 0; } 25% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -80%) scale(.8); } }
 @media (prefers-reduced-motion: reduce) { .lap-smoke, .lap-flicker, .lap-reindeer, .lap-trot, .lap-spark { animation: none; } .lap-route { stroke-dashoffset: 0; animation: none; } }
+
+/* Reused components (SQL in action) inside the Lapland theme */
+.lap-night { --surface: 9 15 28; --ink: 233 238 246; --muted: 160 172 190; --line: 44 56 78; --accent: 127 227 191; --sage: 18 38 38; --lime: 127 227 191; --c1: 242 197 124; --c2: 127 227 191; }
+.lap-day { --surface: 255 255 255; --ink: 26 34 50; --muted: 92 100 116; --line: 226 230 238; --accent: 15 127 98; --sage: 232 244 239; --lime: 196 238 220; --c1: 168 74 38; --c2: 15 127 98; }
+.lap .sql .s { color: rgb(var(--c1)); }
+.lap-night .pill[aria-selected="true"] { color: #06231a; }
+.lap-lanyard { transform-origin: 50% 0; animation: lapSway 4.5s ease-in-out infinite alternate; transition: transform .3s; }
+.lap-lanyard:hover { animation-play-state: paused; transform: rotate(0deg) translateY(4px); }
+@keyframes lapSway { from { transform: rotate(-1.8deg); } to { transform: rotate(1.8deg); } }
+@media (prefers-reduced-motion: reduce) { .lap-lanyard { animation: none; } }
