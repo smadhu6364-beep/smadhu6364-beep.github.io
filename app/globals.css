@@ -142,3 +142,26 @@ section[id] { scroll-margin-top: 88px; }
 [data-depth] { will-change: transform; }
 
 @media (prefers-reduced-motion: reduce) { .grain { animation: none; } [data-reveal] { opacity: 1; transform: none; filter: none; } }
+
+/* Lapland theme (components/lapland) */
+.lap { --lap-red: #c8372d; color: var(--lap-ink); }
+.lap-night { --lap-ink: #eef2fb; --lap-card: rgba(13, 22, 42, .72); --lap-line: rgba(238, 242, 251, .18); }
+.lap-day { --lap-ink: #1d2233; --lap-card: rgba(252, 248, 244, .86); --lap-line: rgba(29, 34, 51, .16); }
+.lap > header, .lap > main, .lap > footer { position: relative; z-index: 1; }
+.lap-card { background: var(--lap-card); border: 1px solid var(--lap-line); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 20px 40px -24px rgb(0 0 0 / .45); }
+
+.lap-smoke { animation: lapSmoke 4s ease-out infinite; opacity: 0; }
+@keyframes lapSmoke { 0% { transform: translate(0, 0) scale(.6); opacity: 0; } 15% { opacity: .7; } 100% { transform: translate(18px, -60px) scale(2.2); opacity: 0; } }
+.lap-flicker { animation: lapFlicker 3s ease-in-out infinite alternate; }
+@keyframes lapFlicker { 0% { opacity: .75; } 40% { opacity: 1; } 70% { opacity: .85; } 100% { opacity: 1; } }
+.lap-reindeer { animation: lapWalk 70s linear infinite; }
+@keyframes lapWalk { from { transform: translateX(-80px); } to { transform: translateX(1680px); } }
+.lap-trot { animation: lapTrot .5s ease-in-out infinite alternate; }
+@keyframes lapTrot { to { transform: translateY(-2px); } }
+.lap-still .lap-smoke, .lap-still .lap-flicker, .lap-still .lap-reindeer, .lap-still .lap-trot { animation-play-state: paused; }
+.lap-route { stroke-dashoffset: 1; animation: lapRoute 2.4s 0.6s cubic-bezier(.6,0,.2,1) forwards; }
+@keyframes lapRoute { to { stroke-dashoffset: 0; } }
+.lap-spark { animation: lapSpark 1.3s ease-out forwards; }
+@keyframes lapSpark { 0% { transform: translate(-50%, -50%) scale(.3); opacity: 0; } 25% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); } 100% { opacity: 0; transform: translate(-50%, -80%) scale(.8); } }
+@media (prefers-reduced-motion: reduce) { .lap-smoke, .lap-flicker, .lap-reindeer, .lap-trot, .lap-spark { animation: none; } .lap-route { stroke-dashoffset: 0; animation: none; } }
