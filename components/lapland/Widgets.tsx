@@ -22,7 +22,7 @@ export function Clocks() {
   return (
     <div className="flex h-full flex-col justify-between">
       <p className="font-mono text-[44px] leading-none tracking-tight tabular-nums sm:text-[52px]">{now ? time("Europe/Dublin", now, true) : "--:--:--"}</p>
-      <div className="mt-6 border-t border-white/15 pt-4 font-mono text-xs text-white/70">
+      <div className="mt-6 border-t border-[color:var(--lap-line)] pt-4 font-mono text-xs opacity-75">
         <p className="flex justify-between"><span>Rovaniemi</span><span className="tabular-nums">{now ? time("Europe/Helsinki", now) : "--:--"}</span></p>
         <p className="mt-1 flex justify-between"><span>right now there</span><span className="tabular-nums">{temp === null ? "…" : `${temp > 0 ? "+" : ""}${temp}°C`}</span></p>
       </div>
@@ -106,9 +106,9 @@ export function PostOffice({ email }: { email: string }) {
         onChange={(e) => setNote(e.target.value)}
         rows={3}
         placeholder="Hi Madhu, ..."
-        className="w-full resize-none rounded-lg border border-[color:var(--lap-line)] bg-transparent p-3 text-sm outline-none placeholder:opacity-50 focus:border-[color:var(--lap-red)]"
+        className="w-full resize-none rounded-lg border border-[color:var(--lap-line)] bg-transparent p-3 text-sm outline-none placeholder:opacity-50 focus:border-[color:var(--lap-accent)]"
       />
-      <a href={href} className="mt-2 inline-flex items-center gap-2 rounded-full bg-[color:var(--lap-red)] px-4 py-2 text-sm text-white transition hover:brightness-110">
+      <a href={href} className="mt-2 inline-flex items-center gap-2 rounded-full bg-[color:var(--lap-accent)] px-4 py-2 text-sm font-semibold text-[#06231a] transition hover:brightness-110">
         Post it <span aria-hidden="true">✉</span>
       </a>
     </div>

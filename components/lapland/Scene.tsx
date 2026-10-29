@@ -114,7 +114,10 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     const greens = strip([[0, "rgba(160,90,255,0)"], [0.35, "rgba(170,90,230,0.35)"], [0.75, "rgba(60,240,160,0.75)"], [0.93, "rgba(170,255,210,1)"], [1, "rgba(80,255,170,0)"]]);
     const pale = strip([[0, "rgba(120,200,255,0)"], [0.6, "rgba(90,255,190,0.5)"], [0.95, "rgba(200,255,230,0.9)"], [1, "rgba(0,0,0,0)"]]);
 
+    const skyStatic = document.createElement("canvas");
+    const cs = skyStatic.getContext("2d")!;
     let W = 0, H = 0, dpr = 1, builtFor = "";
+    let quality = 2; // 2 full, 1 lighter, 0 still
     let stars: Star[] = [];
     let flakes: Flake[] = [];
     let puffs: Puff[] = [];
@@ -234,11 +237,47 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       cl.fillStyle = "#ffd36e";
       cl.fillText("66°33′N", 0, -39);
       cl.restore();
+      // sky drawn once per size/mode; only a few stars twinkle live
+      skyStatic.width = W;
+      skyStatic.height = H;
+      const g = cs.createLinearGradient(0, 0, 0, H * 0.8);
+      if (isNight) { g.addColorStop(0, "#02040c"); g.addColorStop(0.5, "#071428"); g.addColorStop(1, "#16304f"); }
+      else { g.addColorStop(0, "#6f8fbf"); g.addColorStop(0.55, "#b9aecb"); g.addColorStop(1, "#f3cdbd"); }
+      cs.fillStyle = g;
+      cs.fillRect(0, 0, W, H);
+      if (isNight) {
+        cs.save();
+        cs.translate(W / 2, H * 0.25);
+        cs.rotate(Math.atan2(H * 0.4, W));
+        const mw = cs.createLinearGradient(0, -H * 0.09, 0, H * 0.09);
+        mw.addColorStop(0, "rgba(160,180,255,0)");
+        mw.addColorStop(0.5, "rgba(170,185,240,0.07)");
+        mw.addColorStop(1, "rgba(160,180,255,0)");
+        cs.fillStyle = mw;
+        cs.fillRect(-W, -H * 0.09, W * 2, H * 0.18);
+        cs.restore();
+        for (const st of stars) { cs.globalAlpha = 0.55; cs.fillStyle = st.c; cs.fillRect(st.x, st.y, st.r, st.r); }
+        cs.globalAlpha = 1;
+        const mg = cs.createRadialGradient(W * 0.86, H * 0.12, 0, W * 0.86, H * 0.12, H * 0.22);
+        mg.addColorStop(0, "rgba(235,240,255,0.9)");
+        mg.addColorStop(0.04, "rgba(235,240,255,0.5)");
+        mg.addColorStop(0.08, "rgba(200,215,255,0.12)");
+        mg.addColorStop(1, "rgba(200,215,255,0)");
+        cs.fillStyle = mg;
+        cs.fillRect(0, 0, W, H * 0.5);
+      } else {
+        const sg2 = cs.createRadialGradient(W * 0.78, H * 0.6, 0, W * 0.78, H * 0.6, H * 0.45);
+        sg2.addColorStop(0, "rgba(255,226,190,0.95)");
+        sg2.addColorStop(0.12, "rgba(255,205,175,0.55)");
+        sg2.addColorStop(1, "rgba(255,200,170,0)");
+        cs.fillStyle = sg2;
+        cs.fillRect(0, 0, W, H);
+      }
       builtFor = `${W}x${H}:${isNight}`;
     };
 
     const resize = () => {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      dpr = 1; // soft scene, so 1x is plenty and far cheaper on retina screens
       W = window.innerWidth;
       H = window.innerHeight;
       for (const c of [A, B]) {
@@ -249,17 +288,18 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       }
       ca.setTransform(dpr, 0, 0, dpr, 0, 0);
       cb.setTransform(dpr, 0, 0, dpr, 0, 0);
-      aur.width = Math.ceil(W / 3);
-      aur.height = Math.ceil(H / 3);
+      const div = quality < 2 ? 8 : 5;
+      aur.width = Math.ceil(W / div);
+      aur.height = Math.ceil(H / div);
       const sr = rng(3);
-      stars = Array.from({ length: Math.round((W * H) / 2600) }, () => {
+      stars = Array.from({ length: Math.round((W * H) / 4500) }, () => {
         // a third of them crowd into a diagonal band: the Milky Way
         let x = sr() * W, y = sr() * H * 0.72;
         if (sr() < 0.35) { const t = sr(); x = t * W; y = H * (0.05 + t * 0.4) + (sr() - 0.5) * H * 0.12; }
         const warm = sr();
         return { x, y, r: sr() < 0.04 ? 1.4 : sr() * 0.9 + 0.2, p: sr() * 6, c: warm < 0.1 ? "#ffe6c4" : warm < 0.2 ? "#cfe0ff" : "#f2f6ff" };
       });
-      flakes = Array.from({ length: Math.round(W / 8) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + 0.4, v: Math.random() * 0.5 + 0.25, w: Math.random() * 6 }));
+      flakes = Array.from({ length: Math.round(W / 14) }, () => ({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.8 + 0.4, v: Math.random() * 0.5 + 0.25, w: Math.random() * 6 }));
       builtFor = "";
     };
     resize();
@@ -268,18 +308,25 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     // aurora: rays along a slowly folding curtain, drawn small then scaled up (soft, like long exposure)
     const curtain = (t: number, base: number, amp: number, len: number, speed: number, alpha: number, img: HTMLCanvasElement) => {
       const w = aur.width, h = aur.height;
-      for (let x = -4; x < w + 4; x += 1) {
+      for (let x = -4; x < w + 4; x += 2) {
         const k = x / w;
         const y = h * base + Math.sin(k * 4.2 + t * speed) * h * amp + Math.sin(k * 11 - t * speed * 1.6) * h * amp * 0.4;
         const rays = 0.5 + 0.5 * Math.sin(k * 90 + t * 0.6) * Math.sin(k * 37 - t * 0.4);
         const L = h * len * (0.7 + 0.5 * Math.sin(k * 6 + t * speed * 0.7)) * (0.75 + rays * 0.5);
-        cu.globalAlpha = alpha * (0.35 + 0.65 * Math.max(0, Math.sin(k * 3.1 - t * speed * 0.9) * 0.5 + 0.5)) * (0.6 + rays * 0.4);
-        cu.drawImage(img, x, y - L, 1.6, L + 2);
+        cu.globalAlpha = 0.6 * alpha * (0.35 + 0.65 * Math.max(0, Math.sin(k * 3.1 - t * speed * 0.9) * 0.5 + 0.5)) * (0.6 + rays * 0.4);
+        cu.drawImage(img, x - 1, y - L, 4.5, L + 2); // overlapping strips, so no visible banding
       }
     };
 
     let raf = 0, t = 0, last = performance.now();
+    // Self-tuning: if drawing a frame costs too much on this machine, step down
+    // (coarser aurora, then a still picture redrawn once a second).
+    let lastDraw = 0, cost = 0, gap = 32;
     const frame = (now: number) => {
+      raf = requestAnimationFrame(frame);
+      if (document.hidden || now - lastDraw < gap) return; // ~30fps is plenty for drifting light
+      lastDraw = now;
+      const t0 = performance.now();
       const { night, lively } = state.current;
       const moving = lively && !reduced;
       const dt = Math.min(0.05, (now - last) / 1000);
@@ -287,41 +334,17 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       last = now;
       if (builtFor !== `${W}x${H}:${night}`) build(night);
 
-      // sky
-      const g = ca.createLinearGradient(0, 0, 0, H * 0.8);
-      if (night) { g.addColorStop(0, "#02040c"); g.addColorStop(0.5, "#071428"); g.addColorStop(1, "#16304f"); }
-      else { g.addColorStop(0, "#6f8fbf"); g.addColorStop(0.55, "#b9aecb"); g.addColorStop(1, "#f3cdbd"); }
-      ca.fillStyle = g;
-      ca.fillRect(0, 0, W, H);
+      ca.drawImage(skyStatic, 0, 0);
 
       let glow = 0;
       if (night) {
-        // Milky Way haze
-        ca.save();
-        ca.translate(W / 2, H * 0.25);
-        ca.rotate(Math.atan2(H * 0.4, W));
-        const mw = ca.createLinearGradient(0, -H * 0.09, 0, H * 0.09);
-        mw.addColorStop(0, "rgba(160,180,255,0)");
-        mw.addColorStop(0.5, "rgba(170,185,240,0.07)");
-        mw.addColorStop(1, "rgba(160,180,255,0)");
-        ca.fillStyle = mw;
-        ca.fillRect(-W, -H * 0.09, W * 2, H * 0.18);
-        ca.restore();
-        for (const s of stars) {
-          ca.globalAlpha = 0.35 + 0.65 * Math.abs(Math.sin(s.p + t * 0.7));
-          ca.fillStyle = s.c;
-          ca.fillRect(s.x, s.y, s.r, s.r);
+        for (let i = 0; i < stars.length; i += 12) {
+          const st = stars[i];
+          ca.globalAlpha = 0.6 * Math.abs(Math.sin(st.p + t * 0.7));
+          ca.fillStyle = st.c;
+          ca.fillRect(st.x, st.y, st.r + 0.4, st.r + 0.4);
         }
         ca.globalAlpha = 1;
-        // moon glow, top right
-        const mg = ca.createRadialGradient(W * 0.86, H * 0.12, 0, W * 0.86, H * 0.12, H * 0.22);
-        mg.addColorStop(0, "rgba(235,240,255,0.9)");
-        mg.addColorStop(0.04, "rgba(235,240,255,0.5)");
-        mg.addColorStop(0.08, "rgba(200,215,255,0.12)");
-        mg.addColorStop(1, "rgba(200,215,255,0)");
-        ca.fillStyle = mg;
-        ca.fillRect(0, 0, W, H * 0.5);
-
         cu.clearRect(0, 0, aur.width, aur.height);
         cu.globalCompositeOperation = "lighter";
         curtain(t, 0.42, 0.07, 0.34, 0.12, 0.55, greens);
@@ -332,18 +355,9 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         ca.save();
         ca.globalCompositeOperation = "screen";
         ca.imageSmoothingQuality = "high";
-        ca.filter = "blur(2px)";
         ca.drawImage(aur, 0, 0, W, H);
-        ca.filter = "none";
         ca.restore();
         glow = 0.7 + 0.3 * Math.sin(t * 0.3);
-      } else {
-        const sg = ca.createRadialGradient(W * 0.78, H * 0.6, 0, W * 0.78, H * 0.6, H * 0.45);
-        sg.addColorStop(0, "rgba(255,226,190,0.95)");
-        sg.addColorStop(0.12, "rgba(255,205,175,0.55)");
-        sg.addColorStop(1, "rgba(255,200,170,0)");
-        ca.fillStyle = sg;
-        ca.fillRect(0, 0, W, H);
       }
 
       ca.drawImage(land, 0, 0, W, H);
@@ -407,8 +421,14 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         cb.arc(f.x, f.y, f.r, 0, 6.283);
         cb.fill();
       }
-
-      raf = requestAnimationFrame(frame);
+      cost = cost * 0.9 + (performance.now() - t0) * 0.1;
+      (window as unknown as { __lap?: object }).__lap = { cost: Math.round(cost * 10) / 10, quality }; // handy for checking speed in devtools
+      if (cost > 12 && quality > 0) {
+        quality -= 1;
+        cost = 0;
+        if (quality === 1) { aur.width = Math.ceil(W / 8); aur.height = Math.ceil(H / 8); flakes = flakes.slice(0, flakes.length >> 1); }
+        if (quality === 0) gap = 1000;
+      }
     };
     raf = requestAnimationFrame(frame);
     return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };

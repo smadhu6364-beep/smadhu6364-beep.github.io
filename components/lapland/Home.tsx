@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Immersive from "@/components/Immersive";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { education, experience, profile, projects, skills } from "@/lib/data";
 import Scene from "./Scene";
@@ -19,7 +18,7 @@ function season(d = new Date()) {
 function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
   return (
     <p className="flex items-baseline gap-2">
-      <span className="text-sm font-semibold text-[color:var(--lap-red)]">{fi}</span>
+      <span className="text-[13px] font-semibold tracking-wide text-[color:var(--lap-accent)]">{fi}</span>
       <span className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-60`}>{en}</span>
     </p>
   );
@@ -58,7 +57,7 @@ function Emblem({ id }: { id: string }) {
   }
 }
 
-export default function LaplandHome({ serif, mono }: { serif: string; mono: string }) {
+export default function LaplandHome({ display, sans, mono }: { display: string; sans: string; mono: string }) {
   const [night, setNight] = useState(true);
   const [lively, setLively] = useState(true);
   const sound = useLaplandSound();
@@ -72,21 +71,28 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
   }, []);
   useEffect(() => { try { localStorage.setItem("lapNight", night ? "1" : "0"); } catch {} }, [night]);
 
+  // cards fade up once as they come into view
+  useEffect(() => {
+    const els = document.querySelectorAll("[data-reveal]");
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } }), { threshold: 0.12 });
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
   const card = "lap-card rounded-[22px] p-6 sm:p-7";
-  const pill = `${mono} inline-flex h-9 items-center gap-2 rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3.5 text-[11px] uppercase tracking-[0.15em] backdrop-blur transition hover:border-[color:var(--lap-red)]`;
+  const pill = `${mono} inline-flex h-9 items-center gap-2 rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3.5 text-[11px] uppercase tracking-[0.15em] transition hover:border-[color:var(--lap-accent)]`;
   const [msc, be] = education;
 
   return (
-    <div className={`lap ${night ? "lap-night" : "lap-day"} ${serif} min-h-screen`}>
+    <div className={`lap ${night ? "lap-night" : "lap-day"} ${sans} min-h-screen`}>
       <Scene night={night} lively={lively} />
-      <Immersive />
       <WhatsAppButton />
 
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 pt-6 sm:px-6">
         <a href="#top" className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--lap-red)] text-xl text-white" aria-hidden="true">❄</span>
+          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--lap-accent)] text-xl text-[#06231a]" aria-hidden="true">❄</span>
           <span>
-            <span className="block text-lg font-semibold leading-tight">Madhu Sudhan</span>
+            <span className={`${display} block text-2xl leading-tight [text-shadow:0_1px_8px_rgb(0_0_0/.35)]`}>Madhu Sudhan</span>
             <span className={`${mono} block text-[10px] uppercase tracking-[0.25em] opacity-70`}>Dublin 9 · 53°N, dreaming of 66°N</span>
           </span>
         </a>
@@ -110,7 +116,7 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
         {/* Intro */}
         <section data-reveal className={`${card} lg:col-span-7`}>
           <Label fi="Minä" en="Madhu Sudhan" mono={mono} />
-          <h1 className="mt-5 text-[30px] font-medium leading-[1.12] tracking-[-0.01em] sm:text-[40px]">
+          <h1 className={`${display} mt-5 text-[34px] leading-[1.08] sm:text-[48px]`}>
             I used to fix booking mistakes for a living. Now I go looking for them in data.
           </h1>
           <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-80">
@@ -125,18 +131,18 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
         </section>
 
         {/* Clocks */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="rounded-[22px] bg-[#101624] p-6 text-white shadow-xl lg:col-span-5">
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-card lap-ink rounded-[22px] p-6 sm:p-7 lg:col-span-5">
           <Label fi="Nyt" en="Now in Dublin" mono={mono} />
           <div className="mt-5"><Clocks /></div>
         </section>
 
         {/* Route */}
-        <section data-reveal data-tilt className={`${card} lg:col-span-5`}>
+        <section data-reveal className={`${card} lg:col-span-5`}>
           <Label fi="Reitti" en="The route" mono={mono} />
           <svg viewBox="0 0 300 120" className="mt-4 w-full" aria-hidden="true">
             <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="currentColor" strokeOpacity=".35" strokeWidth="2" strokeDasharray="6 7" />
-            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="var(--lap-red)" strokeWidth="2.5" pathLength={1} strokeDasharray="1" className="lap-route" />
-            <circle cx="30" cy="95" r="5" fill="var(--lap-red)" /><circle cx="270" cy="70" r="5" fill="var(--lap-red)" />
+            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="var(--lap-accent)" strokeWidth="2.5" pathLength={1} strokeDasharray="1" className="lap-route" />
+            <circle cx="30" cy="95" r="5" fill="var(--lap-accent)" /><circle cx="270" cy="70" r="5" fill="var(--lap-accent)" />
             <text x="30" y="115" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>BLR</text>
             <text x="270" y="90" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>DUB</text>
           </svg>
@@ -151,7 +157,7 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
           <Label fi="Työ" en="Work" mono={mono} />
           <ol className="mt-5 space-y-5">
             {experience.map((j) => (
-              <li key={j.company} className="grid gap-1 border-l-2 border-[color:var(--lap-red)] pl-4 sm:grid-cols-[1fr_auto]">
+              <li key={j.company} className="grid gap-1 border-l-2 border-[color:var(--lap-accent)] pl-4 sm:grid-cols-[1fr_auto]">
                 <div>
                   <p className="text-lg font-medium leading-snug">{j.role}</p>
                   <p className="text-sm opacity-75">{j.company} · {j.place}</p>
@@ -165,19 +171,19 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
 
         {/* Projects */}
         <div className="flex items-end justify-between pt-6 lg:col-span-12">
-          <h2 className="text-3xl font-medium sm:text-4xl"><span className="text-[color:var(--lap-red)]">Projektit</span> · things I&rsquo;ve built</h2>
+          <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built <span className="italic text-[color:var(--lap-accent)]">· projektit</span></h2>
         </div>
         {projects.map((p, i) => (
-          <a key={p.id} href={p.repo} target="_blank" rel="noreferrer" data-reveal data-tilt style={{ ["--d" as string]: `${i * 0.08}s` }}
+          <a key={p.id} href={p.repo} target="_blank" rel="noreferrer" data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
             className={`${card} group flex flex-col ${i === 0 ? "lg:col-span-8" : "lg:col-span-4"}`}>
             <div className="flex items-start justify-between gap-4">
               <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
-              <span className="text-[color:var(--lap-red)] transition group-hover:translate-x-1">→</span>
+              <span className="text-[color:var(--lap-accent)] transition group-hover:translate-x-1">→</span>
             </div>
             <div className="mt-4 flex items-start gap-4">
               <div className="shrink-0 rounded-xl bg-white/70 p-1 shadow-sm"><Emblem id={p.id} /></div>
               <div>
-                <h3 className="text-xl font-medium leading-snug sm:text-2xl">{p.name}</h3>
+                <h3 className="text-lg font-semibold leading-snug sm:text-xl">{p.name}</h3>
                 <p className="mt-2 text-sm leading-relaxed opacity-75">{p.tagline}</p>
               </div>
             </div>
@@ -212,22 +218,22 @@ export default function LaplandHome({ serif, mono }: { serif: string; mono: stri
         {/* Hobbies */}
         <section data-reveal style={{ ["--d" as string]: ".2s" }} className={`${card} lg:col-span-3`}>
           <Label fi="Vapaa-aika" en="Off the clock" mono={mono} />
-          <p className="mt-4 text-lg leading-snug">Coming soon.</p>
+          <p className={`${display} mt-4 text-2xl`}>Coming soon.</p>
           <p className="mt-2 text-sm opacity-70">I&rsquo;m writing this one myself.</p>
         </section>
 
         {/* Post office */}
         <section data-reveal className={`${card} lg:col-span-7`}>
           <Label fi="Postitoimisto" en="Arctic Circle post office" mono={mono} />
-          <h2 className="mt-4 text-2xl font-medium">Leave me a note.</h2>
+          <h2 className={`${display} mt-4 text-3xl`}>Leave me a note.</h2>
           <p className="mt-2 text-sm opacity-75">Santa&rsquo;s post office on the Arctic Circle gets letters from all over the world. Mine gets fewer, so yours will definitely be read.</p>
           <div className="mt-4"><PostOffice email={profile.email} /></div>
         </section>
 
         {/* Contact */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="rounded-[22px] bg-[color:var(--lap-red)] p-7 text-white shadow-xl lg:col-span-5">
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-contact rounded-[22px] p-7 text-white shadow-xl lg:col-span-5">
           <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-80`}>Ota yhteyttä · get in touch</p>
-          <p className="mt-4 text-3xl font-medium leading-tight">Hiring a data analyst in Ireland?</p>
+          <p className={`${display} mt-4 text-4xl leading-tight`}>Hiring a data analyst in Ireland?</p>
           <a href={`mailto:${profile.email}`} className={`${mono} mt-6 block text-sm underline-offset-4 hover:underline`}>{profile.email}</a>
           <a href={profile.linkedin} target="_blank" rel="noreferrer" className={`${mono} mt-1 block text-sm underline-offset-4 hover:underline`}>LinkedIn ↗</a>
         </section>
