@@ -3,41 +3,26 @@
 @tailwind utilities;
 
 /* Paper palette. Values are "r g b" so Tailwind can add alpha. */
-:root {
-  --bg: 251 250 247;
-  --surface: 255 255 255;
-  --ink: 28 27 24;
-  --muted: 92 89 82;
-  --line: 232 229 221;
-  --accent: 156 70 36;
-  --sage: 238 242 234;
-  --peach: 248 239 230;
-  --lime: 241 244 200;
-  --dot: 46 140 74;
+:root, .dark {
+  /* Same night palette as the Lapland home page, so every page feels like one site */
+  --bg: 7 12 24;
+  --surface: 13 20 36;
+  --ink: 233 238 246;
+  --muted: 160 172 190;
+  --line: 40 52 74;
+  --accent: 127 227 191;
+  --sage: 16 36 38;
+  --peach: 30 26 44;
+  --lime: 127 227 191;
+  --dot: 127 227 191;
   /* Chart series: Dublin and rest of Ireland */
-  --c1: 168 74 38;
-  --c2: 47 110 96;
-  color-scheme: light;
-}
-.dark {
-  --bg: 35 33 30;
-  --surface: 44 42 38;
-  --ink: 237 233 224;
-  --muted: 180 174 162;
-  --line: 66 63 57;
-  --accent: 232 158 120;
-  --sage: 45 50 43;
-  --peach: 56 48 41;
-  --lime: 60 62 40;
-  --dot: 120 200 140;
-  --c1: 236 150 110;
-  --c2: 128 196 176;
+  --c1: 242 197 124;
+  --c2: 127 227 191;
   color-scheme: dark;
 }
-
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
-body { background: rgb(var(--bg)); color: rgb(var(--ink)); overflow-x: hidden; }
+body { background: radial-gradient(120% 60% at 50% -10%, rgb(60 255 140 / .10), transparent 60%), radial-gradient(80% 50% at 85% 0%, rgb(200 90 220 / .08), transparent 60%), rgb(var(--bg)); background-attachment: fixed; color: rgb(var(--ink)); overflow-x: hidden; }
 ::selection { background: rgb(var(--lime)); color: rgb(var(--ink)); }
 
 :focus-visible { outline: 2px solid rgb(var(--ink)); outline-offset: 3px; border-radius: 6px; }
@@ -55,7 +40,7 @@ section[id] { scroll-margin-top: 88px; }
   color: rgb(var(--ink)); background: transparent; transition: background-color .2s, border-color .2s, color .2s;
 }
 .pill:hover { border-color: rgb(var(--ink) / .5); }
-.pill[aria-pressed="true"], .pill[aria-selected="true"] { background: rgb(var(--lime)); border-color: rgb(var(--ink) / .55); color: rgb(var(--ink)); font-weight: 500; }
+.pill[aria-pressed="true"], .pill[aria-selected="true"] { background: rgb(var(--lime)); border-color: rgb(var(--lime)); color: #06231a; font-weight: 600; }
 
 /* Light buttons: soft tint for the main action, outline for the rest */
 .btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.4rem; border-radius: 999px; font-size: 15px; font-weight: 500; border: 1px solid rgb(var(--ink) / .7); color: rgb(var(--ink)); transition: background-color .2s, border-color .2s; }
