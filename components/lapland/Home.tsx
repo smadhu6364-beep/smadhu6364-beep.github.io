@@ -24,6 +24,9 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
   );
 }
 
+// projects with a written case study at /projects/<id>/
+const CASE_STUDIES = new Set(["benchmark", "irish-property", "civicpulse", "roam"]);
+
 const BADGES = [
   {
     role: "Author",
@@ -147,7 +150,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
 
       <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-8 sm:px-6 lg:grid-cols-12">
         {/* Intro */}
-        <section data-reveal className={`${card} lg:col-span-7`}>
+        <section id="about" data-reveal className={`${card} scroll-mt-6 lg:col-span-7`}>
           <Label fi="Minä" en="Madhu Sudhan" mono={mono} />
           <h1 className={`${display} mt-5 text-[34px] leading-[1.08] sm:text-[48px]`}>
             I used to fix booking mistakes for a living. Now I go looking for them in data.
@@ -203,11 +206,11 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         </section>
 
         {/* Projects */}
-        <div className="flex items-end justify-between pt-6 lg:col-span-12">
+        <div id="work" className="flex scroll-mt-6 items-end justify-between pt-6 lg:col-span-12">
           <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built <span className="italic text-[color:var(--lap-accent)]">· projektit</span></h2>
         </div>
         {projects.map((p, i) => (
-          <a key={p.id} href={p.repo} target="_blank" rel="noreferrer" data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
+          <a key={p.id} href={CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo} {...(CASE_STUDIES.has(p.id) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
             className={`${card} group flex flex-col ${i === 0 ? "lg:col-span-8" : "lg:col-span-4"}`}>
             <div className="flex items-start justify-between gap-4">
               <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
@@ -221,6 +224,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
               </div>
             </div>
             <p className={`${mono} mt-auto pt-5 text-[11px] opacity-60`}>{p.stack.slice(0, 4).join(" · ")}</p>
+            <p className={`${mono} mt-2 text-[11px] text-[color:var(--lap-accent)]`}>{CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}</p>
           </a>
         ))}
 
@@ -304,7 +308,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         </section>
 
         {/* Contact */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-contact rounded-[22px] p-7 text-white shadow-xl lg:col-span-5">
+        <section id="contact" data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-contact rounded-[22px] p-7 text-white shadow-xl lg:col-span-5">
           <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-80`}>Ota yhteyttä · get in touch</p>
           <p className={`${display} mt-4 text-4xl leading-tight`}>Hiring a data analyst in Ireland?</p>
           <a href={`mailto:${profile.email}`} className={`${mono} mt-6 block text-sm underline-offset-4 hover:underline`}>{profile.email}</a>

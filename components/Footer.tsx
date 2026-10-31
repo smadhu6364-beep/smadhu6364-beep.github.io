@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { profile } from "@/lib/data";
 import SoundToggle from "./SoundToggle";
-import ThemeToggle from "./ThemeToggle";
 
 // Evaluated when the static site is built, so it shows the date of the last build.
 const BUILT = new Date();
@@ -20,7 +19,6 @@ export default function Footer() {
           <li><a className="inline-flex min-h-10 items-center hover:text-ink" href={profile.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
           <li><Link className="inline-flex min-h-10 items-center hover:text-ink" href="/cv/">Résumé</Link></li>
           <li><SoundToggle /></li>
-          <li><ThemeToggle /></li>
         </ul>
       </div>
       <p className="mt-3 text-xs text-muted">
