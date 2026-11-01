@@ -59,9 +59,9 @@ export const experience: Job[] = [
     length: "1 yr 9 mo",
     start: "2024-07",
     end: "2026-03",
-    tags: ["Customer service", "Query and complaint resolution", "Inventory checks", "Shift reporting"],
+    tags: ["Customer service", "Query and complaint resolution", "Inventory checks", "Shift reporting", "Advanced Excel"],
     points: [
-      "Compiled daily shift figures into tracking sheets that supervisors used to plan the week.",
+      "Compiled daily shift figures into Excel tracking sheets that supervisors used to plan the week.",
       "Ran stock checks and inventory reconciliation at set checkpoints.",
       "Handled customer onboarding and card payment processing, and resolved complaints in a high-footfall setting.",
     ],
