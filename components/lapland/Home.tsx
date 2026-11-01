@@ -249,9 +249,19 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                   </div>
                   <p className="mt-4 text-sm leading-relaxed opacity-70">{p.detail[0]}</p>
                   <p className={`${mono} mt-4 text-[11px] opacity-60`}>{p.stack.slice(0, 5).join(" · ")}</p>
-                  <a href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className={`${pill} mt-5 self-start border-[color:var(--lap-accent)] text-[color:var(--lap-accent)]`}>
-                    {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
-                  </a>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <a href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className={`${pill} border-[color:var(--lap-accent)] text-[color:var(--lap-accent)]`}>
+                      {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
+                    </a>
+                    {p.demo && p.demo !== cardHref(p) && (
+                      <a href={p.demo} {...(p.demo.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })} className={pill} style={{ background: "var(--lap-accent)", color: "#06231a", borderColor: "var(--lap-accent)" }}>
+                        <span className="h-1.5 w-1.5 rounded-full bg-[#06231a]" aria-hidden /> Live demo ↗
+                      </a>
+                    )}
+                    {internal(p) && (
+                      <a href={p.repo} target="_blank" rel="noreferrer" className={pill}>Code ↗</a>
+                    )}
+                  </div>
                 </div>
               );
             })()}
@@ -268,6 +278,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                 <p className="mt-1 text-sm leading-snug opacity-75">{p.tagline}</p>
                 <p className={`${mono} mt-auto pt-3 text-[11px] text-[color:var(--lap-accent)]`}>
                   {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
+                  {p.demo && p.demo !== cardHref(p) && <span className="ml-2 rounded-full bg-[color:var(--lap-accent)] px-2 py-0.5 text-[#06231a]">live demo</span>}
                 </p>
               </a>
             ))}
@@ -300,19 +311,54 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           </ol>
         </section>
 
-        {/* Education, as the route from Bengaluru to Dublin */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-5`}>
-          <Label fi="reitti" en="Education · the route" mono={mono} />
-          <svg viewBox="0 0 300 120" className="mt-4 w-full" aria-hidden="true">
-            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="currentColor" strokeOpacity=".35" strokeWidth="2" strokeDasharray="6 7" />
-            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="var(--lap-accent)" strokeWidth="2.5" pathLength={1} strokeDasharray="1" className="lap-route" />
-            <circle cx="30" cy="95" r="5" fill="var(--lap-accent)" /><circle cx="270" cy="70" r="5" fill="var(--lap-accent)" />
-            <text x="30" y="115" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>BLR</text>
-            <text x="270" y="90" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>DUB</text>
-          </svg>
-          <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
-            <div><p className="font-semibold">{be.school}</p><p className="opacity-70">{be.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{be.dates}</p></div>
-            <div className="text-right"><p className="font-semibold">DCU</p><p className="opacity-70">{msc.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{msc.dates}</p></div>
+        {/* Education as a boarding pass: the degrees took me from Bengaluru to Dublin */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-card overflow-hidden rounded-[22px] lg:col-span-5" aria-label="Education">
+          <div className={`${mono} flex items-center justify-between bg-[color:var(--lap-accent)] px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#06231a]`}>
+            <span>Boarding pass · Education</span>
+            <span aria-hidden>✈</span>
+          </div>
+          <div className="px-5 pb-4 pt-5">
+            <div className="flex items-end justify-between">
+              <div>
+                <p className={`${mono} text-[11px] uppercase tracking-[0.2em] opacity-60`}>From</p>
+                <p className={`${mono} text-4xl font-semibold leading-none`}>BLR</p>
+                <p className="mt-1 text-xs opacity-70">Bengaluru</p>
+              </div>
+              <div className="relative mx-3 mb-6 h-px flex-1 border-t-2 border-dashed border-[color:var(--lap-line)]">
+                <span aria-hidden className="lap-plane absolute -top-3.5 left-1/2 -translate-x-1/2 text-lg text-[color:var(--lap-accent)]">✈</span>
+              </div>
+              <div className="text-right">
+                <p className={`${mono} text-[11px] uppercase tracking-[0.2em] opacity-60`}>To</p>
+                <p className={`${mono} text-4xl font-semibold leading-none`}>DUB</p>
+                <p className="mt-1 text-xs opacity-70">Dublin</p>
+              </div>
+            </div>
+            <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <dt className={`${mono} text-[11px] uppercase tracking-[0.2em] opacity-60`}>Departed · {be.dates}</dt>
+                <dd className="mt-1 font-semibold">{be.school}</dd>
+                <dd className="opacity-75">{be.title}</dd>
+              </div>
+              <div className="text-right">
+                <dt className={`${mono} text-[11px] uppercase tracking-[0.2em] opacity-60`}>Arriving · {msc.dates.replace("present", "now")}</dt>
+                <dd className="mt-1 font-semibold">DCU</dd>
+                <dd className="opacity-75">{msc.title}</dd>
+              </div>
+            </dl>
+          </div>
+          {/* tear-off stub */}
+          <div className="relative border-t-2 border-dashed border-[color:var(--lap-line)] px-5 pb-5 pt-4">
+            <span aria-hidden className="absolute -left-3 -top-3 h-6 w-6 rounded-full bg-[#070c18]" />
+            <span aria-hidden className="absolute -right-3 -top-3 h-6 w-6 rounded-full bg-[#070c18]" />
+            <div className={`${mono} grid grid-cols-4 gap-2 text-[11px]`}>
+              {[["Passenger", "M. Sudhan"], ["Class", "MSc"], ["Gate", "Data"], ["Seat", "Analyst"]].map(([k, v]) => (
+                <div key={k}>
+                  <p className="uppercase tracking-[0.15em] opacity-55">{k}</p>
+                  <p className="mt-0.5 font-semibold">{v}</p>
+                </div>
+              ))}
+            </div>
+            <div aria-hidden className="mt-4 h-9 rounded-sm opacity-80" style={{ background: "repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 13px)" }} />
           </div>
         </section>
 
