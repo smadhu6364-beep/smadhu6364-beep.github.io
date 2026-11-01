@@ -4,23 +4,14 @@ import { useEffect, useState } from "react";
 import SqlInAction from "@/components/SqlInAction";
 import { education, experience, profile, projects, skills } from "@/lib/data";
 import Scene from "./Scene";
-import { AuroraGame, Clocks, DublinNow, PostOffice, SusGame, useLaplandSound } from "./Widgets";
+import { SusGame, TopChips, useLaplandSound } from "./Widgets";
 import feeds from "@/lib/feeds.json";
-
-// Lapland has its own names for the seasons; we show the one Rovaniemi is in now.
-function season(d = new Date()) {
-  const m = d.getMonth();
-  if (m === 10 || m === 11 || m === 0) return ["Kaamos", "polar night"];
-  if (m <= 3) return ["Hanki", "crust snow"];
-  if (m <= 6) return ["Yötön yö", "nightless night"];
-  return ["Ruska", "autumn colours"];
-}
 
 function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
   return (
     <p className="flex items-baseline gap-2">
-      <span className="text-[13px] font-semibold tracking-wide text-[color:var(--lap-accent)]">{fi}</span>
-      <span className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-60`}>{en}</span>
+      <span className="text-[13px] font-semibold tracking-wide text-[color:var(--lap-accent)]">{en}</span>
+      <span className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-50`}>{fi}</span>
     </p>
   );
 }
@@ -106,7 +97,6 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   const [night, setNight] = useState(true);
   const [lively, setLively] = useState(true);
   const sound = useLaplandSound();
-  const [fi, en] = season();
 
   useEffect(() => {
     try {
@@ -128,46 +118,56 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   const pill = `${mono} inline-flex h-9 items-center gap-2 rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3.5 text-[11px] uppercase tracking-[0.15em] transition hover:border-[color:var(--lap-accent)]`;
   const [msc, be] = education;
 
+  // the most data-related line from each job, so the work history reads as analyst experience
+  const dataPoint = (points: string[]) => points.find((p) => /record|figure|stock|data|track|inventor/i.test(p)) ?? points[0];
+  const icon = `${mono} inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] text-[13px] transition hover:border-[color:var(--lap-accent)]`;
+  // the 30-second version, as a terminal session
+  const TERMINAL: [string, string[]][] = [
+    ["whoami", ["data analyst · dublin · open to roles in ireland"]],
+    ["cat stack.txt", ["SQL  Python  Power BI  Excel  DuckDB  pandas"]],
+    ["ls proof/", ["irish-property-sql/   812,018 sales in SQL", "llm-benchmark/        public repo, 456 unit tests", "hackernoon.md         published, Oct 2026"]],
+    ["cat education.txt", [`MSc Business Analytics, DCU (${msc.dates})`, "BE Computer Science, DSATM (2019 – 2023)"]],
+  ];
+
   return (
     <div className={`lap ${night ? "lap-night" : "lap-day"} ${sans} min-h-screen`}>
       <Scene night={night} lively={lively} />
 
-      <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 pt-6 sm:px-6">
+      {/* Top bar: who, what, live clocks, and the controls as small icons */}
+      <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 pt-5 sm:px-6">
         <a href="#top" className="flex items-center gap-3">
-          <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[color:var(--lap-accent)] text-xl text-[#06231a]" aria-hidden="true">❄</span>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--lap-accent)] text-lg text-[#06231a]" aria-hidden="true">❄</span>
           <span>
             <span className={`${display} block text-2xl leading-tight [text-shadow:0_1px_8px_rgb(0_0_0/.35)]`}>Madhu Sudhan</span>
-            <span className={`${mono} block text-[10px] uppercase tracking-[0.25em] opacity-70`}>Dublin 9 · 53°N, dreaming of 66°N</span>
+            <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-80`}>Data Analyst · Dublin · Open to roles</span>
           </span>
         </a>
-        <div className="flex flex-wrap gap-2">
-          <button type="button" className={pill} onClick={() => setNight(!night)} aria-pressed={night}>
-            <span aria-hidden="true">{night ? "☾" : "☀"}</span>{night ? "Polar night" : "Blue hour"}
+        <div className="flex flex-wrap items-center gap-1.5">
+          <TopChips mono={mono} />
+          <button type="button" className={icon} onClick={() => setNight(!night)} aria-pressed={night} aria-label={night ? "Switch to day view" : "Switch to night view"} title={night ? "Night view" : "Day view"}>
+            {night ? "☾" : "☀"}
           </button>
-          <button type="button" className={pill} onClick={() => setLively(!lively)} aria-pressed={lively}>
-            <span aria-hidden="true">❄</span>{lively ? "Lively" : "Calm"}
+          <button type="button" className={icon} onClick={() => setLively(!lively)} aria-pressed={lively} aria-label={lively ? "Pause the animation" : "Play the animation"} title={lively ? "Animation on" : "Animation paused"}>
+            {lively ? "❄" : "⏸"}
           </button>
-          <button type="button" className={pill} onClick={sound.toggle} aria-pressed={sound.on}>
-            <span aria-hidden="true">♪</span>{sound.on ? "Sound on" : "Sound off"}
+          <button type="button" className={icon} onClick={sound.toggle} aria-pressed={sound.on} aria-label={sound.on ? "Turn music off" : "Turn music on"} title={sound.on ? "Music on" : "Music off"}>
+            {sound.on ? "♪" : "♩"}
           </button>
-          <a href="/cv" className={`${pill} border-[color:var(--lap-accent)]`}>In a hurry? Recruiter view →</a>
-          <span className={`${pill} hidden sm:inline-flex`} title={`Season in Lapland: ${en}`}>
-            <span aria-hidden="true">✦</span>{fi}
-          </span>
+          <a href="/cv" className={`${pill} h-8 border-[color:var(--lap-accent)] px-3 text-[10px]`}>Recruiter view →</a>
         </div>
       </header>
 
-      <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-8 sm:px-6 lg:grid-cols-12">
+      <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-6 sm:px-6 lg:grid-cols-12">
         {/* Intro */}
         <section id="about" data-reveal className={`${card} scroll-mt-6 lg:col-span-7`}>
-          <Label fi="Minä" en="Madhu Sudhan" mono={mono} />
-          <h1 className={`${display} mt-5 text-[34px] leading-[1.08] sm:text-[48px]`}>
+          <Label fi="minä" en="About me" mono={mono} />
+          <h1 className={`${display} mt-4 text-[32px] leading-[1.08] sm:text-[44px]`}>
             I used to fix booking mistakes for a living. Now I go looking for them in data.
           </h1>
-          <p className="mt-5 max-w-xl text-[15px] leading-relaxed opacity-80">
+          <p className="mt-4 max-w-xl text-[15px] leading-relaxed opacity-80">
             Two years in operations in Bengaluru, now an MSc Business Analytics student at DCU. I write SQL and Python, I check my numbers twice, and I&rsquo;m looking for analyst roles in Ireland.
           </p>
-          <div className="mt-6 flex flex-wrap gap-2">
+          <div className="mt-5 flex flex-wrap gap-2">
             <a href="/cv" className={pill}>CV ↗</a>
             <a href={profile.github} target="_blank" rel="noreferrer" className={pill}>GitHub ↗</a>
             <a href={profile.linkedin} target="_blank" rel="noreferrer" className={pill}>LinkedIn ↗</a>
@@ -175,48 +175,30 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           </div>
         </section>
 
-        {/* Clocks */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-card lap-ink rounded-[22px] p-6 sm:p-7 lg:col-span-5">
-          <Label fi="Nyt" en="Now in Dublin" mono={mono} />
-          <div className="mt-5"><Clocks /></div>
-        </section>
-
-        {/* Route */}
-        <section data-reveal className={`${card} lg:col-span-5`}>
-          <Label fi="Reitti" en="The route" mono={mono} />
-          <svg viewBox="0 0 300 120" className="mt-4 w-full" aria-hidden="true">
-            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="currentColor" strokeOpacity=".35" strokeWidth="2" strokeDasharray="6 7" />
-            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="var(--lap-accent)" strokeWidth="2.5" pathLength={1} strokeDasharray="1" className="lap-route" />
-            <circle cx="30" cy="95" r="5" fill="var(--lap-accent)" /><circle cx="270" cy="70" r="5" fill="var(--lap-accent)" />
-            <text x="30" y="115" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>BLR</text>
-            <text x="270" y="90" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>DUB</text>
-          </svg>
-          <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
-            <div><p className="font-semibold">{be.school}</p><p className="opacity-70">{be.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{be.dates}</p></div>
-            <div className="text-right"><p className="font-semibold">DCU</p><p className="opacity-70">{msc.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{msc.dates}</p></div>
+        {/* At a glance, as a terminal */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="overflow-hidden rounded-[22px] border border-[color:var(--lap-line)] bg-[#050a14f2] text-[#d9f7ea] shadow-xl lg:col-span-5">
+          <div className="flex items-center gap-2 border-b border-white/10 px-4 py-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ff6b6b]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#ffd166]" />
+            <span className="h-2.5 w-2.5 rounded-full bg-[#06d6a0]" />
+            <span className={`${mono} ml-2 text-[11px] opacity-60`}>madhu@dublin: ~ · at a glance</span>
+          </div>
+          <div className={`${mono} space-y-3 p-5 text-[12.5px] leading-relaxed`}>
+            {TERMINAL.map(([cmd, out]) => (
+              <div key={cmd}>
+                <p><span className="text-[#7fe3bf]">$</span> {cmd}</p>
+                {out.map((line) => (
+                  <p key={line} className="whitespace-pre-wrap opacity-80">{line}</p>
+                ))}
+              </div>
+            ))}
+            <p><span className="text-[#7fe3bf]">$</span> <span className="lap-caret inline-block h-3.5 w-2 translate-y-0.5 bg-[#7fe3bf]" /></p>
           </div>
         </section>
 
-        {/* Work */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-7`}>
-          <Label fi="Työ" en="Work" mono={mono} />
-          <ol className="mt-5 space-y-5">
-            {experience.map((j) => (
-              <li key={j.company} className="grid gap-1 border-l-2 border-[color:var(--lap-accent)] pl-4 sm:grid-cols-[1fr_auto]">
-                <div>
-                  <p className="text-lg font-medium leading-snug">{j.role}</p>
-                  <p className="text-sm opacity-75">{j.company} · {j.place}</p>
-                  <p className="mt-1 text-sm leading-relaxed opacity-70">{j.points[0]}</p>
-                </div>
-                <p className={`${mono} text-[11px] uppercase tracking-wider opacity-60`}>{j.dates}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
         {/* Projects */}
-        <div id="work" className="flex scroll-mt-6 items-end justify-between pt-6 lg:col-span-12">
-          <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built <span className="italic text-[color:var(--lap-accent)]">· projektit</span></h2>
+        <div id="work" className="flex scroll-mt-6 items-end justify-between pt-4 lg:col-span-12">
+          <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built</h2>
         </div>
         {projects.map((p, i) => (
           <a key={p.id} href={CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo} {...(CASE_STUDIES.has(p.id) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
@@ -239,15 +221,48 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
 
         {/* Proof: real queries with their real result rows */}
         <section data-reveal className={`${card} lap-sql lg:col-span-12`}>
-          <Label fi="Näyttö" en="Proof · SQL in action" mono={mono} />
+          <Label fi="näyttö" en="Proof · SQL in action" mono={mono} />
           <h2 className={`${display} mt-3 text-3xl sm:text-4xl`}>Real queries, real rows.</h2>
           <p className="mb-5 mt-2 max-w-2xl text-sm opacity-75">From my Irish property project: 812,018 sales from the Property Price Register, cleaned and queried in DuckDB. Pick a question to see the SQL and what it returned.</p>
           <SqlInAction />
         </section>
 
+        {/* Work */}
+        <section data-reveal className={`${card} lg:col-span-7`}>
+          <Label fi="työ" en="Work" mono={mono} />
+          <ol className="mt-5 space-y-5">
+            {experience.map((j) => (
+              <li key={j.company} className="grid gap-1 border-l-2 border-[color:var(--lap-accent)] pl-4 sm:grid-cols-[1fr_auto]">
+                <div>
+                  <p className="text-lg font-medium leading-snug">{j.role}</p>
+                  <p className="text-sm opacity-75">{j.company} · {j.place}</p>
+                  <p className="mt-1 text-sm leading-relaxed opacity-70">{dataPoint(j.points)}</p>
+                </div>
+                <p className={`${mono} text-[11px] uppercase tracking-wider opacity-60`}>{j.dates}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* Education, as the route from Bengaluru to Dublin */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-5`}>
+          <Label fi="reitti" en="Education · the route" mono={mono} />
+          <svg viewBox="0 0 300 120" className="mt-4 w-full" aria-hidden="true">
+            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="currentColor" strokeOpacity=".35" strokeWidth="2" strokeDasharray="6 7" />
+            <path d="M30 95 C 90 10, 210 10, 270 70" fill="none" stroke="var(--lap-accent)" strokeWidth="2.5" pathLength={1} strokeDasharray="1" className="lap-route" />
+            <circle cx="30" cy="95" r="5" fill="var(--lap-accent)" /><circle cx="270" cy="70" r="5" fill="var(--lap-accent)" />
+            <text x="30" y="115" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>BLR</text>
+            <text x="270" y="90" textAnchor="middle" fontSize="11" fill="currentColor" className={mono}>DUB</text>
+          </svg>
+          <div className="mt-2 grid grid-cols-2 gap-4 text-sm">
+            <div><p className="font-semibold">{be.school}</p><p className="opacity-70">{be.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{be.dates}</p></div>
+            <div className="text-right"><p className="font-semibold">DCU</p><p className="opacity-70">{msc.title}</p><p className={`${mono} mt-1 text-[11px] opacity-60`}>{msc.dates}</p></div>
+          </div>
+        </section>
+
         {/* Badges, hung like event lanyards */}
         <section className="pt-4 lg:col-span-12">
-          <Label fi="Kortit" en="Badges I've earned" mono={mono} />
+          <Label fi="kortit" en="Badges I've earned" mono={mono} />
           <div className="relative mt-5">
             <div aria-hidden className="absolute inset-x-0 top-[6px] h-[5px] rounded-full bg-gradient-to-b from-[#cfd8e6] to-[#8a97ad] shadow" />
             <div className="relative flex snap-x snap-mandatory gap-5 overflow-x-auto px-1 pb-4 sm:justify-around sm:overflow-visible">
@@ -276,7 +291,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
 
         {/* Skills */}
         <section data-reveal className={`${card} lg:col-span-5`}>
-          <Label fi="Taidot" en="Toolkit" mono={mono} />
+          <Label fi="taidot" en="Toolkit" mono={mono} />
           <div className="mt-4 space-y-3">
             {skills.slice(0, 4).map((g) => (
               <div key={g.name}>
@@ -291,42 +306,28 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           </div>
         </section>
 
-        {/* Game */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-4`}>
-          <Label fi="Revontulet" en="Catch the lights" mono={mono} />
-          <p className="mt-3 text-sm opacity-75">The aurora won&rsquo;t sit still. Tap the sparks before they fade. You get twenty seconds.</p>
-          <div className="mt-4"><AuroraGame /></div>
-        </section>
-
-        {/* Hobbies */}
-        <section data-reveal style={{ ["--d" as string]: ".2s" }} className={`${card} lg:col-span-3`}>
-          <Label fi="Juuri nyt" en="Right now" mono={mono} />
-          <ul className="mt-4 space-y-3 text-sm leading-snug">
-            <li><span className="text-[color:var(--lap-accent)]">●</span> MSc Business Analytics at DCU</li>
-            <li><span className="text-[color:var(--lap-accent)]">●</span> A second HackerNoon piece in editorial review</li>
-            <li><span className="text-[color:var(--lap-accent)]">●</span> Looking for data analyst roles in Ireland</li>
-          </ul>
-        </section>
-
-        {/* Trending in Dublin */}
-        <section data-reveal className={`${card} lg:col-span-6`}>
-          <Label fi="Dublinissä" en="Trending in Dublin" mono={mono} />
-          <div className="mt-3"><DublinNow mono={mono} /></div>
-          <ul className="mt-4 divide-y divide-[color:var(--lap-line)]">
-            {feeds.dublin.slice(0, 5).map((n) => (
-              <li key={n.link}>
-                <a href={n.link} target="_blank" rel="noreferrer" className="group block py-2.5">
-                  <span className="text-sm leading-snug transition group-hover:text-[color:var(--lap-accent)]">{n.title}</span>
-                  <span className={`${mono} mt-0.5 block text-[10px] uppercase tracking-[0.15em] opacity-55`}>{n.source}</span>
-                </a>
+        {/* What we're cooking */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-7`}>
+          <Label fi="keittiössä" en="What we're cooking" mono={mono} />
+          <ul className="mt-4 space-y-3">
+            {KITCHEN.map((k) => (
+              <li key={k.dish} className="flex items-start gap-3 rounded-xl border border-[color:var(--lap-line)] p-3.5">
+                <span aria-hidden className="text-2xl leading-none">{k.icon}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="text-[15px] font-semibold">{k.dish}</span>
+                    <span className={`${mono} rounded-full bg-[color:var(--lap-accent)]/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-[color:var(--lap-accent)]`}>{k.status}</span>
+                  </span>
+                  <span className="mt-1 block text-sm leading-snug opacity-75">{k.note}</span>
+                </span>
               </li>
             ))}
           </ul>
         </section>
 
-        {/* Tech news */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-6`}>
-          <Label fi="Teknologia" en="Tech news · top of Hacker News" mono={mono} />
+        {/* Tech news: what I read */}
+        <section data-reveal className={`${card} lg:col-span-7`}>
+          <Label fi="luen" en="What I'm reading · top of Hacker News" mono={mono} />
           <ol className="mt-4 divide-y divide-[color:var(--lap-line)]">
             {feeds.tech.slice(0, 5).map((n, i) => (
               <li key={n.link} className="flex gap-3 py-2.5">
@@ -348,46 +349,24 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           )}
         </section>
 
-        {/* What we're cooking */}
-        <section data-reveal className={`${card} lg:col-span-7`}>
-          <Label fi="Keittiössä" en="What we're cooking" mono={mono} />
-          <ul className="mt-4 space-y-3">
-            {KITCHEN.map((k) => (
-              <li key={k.dish} className="flex items-start gap-3 rounded-xl border border-[color:var(--lap-line)] p-3.5">
-                <span aria-hidden className="text-2xl leading-none">{k.icon}</span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="text-[15px] font-semibold">{k.dish}</span>
-                    <span className={`${mono} rounded-full bg-[color:var(--lap-accent)]/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-[color:var(--lap-accent)]`}>{k.status}</span>
-                  </span>
-                  <span className="mt-1 block text-sm leading-snug opacity-75">{k.note}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </section>
-
         {/* Something sus */}
         <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-5`}>
-          <Label fi="Epäilyttävä" en="Something sus" mono={mono} />
+          <Label fi="epäilyttävä" en="Something sus" mono={mono} />
           <p className="mb-4 mt-3 text-sm opacity-75">Four of these are true. One is the impostor.</p>
           <SusGame mono={mono} />
         </section>
 
-        {/* Post office */}
-        <section data-reveal className={`${card} lg:col-span-7`}>
-          <Label fi="Postitoimisto" en="Arctic Circle post office" mono={mono} />
-          <h2 className={`${display} mt-4 text-3xl`}>Leave me a note.</h2>
-          <p className="mt-2 text-sm opacity-75">Santa&rsquo;s post office on the Arctic Circle gets letters from all over the world. Mine gets fewer, so yours will definitely be read.</p>
-          <div className="mt-4"><PostOffice email={profile.email} /></div>
-        </section>
-
         {/* Contact */}
-        <section id="contact" data-reveal style={{ ["--d" as string]: ".1s" }} className="lap-contact rounded-[22px] p-7 text-white shadow-xl lg:col-span-5">
-          <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-80`}>Ota yhteyttä · get in touch</p>
-          <p className={`${display} mt-4 text-4xl leading-tight`}>Hiring a data analyst in Ireland?</p>
-          <a href={`mailto:${profile.email}`} className={`${mono} mt-6 block text-sm underline-offset-4 hover:underline`}>{profile.email}</a>
-          <a href={profile.linkedin} target="_blank" rel="noreferrer" className={`${mono} mt-1 block text-sm underline-offset-4 hover:underline`}>LinkedIn ↗</a>
+        <section id="contact" data-reveal className="lap-contact flex flex-col gap-6 rounded-[22px] p-7 text-white shadow-xl sm:flex-row sm:items-end sm:justify-between lg:col-span-12">
+          <div>
+            <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-80`}>Get in touch · ota yhteyttä</p>
+            <p className={`${display} mt-3 text-4xl leading-tight`}>Hiring a data analyst in Ireland?</p>
+          </div>
+          <div className={`${mono} flex flex-col gap-1 text-sm`}>
+            <a href={`mailto:${profile.email}`} className="underline-offset-4 hover:underline">{profile.email}</a>
+            <a href={profile.linkedin} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">LinkedIn ↗</a>
+            <a href="/cv" className="underline-offset-4 hover:underline">CV ↗</a>
+          </div>
         </section>
       </main>
 
