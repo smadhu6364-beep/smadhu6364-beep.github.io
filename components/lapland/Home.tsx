@@ -11,7 +11,7 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
   return (
     <p className="flex items-baseline gap-2">
       <span className="text-[13px] font-semibold tracking-wide text-[color:var(--lap-accent)]">{en}</span>
-      <span className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-50`}>{fi}</span>
+      <span className={`${mono} text-[11px] uppercase tracking-[0.25em] opacity-65`}>{fi}</span>
     </p>
   );
 }
@@ -119,13 +119,13 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   const [msc, be] = education;
 
   // the most data-related line from each job, so the work history reads as analyst experience
-  const dataPoint = (points: string[]) => points.find((p) => /record|figure|stock|data|track|inventor/i.test(p)) ?? points[0];
-  const icon = `${mono} inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] text-[13px] transition hover:border-[color:var(--lap-accent)]`;
+  const dataPoint = (points: string[]) => [/figure|data|record/i, /track|stock|inventor/i].map((re) => points.find((p) => re.test(p))).find(Boolean) ?? points[0];
+  const icon = `${mono} inline-flex h-10 w-10 items-center justify-center rounded-full sm:h-8 sm:w-8 border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] text-[13px] transition hover:border-[color:var(--lap-accent)]`;
   // the 30-second version, as a terminal session
   const TERMINAL: [string, string[]][] = [
     ["whoami", ["data analyst · dublin · open to roles in ireland"]],
     ["cat stack.txt", ["SQL  Python  Power BI  Excel  DuckDB  pandas"]],
-    ["ls proof/", ["irish-property-sql/   812,018 sales in SQL", "llm-benchmark/        public repo, 456 unit tests", "hackernoon.md         published, Oct 2026"]],
+    ["ls proof/", ["irish-property-sql/  · 812,018 sales", "llm-benchmark/       · 456 tests", "hackernoon.md        · published"]],
     ["cat education.txt", [`MSc Business Analytics, DCU (${msc.dates})`, "BE Computer Science, DSATM (2019 – 2023)"]],
   ];
 
@@ -139,7 +139,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[color:var(--lap-accent)] text-lg text-[#06231a]" aria-hidden="true">❄</span>
           <span>
             <span className={`${display} block text-2xl leading-tight [text-shadow:0_1px_8px_rgb(0_0_0/.35)]`}>Madhu Sudhan</span>
-            <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-80`}>Data Analyst · Dublin · Open to roles</span>
+            <span className={`${mono} block text-[11px] uppercase tracking-[0.2em] opacity-80`}>Data Analyst · Dublin · Open to roles</span>
           </span>
         </a>
         <div className="flex flex-wrap items-center gap-1.5">
@@ -153,13 +153,13 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <button type="button" className={icon} onClick={sound.toggle} aria-pressed={sound.on} aria-label={sound.on ? "Turn music off" : "Turn music on"} title={sound.on ? "Music on" : "Music off"}>
             {sound.on ? "♪" : "♩"}
           </button>
-          <a href="/cv" className={`${pill} h-8 border-[color:var(--lap-accent)] px-3 text-[10px]`}>Recruiter view →</a>
+          <a href="/cv" className={`${pill} h-8 border-[color:var(--lap-accent)] px-3 text-[11px]`}>Recruiter view →</a>
         </div>
       </header>
 
       <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-6 sm:px-6 lg:grid-cols-12">
         {/* Intro */}
-        <section id="about" data-reveal className={`${card} scroll-mt-6 lg:col-span-7`}>
+        <section id="about" className={`${card} scroll-mt-6 lg:col-span-7`}>
           <Label fi="minä" en="About me" mono={mono} />
           <h1 className={`${display} mt-4 text-[32px] leading-[1.08] sm:text-[44px]`}>
             I used to fix booking mistakes for a living. Now I go looking for them in data.
@@ -176,7 +176,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         </section>
 
         {/* At a glance, as a terminal */}
-        <section data-reveal style={{ ["--d" as string]: ".1s" }} className="overflow-hidden rounded-[22px] border border-[color:var(--lap-line)] bg-[#050a14f2] text-[#d9f7ea] shadow-xl lg:col-span-5">
+        <section className="overflow-hidden rounded-[22px] border border-[color:var(--lap-line)] bg-[#050a14f2] text-[#d9f7ea] shadow-xl lg:col-span-5">
           <div className="flex items-center gap-2 border-b border-white/10 px-4 py-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-[#ff6b6b]" />
             <span className="h-2.5 w-2.5 rounded-full bg-[#ffd166]" />
@@ -204,7 +204,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <a key={p.id} href={CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo} {...(CASE_STUDIES.has(p.id) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
             className={`${card} group flex flex-col ${i === 0 ? "lg:col-span-8" : "lg:col-span-4"}`}>
             <div className="flex items-start justify-between gap-4">
-              <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
+              <p className={`${mono} text-[11px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
               <span className="text-[color:var(--lap-accent)] transition group-hover:translate-x-1">→</span>
             </div>
             <div className="mt-4 flex items-start gap-4">
@@ -273,11 +273,11 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                   <span aria-hidden className="-mt-1 h-4 w-8 rounded-md bg-gradient-to-b from-[#e2e6ee] to-[#9aa3b3]" />
                   <span className="lap-card -mt-1 block w-full overflow-hidden rounded-2xl text-left">
                     <span className="block px-4 py-3 text-[#06121f]" style={{ background: b.color }}>
-                      <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-80`}>{b.org}</span>
+                      <span className={`${mono} block text-[11px] uppercase tracking-[0.2em] opacity-80`}>{b.org}</span>
                       <span className="mt-1 block text-[26px] font-extrabold uppercase leading-none tracking-tight">{b.role}</span>
                     </span>
                     <span className="block px-4 pb-4 pt-3">
-                      <span className={`${mono} block text-[10px] uppercase tracking-[0.2em] opacity-60`}>Madhu Sudhan · {b.when}</span>
+                      <span className={`${mono} block text-[11px] uppercase tracking-[0.2em] opacity-60`}>Madhu Sudhan · {b.when}</span>
                       <span className="mt-1 block text-[15px] font-semibold leading-snug">{b.title}</span>
                       <span className="mt-1.5 block text-xs leading-relaxed opacity-70">{b.note}</span>
                       <span className={`${mono} mt-3 block text-[11px] text-[color:var(--lap-accent)]`}>{b.cta} ↗</span>
@@ -295,7 +295,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <div className="mt-4 space-y-3">
             {skills.slice(0, 4).map((g) => (
               <div key={g.name}>
-                <p className={`${mono} text-[10px] uppercase tracking-[0.2em] opacity-60`}>{g.name}</p>
+                <p className={`${mono} text-[11px] uppercase tracking-[0.2em] opacity-60`}>{g.name}</p>
                 <div className="mt-1.5 flex flex-wrap gap-1.5">
                   {g.skills.map((s) => (
                     <span key={s} className="rounded-full border border-[color:var(--lap-line)] px-2.5 py-1 text-xs">{s}</span>
@@ -316,7 +316,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                 <span className="min-w-0 flex-1">
                   <span className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="text-[15px] font-semibold">{k.dish}</span>
-                    <span className={`${mono} rounded-full bg-[color:var(--lap-accent)]/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-[color:var(--lap-accent)]`}>{k.status}</span>
+                    <span className={`${mono} rounded-full bg-[color:var(--lap-accent)]/15 px-2 py-0.5 text-[11px] uppercase tracking-[0.15em] text-[color:var(--lap-accent)]`}>{k.status}</span>
                   </span>
                   <span className="mt-1 block text-sm leading-snug opacity-75">{k.note}</span>
                 </span>
@@ -334,7 +334,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                 <span className={`${mono} w-5 shrink-0 pt-0.5 text-xs text-[color:var(--lap-accent)]`}>{i + 1}</span>
                 <span className="min-w-0">
                   <a href={n.link} target="_blank" rel="noreferrer" className="text-sm leading-snug transition hover:text-[color:var(--lap-accent)]">{n.title}</a>
-                  <span className={`${mono} mt-0.5 block truncate text-[10px] uppercase tracking-[0.15em] opacity-55`}>
+                  <span className={`${mono} mt-0.5 block truncate text-[11px] uppercase tracking-[0.15em] opacity-70`}>
                     {n.site} · {n.points} points ·{" "}
                     <a href={n.comments} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">discussion</a>
                   </span>
@@ -343,7 +343,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
             ))}
           </ol>
           {feeds.updated && (
-            <p className={`${mono} mt-3 text-[10px] uppercase tracking-[0.15em] opacity-50`}>
+            <p className={`${mono} mt-3 text-[11px] uppercase tracking-[0.15em] opacity-65`}>
               Refreshed {new Date(feeds.updated).toLocaleDateString("en-IE", { day: "numeric", month: "short" })}, every morning
             </p>
           )}
@@ -359,7 +359,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         {/* Contact */}
         <section id="contact" data-reveal className="lap-contact flex flex-col gap-6 rounded-[22px] p-7 text-white shadow-xl sm:flex-row sm:items-end sm:justify-between lg:col-span-12">
           <div>
-            <p className={`${mono} text-[10px] uppercase tracking-[0.25em] opacity-80`}>Get in touch · ota yhteyttä</p>
+            <p className={`${mono} text-[11px] uppercase tracking-[0.25em] opacity-80`}>Get in touch · ota yhteyttä</p>
             <p className={`${display} mt-3 text-4xl leading-tight`}>Hiring a data analyst in Ireland?</p>
           </div>
           <div className={`${mono} flex flex-col gap-1 text-sm`}>

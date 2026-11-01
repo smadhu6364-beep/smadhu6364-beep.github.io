@@ -212,7 +212,7 @@ export function TopChips({ mono }: { mono: string }) {
   }, []);
   const t = (zone: string) => (now ? time(zone, now) : "--:--");
   const deg = (v?: number) => (v === undefined ? "" : ` · ${v > 0 ? "+" : ""}${v}°`);
-  const chip = `${mono} inline-flex h-8 items-center gap-1.5 rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3 text-[11px] tabular-nums`;
+  const chip = `${mono} inline-flex h-10 items-center gap-1.5 rounded-full border sm:h-8 border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3 text-[11px] tabular-nums`;
   return (
     <>
       <span className={chip} title="Time and temperature in Dublin">

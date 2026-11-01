@@ -398,7 +398,7 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
             hl.addColorStop(0, "rgba(255,240,200,0.6)");
             hl.addColorStop(1, "rgba(255,240,200,0)");
             ca.fillStyle = hl;
-            ca.fillRect(x0 - carW * 1.6, y0 - carW, carW * 1.7, carW * 2);
+            ca.fillRect(x0 - carW * 1.6, y0 + carH / 2 - carW * 1.6, carW * 3.2, carW * 3.2); // cover the whole glow, so no hard edge
           }
         }
       }
@@ -491,8 +491,9 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         if (quality === 0) gap = 1000;
       }
     };
-    raf = requestAnimationFrame(frame);
-    return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+    const start = window.setTimeout(() => { raf = requestAnimationFrame(frame); }, 400);
+    return () => {
+      window.clearTimeout(start); cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
   }, []);
 
   return (
