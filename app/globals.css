@@ -166,3 +166,8 @@ section[id] { scroll-margin-top: 88px; }
 
 .lap-caret { animation: lapCaret 1s steps(2) infinite; }
 @keyframes lapCaret { 50% { opacity: 0; } }
+
+/* project switcher: the detail panel slides in when the pick changes */
+.lap-swap { animation: lapSwap .35s cubic-bezier(.2,.7,.2,1); }
+@keyframes lapSwap { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .lap-swap { animation: none; } }
