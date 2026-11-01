@@ -46,9 +46,9 @@ export const experience: Job[] = [
     end: "2026-09",
     tags: ["Customer service", "Query and complaint resolution", "Records accuracy"],
     points: [
-      "Answered customer queries and resolved booking issues in a busy, high-volume operations team.",
-      "Found and corrected errors in booking records.",
-      "Worked with teammates to keep daily operations running.",
+      "Audited booking records for errors and corrected them, keeping customer data accurate.",
+      "Resolved a high volume of booking queries and issues, working each one back to the record that caused it.",
+      "Worked with the operations team to keep daily processes and records running smoothly.",
     ],
   },
   {
@@ -61,9 +61,9 @@ export const experience: Job[] = [
     end: "2026-03",
     tags: ["Customer service", "Query and complaint resolution", "Inventory checks", "Shift reporting"],
     points: [
-      "Handled customer onboarding and card payments, and resolved complaints in a high-footfall setting.",
-      "Ran stock checks and inventory checkpoints.",
-      "Compiled shift figures in tracking files so supervisors could plan the week.",
+      "Compiled daily shift figures into tracking sheets that supervisors used to plan the week.",
+      "Ran stock checks and inventory reconciliation at set checkpoints.",
+      "Handled customer onboarding and card payment processing, and resolved complaints in a high-footfall setting.",
     ],
   },
   {
@@ -133,10 +133,23 @@ const allProjects: Project[] = [
     tags: ["SQL", "DuckDB", "Python", "pandas", "Data visualisation", "Statistics"],
     stack: ["SQL", "DuckDB", "Python", "pandas", "matplotlib"],
     detail: [
-      "Every residential sale on the Property Price Register from 2010 to October 2026, analysed in eight SQL files.",
+      "Every residential sale on the Property Price Register from 2010 to October 2026, analysed in nine SQL files.",
       "The national median was €380,000 in 2025, up from €148,000 in 2013. Dublin's lead over the rest of the country has shrunk from 2.22 times to 1.49 times.",
     ],
     caseStudy: true,
+  },
+  {
+    id: "property-dashboard",
+    name: "Irish property dashboard",
+    tagline: "Filter 812,018 Irish house sales by county and year: prices, volumes and rankings in one view.",
+    repo: "https://github.com/smadhu6364-beep/irish-property-sql",
+    kind: "Data & BI",
+    tags: ["SQL", "DuckDB", "Data visualisation", "TypeScript", "React"],
+    stack: ["SQL", "DuckDB", "React", "TypeScript"],
+    detail: [
+      "KPI tiles, a county filter, a year range, a price trend against the national median and a county league table.",
+      "Built on a new window-function query (LAG for year-on-year change, RANK by county) over the property results.",
+    ],
   },
   {
     id: "civicpulse",
