@@ -252,7 +252,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                       <span className="h-2.5 w-2.5 rounded-full bg-[#ffd166]" />
                       <span className="h-2.5 w-2.5 rounded-full bg-[#06d6a0]" />
                       <span className={`${mono} ml-2 min-w-0 flex-1 truncate rounded-md bg-white/5 px-2 py-1 text-[11px] opacity-70`}>
-                        {p.demo?.startsWith("/") ? `smadhu6364-beep.github.io${p.demo}` : p.demo?.replace("https://", "")}
+                        {p.demo?.startsWith("/") ? `madhu.is-a.dev${p.demo}` : p.demo?.replace("https://", "")}
                       </span>
                       <a href={p.demo} {...(p.demo?.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })} className={`${mono} rounded-md px-2 py-1 text-[11px] hover:bg-white/10`}>Full screen ↗</a>
                       <button type="button" onClick={() => setLive(false)} className={`${mono} rounded-md px-2 py-1 text-[11px] hover:bg-white/10`} aria-label="Close the live demo">✕</button>

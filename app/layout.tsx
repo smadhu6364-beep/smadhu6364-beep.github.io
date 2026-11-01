@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Manrope({ subsets: ["latin"], weight: ["400", "500", "600", "700"], display: "swap", variable: "--font-inter" });
 const serif = Instrument_Serif({ subsets: ["latin"], weight: "400", style: ["normal", "italic"], display: "swap", variable: "--font-serif" });
 
-const SITE = "https://smadhu6364-beep.github.io";
+const SITE = "https://madhu.is-a.dev";
 const TITLE = "Madhu Sudhan · Data analyst in Dublin";
 const DESCRIPTION =
   "MSc Business Analytics student at DCU, building data and AI tools. Operations background; now using Python, SQL and LLMs to turn messy information into something people can act on.";

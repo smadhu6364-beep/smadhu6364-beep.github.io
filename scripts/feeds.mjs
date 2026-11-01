@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const OUT = path.resolve("lib/feeds.json");
-const UA = { "User-Agent": "madhu-portfolio-build (+https://smadhu6364-beep.github.io)" };
+const UA = { "User-Agent": "madhu-portfolio-build (+https://madhu.is-a.dev)" };
 
 const decode = (s) =>
   s.replace(/<!\[CDATA\[|\]\]>/g, "").replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">").trim();

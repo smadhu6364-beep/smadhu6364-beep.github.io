@@ -2,7 +2,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const SITE = "https://smadhu6364-beep.github.io";
+const SITE = "https://madhu.is-a.dev";
 const out = path.resolve("out");
 
 // The Airbnb group project stays off the public build until PUBLISH_AIRBNB is true
