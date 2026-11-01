@@ -31,55 +31,55 @@
       "date": "2026-10-29T16:25:32.000Z"
     },
     {
-      "title": "Gulliver 300 with Dublin City Council Libraries",
-      "source": "Dublin City Council",
-      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPT2w1el8tM0ZqSnB6R3R2QlE4WHF1d3FoSTc5ckxuWVR4cGRZNWliODdJaVpBVmlWX2NvU0NkbXYzQkROaV9GVFQydkRqQUhwTExZb0YzQTI1WDA0M0NGa2tTQkhsMUhlR1FnbDIxT3VpSmZyWkNuVUtFUlROUV9RZzUycS1nOTAt?oc=5",
-      "date": "2026-10-29T10:59:41.000Z"
+      "title": "Newcode Ireland discusses AI and dispute resolution at Dublin event",
+      "source": "Irish Legal News",
+      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPODFydTl5SHRxeEduNWw5QjdPTzNzdnVJQjFaREkwTmdBS1pmdXJ3QXU3bzNIRmgxYzkwblBXb2dIZHJXd1BaWG41Y2JmYUt1NjI5UjlYVDdKQzdSY1o0TjRwZWpZdTlJS2dXYnk0eUZzNl8wbnZLUGc5ZUlFZzJuUlBrOV9EXzE2M19NU0N1a0lxanNhNFp2WnI4X1JMMEtmSzlXTEZGSUE1X0lneldPQ0NnRHRMTTRs?oc=5",
+      "date": "2026-10-29T10:08:41.000Z"
     }
   ],
   "tech": [
     {
       "title": "HackerTube: YouTube built from videos recommended by HN",
       "link": "https://karpathy.bearblog.dev/hacker-tube/",
-      "points": 1349,
+      "points": 1358,
       "comments": "https://news.ycombinator.com/item?id=50319510",
       "site": "karpathy.bearblog.dev"
     },
     {
       "title": "OpenIDEA: The IDE you know, rebuilt in Rust",
       "link": "https://github.com/l0ng-ai/openidea",
-      "points": 23,
+      "points": 28,
       "comments": "https://news.ycombinator.com/item?id=50323848",
       "site": "github.com"
     },
     {
       "title": "An Italian farmer found some unknown seeds in his attic and planted them",
       "link": "https://www.smithsonianmag.com/science-nature/italian-farmer-found-unknown-seeds-attic-with-nothing-lose-planted-them-result-biblical-180989644/",
-      "points": 452,
+      "points": 456,
       "comments": "https://news.ycombinator.com/item?id=50320963",
       "site": "smithsonianmag.com"
     },
     {
       "title": "No AI, 52 min. Build all Linux Files utils in C by Hand [video]",
       "link": "https://www.youtube.com/watch?v=gQRmSlcTq9c",
-      "points": 28,
+      "points": 30,
       "comments": "https://news.ycombinator.com/item?id=50290480",
       "site": "youtube.com"
     },
     {
-      "title": "Running a bootstrapped SaaS for 20 years with my brother",
-      "link": "https://blog.zamzar.com/2026/10/30/20-years-766-million-files-two-chameleons/",
-      "points": 94,
-      "comments": "https://news.ycombinator.com/item?id=50303984",
-      "site": "blog.zamzar.com"
-    },
-    {
       "title": "Brazilian Court Sanctions Lawyers for Prompt Injection in Court Filing",
       "link": "https://jetstream.security/insights/brazilian-court-sanctions-prompt-injection-filing/",
-      "points": 125,
+      "points": 131,
       "comments": "https://news.ycombinator.com/item?id=50322173",
       "site": "jetstream.security"
+    },
+    {
+      "title": "Running a bootstrapped SaaS for 20 years with my brother",
+      "link": "https://blog.zamzar.com/2026/10/30/20-years-766-million-files-two-chameleons/",
+      "points": 97,
+      "comments": "https://news.ycombinator.com/item?id=50303984",
+      "site": "blog.zamzar.com"
     }
   ],
-  "updated": "2026-11-01T10:37:46.769Z"
+  "updated": "2026-11-01T10:44:28.734Z"
 }

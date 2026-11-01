@@ -105,6 +105,7 @@ function Emblem({ id }: { id: string }) {
 export default function LaplandHome({ display, sans, mono }: { display: string; sans: string; mono: string }) {
   const [night, setNight] = useState(true);
   const [lively, setLively] = useState(true);
+  const [pick, setPick] = useState(0); // which project the switcher shows
   const sound = useLaplandSound();
 
   useEffect(() => {
@@ -209,24 +210,70 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         <div id="work" className="flex scroll-mt-6 items-end justify-between pt-4 lg:col-span-12">
           <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built</h2>
         </div>
-        {projects.map((p, i) => (
-          <a key={p.id} href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
-            className={`${card} group flex flex-col ${["lg:col-span-8", "lg:col-span-4", "lg:col-span-4", "lg:col-span-8", "lg:col-span-6", "lg:col-span-6"][i] ?? "lg:col-span-4"}`}>
-            <div className="flex items-start justify-between gap-4">
-              <p className={`${mono} text-[11px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
-              <span className="text-[color:var(--lap-accent)] transition group-hover:translate-x-1">→</span>
-            </div>
-            <div className="mt-4 flex items-start gap-4">
-              <div className="shrink-0 rounded-xl bg-white/70 p-1 shadow-sm"><Emblem id={p.id} /></div>
-              <div>
-                <h3 className="text-lg font-semibold leading-snug sm:text-xl">{p.name}</h3>
-                <p className="mt-2 text-sm leading-relaxed opacity-75">{p.tagline}</p>
-              </div>
-            </div>
-            <p className={`${mono} mt-auto pt-5 text-[11px] opacity-60`}>{p.stack.slice(0, 4).join(" · ")}</p>
-            <p className={`${mono} mt-2 text-[11px] text-[color:var(--lap-accent)]`}>{p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}</p>
-          </a>
-        ))}
+        {/* Project switcher: a list on the left, one detail panel on the right. Phones get a swipe row. */}
+        <section data-reveal className={`${card} lg:col-span-12`}>
+          {/* desktop */}
+          <div className="hidden gap-6 md:grid md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.3fr)]">
+            <ol className="space-y-1" role="tablist" aria-label="Projects">
+              {projects.map((p, i) => {
+                const on = i === pick;
+                return (
+                  <li key={p.id}>
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={on}
+                      onMouseEnter={() => setPick(i)}
+                      onFocus={() => setPick(i)}
+                      onClick={() => setPick(i)}
+                      className={`group grid w-full grid-cols-[28px_1fr_auto] items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${on ? "bg-[color:var(--lap-accent)]/12" : "hover:bg-white/5"}`}
+                    >
+                      <span className={`${mono} text-xs ${on ? "text-[color:var(--lap-accent)]" : "opacity-50"}`}>{String(i + 1).padStart(2, "0")}</span>
+                      <span className={`truncate text-[15px] ${on ? "font-semibold" : "opacity-80"}`}>{p.name}</span>
+                      <span className={`${mono} text-[10px] uppercase tracking-[0.15em] ${on ? "text-[color:var(--lap-accent)]" : "opacity-40"}`}>{p.kind}</span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+            {(() => {
+              const p = projects[pick];
+              return (
+                <div key={p.id} role="tabpanel" className="lap-swap flex flex-col rounded-2xl border border-[color:var(--lap-line)] p-5">
+                  <div className="flex items-start gap-4">
+                    <div className="shrink-0 rounded-xl bg-white/70 p-1 shadow-sm"><Emblem id={p.id} /></div>
+                    <div className="min-w-0">
+                      <h3 className="text-xl font-semibold leading-snug">{p.name}</h3>
+                      <p className="mt-1.5 text-sm leading-relaxed opacity-80">{p.tagline}</p>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed opacity-70">{p.detail[0]}</p>
+                  <p className={`${mono} mt-4 text-[11px] opacity-60`}>{p.stack.slice(0, 5).join(" · ")}</p>
+                  <a href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className={`${pill} mt-5 self-start border-[color:var(--lap-accent)] text-[color:var(--lap-accent)]`}>
+                    {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
+                  </a>
+                </div>
+              );
+            })()}
+          </div>
+          {/* phone */}
+          <div className="-mx-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-2 pb-2 [scrollbar-width:none] md:hidden">
+            {projects.map((p, i) => (
+              <a key={p.id} href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className="flex w-[78%] shrink-0 snap-center flex-col rounded-2xl border border-[color:var(--lap-line)] p-4">
+                <div className="flex items-center gap-3">
+                  <div className="shrink-0 rounded-lg bg-white/70 p-0.5 [&_svg]:h-10 [&_svg]:w-10"><Emblem id={p.id} /></div>
+                  <span className={`${mono} text-[11px] opacity-60`}>{String(i + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
+                </div>
+                <h3 className="mt-3 text-base font-semibold leading-snug">{p.name}</h3>
+                <p className="mt-1 text-sm leading-snug opacity-75">{p.tagline}</p>
+                <p className={`${mono} mt-auto pt-3 text-[11px] text-[color:var(--lap-accent)]`}>
+                  {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
+                </p>
+              </a>
+            ))}
+          </div>
+          <p className={`${mono} mt-3 text-[11px] opacity-60 md:hidden`}>Swipe for more →</p>
+        </section>
 
         {/* Proof: real queries with their real result rows */}
         <section data-reveal className={`${card} lap-sql lg:col-span-12`}>
