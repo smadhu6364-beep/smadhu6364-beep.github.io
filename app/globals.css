@@ -163,3 +163,6 @@ section[id] { scroll-margin-top: 88px; }
 .lap-lanyard:hover { animation-play-state: paused; transform: rotate(0deg) translateY(4px); }
 @keyframes lapSway { from { transform: rotate(-1.8deg); } to { transform: rotate(1.8deg); } }
 @media (prefers-reduced-motion: reduce) { .lap-lanyard { animation: none; } }
+
+.lap-caret { animation: lapCaret 1s steps(2) infinite; }
+@keyframes lapCaret { 50% { opacity: 0; } }

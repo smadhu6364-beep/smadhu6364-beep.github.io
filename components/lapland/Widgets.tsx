@@ -194,6 +194,37 @@ export function useLaplandSound() {
   return { on, toggle };
 }
 
+/** Small live chips for the top bar: local time and temperature in Dublin and Rovaniemi. */
+export function TopChips({ mono }: { mono: string }) {
+  const [now, setNow] = useState<Date | null>(null);
+  const [temp, setTemp] = useState<{ dub?: number; rov?: number }>({});
+  useEffect(() => {
+    setNow(new Date());
+    const id = window.setInterval(() => setNow(new Date()), 15000);
+    const get = (lat: number, lon: number) =>
+      fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m`)
+        .then((r) => r.json())
+        .then((j) => Math.round(j.current.temperature_2m));
+    Promise.allSettled([get(53.35, -6.26), get(66.5, 25.73)]).then(([d, r]) =>
+      setTemp({ dub: d.status === "fulfilled" ? d.value : undefined, rov: r.status === "fulfilled" ? r.value : undefined }),
+    );
+    return () => window.clearInterval(id);
+  }, []);
+  const t = (zone: string) => (now ? time(zone, now) : "--:--");
+  const deg = (v?: number) => (v === undefined ? "" : ` · ${v > 0 ? "+" : ""}${v}°`);
+  const chip = `${mono} inline-flex h-8 items-center gap-1.5 rounded-full border border-[color:var(--lap-line)] bg-[color:var(--lap-card)] px-3 text-[11px] tabular-nums`;
+  return (
+    <>
+      <span className={chip} title="Time and temperature in Dublin">
+        <span aria-hidden>☘</span>Dublin {t("Europe/Dublin")}{deg(temp.dub)}
+      </span>
+      <span className={`${chip} hidden sm:inline-flex`} title="Time and temperature in Rovaniemi, on the Arctic Circle">
+        <span aria-hidden>❄</span>Rovaniemi {t("Europe/Helsinki")}{deg(temp.rov)}
+      </span>
+    </>
+  );
+}
+
 /** Dublin right now: live temperature and today's sunset, from Open-Meteo (free, no key). */
 export function DublinNow({ mono }: { mono: string }) {
   const [w, setW] = useState<{ temp: number; sunset: string } | null>(null);
