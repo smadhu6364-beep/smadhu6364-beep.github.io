@@ -333,7 +333,7 @@ const allCaseStudies: CaseStudy[] = [
       "Replace the placeholder images and sample data.",
     ],
     links: [
-      { label: "Live demo", href: "https://smadhu6364-beep.github.io/roam-travel/" },
+      { label: "Live demo", href: "https://madhu.is-a.dev/roam-travel/" },
       { label: "Code on GitHub", href: "https://github.com/smadhu6364-beep/roam-travel" },
     ],
     images: [
