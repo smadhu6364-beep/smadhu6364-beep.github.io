@@ -29,6 +29,8 @@ const CASE_STUDIES = new Set(["benchmark", "irish-property", "civicpulse", "roam
 // where each project card goes: the dashboard page, a case study, or the code
 const cardHref = (p: { id: string; repo: string }) => (p.id === "property-dashboard" ? "/dashboard/" : CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo);
 const internal = (p: { id: string }) => p.id === "property-dashboard" || CASE_STUDIES.has(p.id);
+// what runs inside the box when someone presses "Try it live" (the dashboard has a header-free version)
+const demoEmbed = (p: { id: string; demo?: string }) => (p.demo === "/dashboard/" ? "/dashboard/embed/" : p.demo);
 
 const BADGES = [
   {
@@ -106,6 +108,8 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   const [night, setNight] = useState(true);
   const [lively, setLively] = useState(true);
   const [pick, setPick] = useState(0); // which project the switcher shows
+  const [live, setLive] = useState(false); // is the picked project's demo running in the box
+  const choose = (i: number) => { setPick(i); setLive(false); };
   const sound = useLaplandSound();
 
   useEffect(() => {
@@ -223,9 +227,9 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                       type="button"
                       role="tab"
                       aria-selected={on}
-                      onMouseEnter={() => setPick(i)}
-                      onFocus={() => setPick(i)}
-                      onClick={() => setPick(i)}
+                      onMouseEnter={() => { if (!live) setPick(i); }}
+                      onFocus={() => { if (!live) setPick(i); }}
+                      onClick={() => choose(i)}
                       className={`group grid w-full grid-cols-[28px_1fr_auto] items-center gap-3 rounded-xl px-3 py-2.5 text-left transition ${on ? "bg-[color:var(--lap-accent)]/12" : "hover:bg-white/5"}`}
                     >
                       <span className={`${mono} text-xs ${on ? "text-[color:var(--lap-accent)]" : "opacity-50"}`}>{String(i + 1).padStart(2, "0")}</span>
@@ -238,6 +242,32 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
             </ol>
             {(() => {
               const p = projects[pick];
+              const embed = demoEmbed(p);
+              if (live && embed) {
+                // the project itself, running inside the box
+                return (
+                  <div key={`${p.id}-live`} role="tabpanel" className="lap-swap flex min-h-[460px] flex-col overflow-hidden rounded-2xl border border-[color:var(--lap-line)] bg-[#050a14]">
+                    <div className="flex items-center gap-2 border-b border-white/10 px-3 py-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#ff6b6b]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#ffd166]" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-[#06d6a0]" />
+                      <span className={`${mono} ml-2 min-w-0 flex-1 truncate rounded-md bg-white/5 px-2 py-1 text-[11px] opacity-70`}>
+                        {p.demo?.startsWith("/") ? `smadhu6364-beep.github.io${p.demo}` : p.demo?.replace("https://", "")}
+                      </span>
+                      <a href={p.demo} {...(p.demo?.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })} className={`${mono} rounded-md px-2 py-1 text-[11px] hover:bg-white/10`}>Full screen ↗</a>
+                      <button type="button" onClick={() => setLive(false)} className={`${mono} rounded-md px-2 py-1 text-[11px] hover:bg-white/10`} aria-label="Close the live demo">✕</button>
+                    </div>
+                    <iframe
+                      src={embed}
+                      title={`${p.name}, live demo`}
+                      className="h-full min-h-[420px] w-full flex-1 bg-white"
+                      loading="lazy"
+                      allow="camera; microphone; fullscreen"
+                    />
+                    {p.id === "aiml" && <p className={`${mono} px-3 py-2 text-[11px] opacity-60`}>The vision demos ask for your camera. Nothing leaves your browser.</p>}
+                  </div>
+                );
+              }
               return (
                 <div key={p.id} role="tabpanel" className="lap-swap flex flex-col rounded-2xl border border-[color:var(--lap-line)] p-5">
                   <div className="flex items-start gap-4">
@@ -245,19 +275,29 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
                     <div className="min-w-0">
                       <h3 className="text-xl font-semibold leading-snug">{p.name}</h3>
                       <p className="mt-1.5 text-sm leading-relaxed opacity-80">{p.tagline}</p>
+                      {(p.credit || p.note) && (
+                        <p className={`${mono} mt-2 text-[11px] text-[color:var(--lap-accent)]`}>{[p.credit, p.note].filter(Boolean).join(" · ")}</p>
+                      )}
                     </div>
                   </div>
-                  <p className="mt-4 text-sm leading-relaxed opacity-70">{p.detail[0]}</p>
-                  <p className={`${mono} mt-4 text-[11px] opacity-60`}>{p.stack.slice(0, 5).join(" · ")}</p>
+                  <ul className="mt-4 space-y-2 text-sm leading-relaxed opacity-80">
+                    {p.detail.map((d) => (
+                      <li key={d} className="flex gap-2">
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[color:var(--lap-accent)]" aria-hidden />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className={`${mono} mt-4 text-[11px] opacity-60`}>{p.stack.join(" · ")}</p>
                   <div className="mt-5 flex flex-wrap gap-2">
+                    {embed && (
+                      <button type="button" onClick={() => setLive(true)} className={pill} style={{ background: "var(--lap-accent)", color: "#06231a", borderColor: "var(--lap-accent)" }}>
+                        ▶ Try it live
+                      </button>
+                    )}
                     <a href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className={`${pill} border-[color:var(--lap-accent)] text-[color:var(--lap-accent)]`}>
                       {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
                     </a>
-                    {p.demo && p.demo !== cardHref(p) && (
-                      <a href={p.demo} {...(p.demo.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })} className={pill} style={{ background: "var(--lap-accent)", color: "#06231a", borderColor: "var(--lap-accent)" }}>
-                        <span className="h-1.5 w-1.5 rounded-full bg-[#06231a]" aria-hidden /> Live demo ↗
-                      </a>
-                    )}
                     {internal(p) && (
                       <a href={p.repo} target="_blank" rel="noreferrer" className={pill}>Code ↗</a>
                     )}
@@ -269,18 +309,25 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           {/* phone */}
           <div className="-mx-2 flex snap-x snap-mandatory gap-3 overflow-x-auto px-2 pb-2 [scrollbar-width:none] md:hidden">
             {projects.map((p, i) => (
-              <a key={p.id} href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className="flex w-[78%] shrink-0 snap-center flex-col rounded-2xl border border-[color:var(--lap-line)] p-4">
+              <div key={p.id} className="flex w-[80%] shrink-0 snap-center flex-col rounded-2xl border border-[color:var(--lap-line)] p-4">
                 <div className="flex items-center gap-3">
                   <div className="shrink-0 rounded-lg bg-white/70 p-0.5 [&_svg]:h-10 [&_svg]:w-10"><Emblem id={p.id} /></div>
                   <span className={`${mono} text-[11px] opacity-60`}>{String(i + 1).padStart(2, "0")} / {String(projects.length).padStart(2, "0")}</span>
                 </div>
                 <h3 className="mt-3 text-base font-semibold leading-snug">{p.name}</h3>
                 <p className="mt-1 text-sm leading-snug opacity-75">{p.tagline}</p>
-                <p className={`${mono} mt-auto pt-3 text-[11px] text-[color:var(--lap-accent)]`}>
-                  {p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}
-                  {p.demo && p.demo !== cardHref(p) && <span className="ml-2 rounded-full bg-[color:var(--lap-accent)] px-2 py-0.5 text-[#06231a]">live demo</span>}
-                </p>
-              </a>
+                <p className="mt-2 text-xs leading-snug opacity-65">{p.detail[0]}</p>
+                <div className="mt-auto flex flex-wrap gap-2 pt-3">
+                  {p.demo && (
+                    <a href={p.demo} {...(p.demo.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })} className={`${mono} inline-flex min-h-10 items-center rounded-full px-3 text-[11px]`} style={{ background: "var(--lap-accent)", color: "#06231a" }}>
+                      ▶ Try it live
+                    </a>
+                  )}
+                  <a href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} className={`${mono} inline-flex min-h-10 items-center rounded-full border border-[color:var(--lap-line)] px-3 text-[11px] text-[color:var(--lap-accent)]`}>
+                    {p.id === "property-dashboard" ? "Dashboard →" : CASE_STUDIES.has(p.id) ? "Case study →" : "Code ↗"}
+                  </a>
+                </div>
+              </div>
             ))}
           </div>
           <p className={`${mono} mt-3 text-[11px] opacity-60 md:hidden`}>Swipe for more →</p>
