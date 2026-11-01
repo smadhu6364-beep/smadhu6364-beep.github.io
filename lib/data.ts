@@ -136,6 +136,7 @@ const allProjects: Project[] = [
       "Every residential sale on the Property Price Register from 2010 to October 2026, analysed in nine SQL files.",
       "The national median was €380,000 in 2025, up from €148,000 in 2013. Dublin's lead over the rest of the country has shrunk from 2.22 times to 1.49 times.",
     ],
+    demo: "/dashboard/",
     caseStudy: true,
   },
   {
@@ -143,6 +144,7 @@ const allProjects: Project[] = [
     name: "Irish property dashboard",
     tagline: "Filter 812,018 Irish house sales by county and year: prices, volumes and rankings in one view.",
     repo: "https://github.com/smadhu6364-beep/irish-property-sql",
+    demo: "/dashboard/",
     kind: "Data & BI",
     tags: ["SQL", "DuckDB", "Data visualisation", "TypeScript", "React"],
     stack: ["SQL", "DuckDB", "React", "TypeScript"],
