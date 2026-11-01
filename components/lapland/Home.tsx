@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import SqlInAction from "@/components/SqlInAction";
 import { education, experience, profile, projects, skills } from "@/lib/data";
 import Scene from "./Scene";
-import { AuroraGame, Clocks, PostOffice, useLaplandSound } from "./Widgets";
+import { AuroraGame, Clocks, DublinNow, PostOffice, SusGame, useLaplandSound } from "./Widgets";
+import feeds from "@/lib/feeds.json";
 
 // Lapland has its own names for the seasons; we show the one Rovaniemi is in now.
 function season(d = new Date()) {
@@ -23,6 +24,14 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
     </p>
   );
 }
+
+// Work in progress. Statuses are honest: nothing here is finished until it says so.
+const KITCHEN = [
+  { icon: "📰", dish: "A second HackerNoon article", status: "with the editors", note: "How we re-ran a research project's experiments on free GPUs, with a co-author. In editorial review." },
+  { icon: "🧪", dish: "LLM risk-register benchmark paper", status: "simmering", note: "Writing it up with Kruthik Jadhav, being prepared for an IEEE conference." },
+  { icon: "📊", dish: "MSc Business Analytics at DCU", status: "on the stove", note: "Statistics, Power BI and machine learning in Python, one module at a time." },
+  { icon: "❄️", dish: "This website", status: "plating", note: "Every tree, train and ray of aurora is drawn in code. Still adding little things." },
+];
 
 // projects with a written case study at /projects/<id>/
 const CASE_STUDIES = new Set(["benchmark", "irish-property", "civicpulse", "roam"]);
@@ -297,6 +306,72 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
             <li><span className="text-[color:var(--lap-accent)]">●</span> A second HackerNoon piece in editorial review</li>
             <li><span className="text-[color:var(--lap-accent)]">●</span> Looking for data analyst roles in Ireland</li>
           </ul>
+        </section>
+
+        {/* Trending in Dublin */}
+        <section data-reveal className={`${card} lg:col-span-6`}>
+          <Label fi="Dublinissä" en="Trending in Dublin" mono={mono} />
+          <div className="mt-3"><DublinNow mono={mono} /></div>
+          <ul className="mt-4 divide-y divide-[color:var(--lap-line)]">
+            {feeds.dublin.slice(0, 5).map((n) => (
+              <li key={n.link}>
+                <a href={n.link} target="_blank" rel="noreferrer" className="group block py-2.5">
+                  <span className="text-sm leading-snug transition group-hover:text-[color:var(--lap-accent)]">{n.title}</span>
+                  <span className={`${mono} mt-0.5 block text-[10px] uppercase tracking-[0.15em] opacity-55`}>{n.source}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Tech news */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-6`}>
+          <Label fi="Teknologia" en="Tech news · top of Hacker News" mono={mono} />
+          <ol className="mt-4 divide-y divide-[color:var(--lap-line)]">
+            {feeds.tech.slice(0, 5).map((n, i) => (
+              <li key={n.link} className="flex gap-3 py-2.5">
+                <span className={`${mono} w-5 shrink-0 pt-0.5 text-xs text-[color:var(--lap-accent)]`}>{i + 1}</span>
+                <span className="min-w-0">
+                  <a href={n.link} target="_blank" rel="noreferrer" className="text-sm leading-snug transition hover:text-[color:var(--lap-accent)]">{n.title}</a>
+                  <span className={`${mono} mt-0.5 block truncate text-[10px] uppercase tracking-[0.15em] opacity-55`}>
+                    {n.site} · {n.points} points ·{" "}
+                    <a href={n.comments} target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">discussion</a>
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          {feeds.updated && (
+            <p className={`${mono} mt-3 text-[10px] uppercase tracking-[0.15em] opacity-50`}>
+              Refreshed {new Date(feeds.updated).toLocaleDateString("en-IE", { day: "numeric", month: "short" })}, every morning
+            </p>
+          )}
+        </section>
+
+        {/* What we're cooking */}
+        <section data-reveal className={`${card} lg:col-span-7`}>
+          <Label fi="Keittiössä" en="What we're cooking" mono={mono} />
+          <ul className="mt-4 space-y-3">
+            {KITCHEN.map((k) => (
+              <li key={k.dish} className="flex items-start gap-3 rounded-xl border border-[color:var(--lap-line)] p-3.5">
+                <span aria-hidden className="text-2xl leading-none">{k.icon}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex flex-wrap items-baseline justify-between gap-2">
+                    <span className="text-[15px] font-semibold">{k.dish}</span>
+                    <span className={`${mono} rounded-full bg-[color:var(--lap-accent)]/15 px-2 py-0.5 text-[10px] uppercase tracking-[0.15em] text-[color:var(--lap-accent)]`}>{k.status}</span>
+                  </span>
+                  <span className="mt-1 block text-sm leading-snug opacity-75">{k.note}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Something sus */}
+        <section data-reveal style={{ ["--d" as string]: ".1s" }} className={`${card} lg:col-span-5`}>
+          <Label fi="Epäilyttävä" en="Something sus" mono={mono} />
+          <p className="mb-4 mt-3 text-sm opacity-75">Four of these are true. One is the impostor.</p>
+          <SusGame mono={mono} />
         </section>
 
         {/* Post office */}
