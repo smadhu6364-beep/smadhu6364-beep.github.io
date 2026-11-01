@@ -26,6 +26,9 @@ const KITCHEN = [
 
 // projects with a written case study at /projects/<id>/
 const CASE_STUDIES = new Set(["benchmark", "irish-property", "civicpulse", "roam"]);
+// where each project card goes: the dashboard page, a case study, or the code
+const cardHref = (p: { id: string; repo: string }) => (p.id === "property-dashboard" ? "/dashboard/" : CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo);
+const internal = (p: { id: string }) => p.id === "property-dashboard" || CASE_STUDIES.has(p.id);
 
 const BADGES = [
   {
@@ -74,6 +77,12 @@ function Emblem({ id }: { id: string }) {
       return (
         <svg {...common}><path d="M8 30 L32 10 L56 30 V56 H8 Z" fill="#f3efe6" stroke="#1d2233" strokeWidth="2" />
           {[[16, 40, 14], [26, 34, 20], [36, 28, 26], [46, 22, 32]].map(([x, y, h]) => (<rect key={x} x={x} y={y} width="7" height={h} fill={x === 46 ? "#c8372d" : "#2f6fb3"} />))}</svg>
+      );
+    case "property-dashboard":
+      return (
+        <svg {...common}><rect x="6" y="10" width="52" height="44" rx="5" fill="#f3efe6" stroke="#1d2233" strokeWidth="2" />
+          <rect x="12" y="16" width="18" height="8" rx="2" fill="#2fb380" /><rect x="34" y="16" width="18" height="8" rx="2" fill="#f2c57c" />
+          <path d="M12 46 L22 38 L30 41 L40 30 L52 33" fill="none" stroke="#2f6fb3" strokeWidth="2.5" strokeLinecap="round" /></svg>
       );
     case "civicpulse":
       return (
@@ -201,8 +210,8 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
           <h2 className={`${display} text-4xl text-white [text-shadow:0_2px_12px_rgb(0_0_0/.5)] sm:text-5xl`}>Things I&rsquo;ve built</h2>
         </div>
         {projects.map((p, i) => (
-          <a key={p.id} href={CASE_STUDIES.has(p.id) ? `/projects/${p.id}/` : p.repo} {...(CASE_STUDIES.has(p.id) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
-            className={`${card} group flex flex-col ${i === 0 ? "lg:col-span-8" : "lg:col-span-4"}`}>
+          <a key={p.id} href={cardHref(p)} {...(internal(p) ? {} : { target: "_blank", rel: "noreferrer" })} data-reveal style={{ ["--d" as string]: `${i * 0.08}s` }}
+            className={`${card} group flex flex-col ${["lg:col-span-8", "lg:col-span-4", "lg:col-span-4", "lg:col-span-8", "lg:col-span-6", "lg:col-span-6"][i] ?? "lg:col-span-4"}`}>
             <div className="flex items-start justify-between gap-4">
               <p className={`${mono} text-[11px] uppercase tracking-[0.25em] opacity-60`}>{p.kind}</p>
               <span className="text-[color:var(--lap-accent)] transition group-hover:translate-x-1">→</span>
@@ -215,7 +224,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
               </div>
             </div>
             <p className={`${mono} mt-auto pt-5 text-[11px] opacity-60`}>{p.stack.slice(0, 4).join(" · ")}</p>
-            <p className={`${mono} mt-2 text-[11px] text-[color:var(--lap-accent)]`}>{CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}</p>
+            <p className={`${mono} mt-2 text-[11px] text-[color:var(--lap-accent)]`}>{p.id === "property-dashboard" ? "Open the dashboard →" : CASE_STUDIES.has(p.id) ? "Read the case study →" : "View the code ↗"}</p>
           </a>
         ))}
 

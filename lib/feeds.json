@@ -41,45 +41,45 @@
     {
       "title": "HackerTube: YouTube built from videos recommended by HN",
       "link": "https://karpathy.bearblog.dev/hacker-tube/",
-      "points": 1340,
+      "points": 1348,
       "comments": "https://news.ycombinator.com/item?id=50319510",
       "site": "karpathy.bearblog.dev"
     },
     {
-      "title": "An Italian farmer found some unknown seeds in his attic and planted them",
-      "link": "https://www.smithsonianmag.com/science-nature/italian-farmer-found-unknown-seeds-attic-with-nothing-lose-planted-them-result-biblical-180989644/",
-      "points": 450,
-      "comments": "https://news.ycombinator.com/item?id=50320963",
-      "site": "smithsonianmag.com"
-    },
-    {
       "title": "OpenIDEA: The IDE you know, rebuilt in Rust",
       "link": "https://github.com/l0ng-ai/openidea",
-      "points": 14,
+      "points": 20,
       "comments": "https://news.ycombinator.com/item?id=50323848",
       "site": "github.com"
     },
     {
+      "title": "An Italian farmer found some unknown seeds in his attic and planted them",
+      "link": "https://www.smithsonianmag.com/science-nature/italian-farmer-found-unknown-seeds-attic-with-nothing-lose-planted-them-result-biblical-180989644/",
+      "points": 452,
+      "comments": "https://news.ycombinator.com/item?id=50320963",
+      "site": "smithsonianmag.com"
+    },
+    {
       "title": "No AI, 52 min. Build all Linux Files utils in C by Hand [video]",
       "link": "https://www.youtube.com/watch?v=gQRmSlcTq9c",
-      "points": 22,
+      "points": 28,
       "comments": "https://news.ycombinator.com/item?id=50290480",
       "site": "youtube.com"
     },
     {
       "title": "Running a bootstrapped SaaS for 20 years with my brother",
       "link": "https://blog.zamzar.com/2026/10/30/20-years-766-million-files-two-chameleons/",
-      "points": 93,
+      "points": 94,
       "comments": "https://news.ycombinator.com/item?id=50303984",
       "site": "blog.zamzar.com"
     },
     {
       "title": "Brazilian Court Sanctions Lawyers for Prompt Injection in Court Filing",
       "link": "https://jetstream.security/insights/brazilian-court-sanctions-prompt-injection-filing/",
-      "points": 124,
+      "points": 125,
       "comments": "https://news.ycombinator.com/item?id=50322173",
       "site": "jetstream.security"
     }
   ],
-  "updated": "2026-11-01T10:27:19.752Z"
+  "updated": "2026-11-01T10:36:08.578Z"
 }
