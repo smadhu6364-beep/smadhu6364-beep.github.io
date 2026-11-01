@@ -7,16 +7,16 @@
       "date": "2026-10-29T10:39:37.000Z"
     },
     {
-      "title": "Protecting Our Seas and Oceans: Authors Mark Mellett and Michael Cronin Debate At the Dublin Book Festival",
-      "source": "Afloat",
-      "link": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxNaFA3X2d6dGMyeEYyalpkMkdXZ3UzRE9PTjR3eTF5UFctTUR0bmVISnVacDFsaHBLQjRZNTJ2VDkyTHhyNDBBSnlYUHFFb2E0QTdHYi1mM3prLUFJSUFDQXJkVGx1eW9yWXR5NWRHM3lHSGllQ3RpeFBfYVU3QmJya1JWNGNWZVJKdV9TZGNwSmxIbzd3NGNCRlh4bzBIM2I4OTR2Qkw3ZWtZR2NtVWZLNjBQN09NWHM3Y1VNUENjMllWWVVRVTFjaGQyVXQzQWdfRkNMZDBwSVZEajhabUtwUl9pUjRwNy1VVUlnUA?oc=5",
-      "date": "2026-10-31T17:11:24.000Z"
-    },
-    {
       "title": "Man (20s) in critical condition following Dublin collision involving car and bicycle",
       "source": "Irish Independent",
       "link": "https://news.google.com/rss/articles/CBMi1wFBVV95cUxPRExVQmdWMXNVaXFWdlM1U1JvYVd5OGFUa01KalJaY191aUt0WnJmdUZiajlYUklaeFJfUXlrdTRkR1ByNWh0akdZcFhHbkp0Tlp2Umh6ejhZUmx5dkdiYTc5MlItNUE3aDIxU0xZcU9fdzhSVUpqeHpEellhNzd6ekRDR3Jva2lBTEQ1VlVMZHVQMU42Q25wVV9wdXJJXzBXTjVyMXhRanRxY3V5OVpFa0FSdmt6T0lnZ3QyMmFUZFlRcTk1cWdDeE1YbTgycTZhb0ZiOVQ3aw?oc=5",
       "date": "2026-11-01T08:40:00.000Z"
+    },
+    {
+      "title": "Protecting Our Seas and Oceans: Authors Mark Mellett and Michael Cronin Debate At the Dublin Book Festival",
+      "source": "Afloat",
+      "link": "https://news.google.com/rss/articles/CBMi7AFBVV95cUxNaFA3X2d6dGMyeEYyalpkMkdXZ3UzRE9PTjR3eTF5UFctTUR0bmVISnVacDFsaHBLQjRZNTJ2VDkyTHhyNDBBSnlYUHFFb2E0QTdHYi1mM3prLUFJSUFDQXJkVGx1eW9yWXR5NWRHM3lHSGllQ3RpeFBfYVU3QmJya1JWNGNWZVJKdV9TZGNwSmxIbzd3NGNCRlh4bzBIM2I4OTR2Qkw3ZWtZR2NtVWZLNjBQN09NWHM3Y1VNUENjMllWWVVRVTFjaGQyVXQzQWdfRkNMZDBwSVZEajhabUtwUl9pUjRwNy1VVUlnUA?oc=5",
+      "date": "2026-10-31T17:11:24.000Z"
     },
     {
       "title": "300 Years of Gulliver: Dublin Honours Its Greatest Satirist at the Jonathan Swift Festival",
@@ -31,24 +31,24 @@
       "date": "2026-10-29T16:25:32.000Z"
     },
     {
-      "title": "Newcode Ireland discusses AI and dispute resolution at Dublin event",
-      "source": "Irish Legal News",
-      "link": "https://news.google.com/rss/articles/CBMiuAFBVV95cUxPODFydTl5SHRxeEduNWw5QjdPTzNzdnVJQjFaREkwTmdBS1pmdXJ3QXU3bzNIRmgxYzkwblBXb2dIZHJXd1BaWG41Y2JmYUt1NjI5UjlYVDdKQzdSY1o0TjRwZWpZdTlJS2dXYnk0eUZzNl8wbnZLUGc5ZUlFZzJuUlBrOV9EXzE2M19NU0N1a0lxanNhNFp2WnI4X1JMMEtmSzlXTEZGSUE1X0lneldPQ0NnRHRMTTRs?oc=5",
-      "date": "2026-10-29T10:08:41.000Z"
+      "title": "Gulliver 300 with Dublin City Council Libraries",
+      "source": "Dublin City Council",
+      "link": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxPT2w1el8tM0ZqSnB6R3R2QlE4WHF1d3FoSTc5ckxuWVR4cGRZNWliODdJaVpBVmlWX2NvU0NkbXYzQkROaV9GVFQydkRqQUhwTExZb0YzQTI1WDA0M0NGa2tTQkhsMUhlR1FnbDIxT3VpSmZyWkNuVUtFUlROUV9RZzUycS1nOTAt?oc=5",
+      "date": "2026-10-29T10:59:41.000Z"
     }
   ],
   "tech": [
     {
       "title": "HackerTube: YouTube built from videos recommended by HN",
       "link": "https://karpathy.bearblog.dev/hacker-tube/",
-      "points": 1348,
+      "points": 1349,
       "comments": "https://news.ycombinator.com/item?id=50319510",
       "site": "karpathy.bearblog.dev"
     },
     {
       "title": "OpenIDEA: The IDE you know, rebuilt in Rust",
       "link": "https://github.com/l0ng-ai/openidea",
-      "points": 20,
+      "points": 23,
       "comments": "https://news.ycombinator.com/item?id=50323848",
       "site": "github.com"
     },
@@ -81,5 +81,5 @@
       "site": "jetstream.security"
     }
   ],
-  "updated": "2026-11-01T10:36:08.578Z"
+  "updated": "2026-11-01T10:37:46.769Z"
 }
