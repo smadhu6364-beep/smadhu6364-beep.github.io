@@ -1,6 +1,18 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import dash from "@/lib/dashboardData.json";
+
+// The main aurora curtain is shaped by data: its height follows the national
+// median house price from 2010 to 2026 (02_overview in the SQL project), so the
+// lights rise across the sky the way prices did.
+const SERIES = (dash.national as [number, number, number][]).map(([year, , median]) => ({ year, median }));
+const LO = Math.min(...SERIES.map((d) => d.median)), HI = Math.max(...SERIES.map((d) => d.median));
+const priceAt = (k: number) => {
+  const f = Math.max(0, Math.min(1, k)) * (SERIES.length - 1), i = Math.floor(f), j = Math.min(SERIES.length - 1, i + 1);
+  const m = SERIES[i].median + (SERIES[j].median - SERIES[i].median) * (f - i);
+  return (m - LO) / (HI - LO); // 0 at the 2013 low, 1 at the 2026 high
+};
 
 /*
   Lapland backdrop, drawn in code with canvas:
@@ -96,11 +108,12 @@ function strip(colors: [number, string][]) {
 // Path2D only exists in the browser, so build it inside the effect
 const REINDEER_D = "M0 -24 C 6 -32, 34 -32, 42 -24 L 50 -36 L 54 -34 L 48 -22 C 48 -18, 44 -16, 40 -18 L 40 0 L 37 0 L 35 -14 L 10 -14 L 8 0 L 5 0 L 4 -16 C -2 -18, -4 -22, 0 -24 Z M50 -36 L 45 -50 L 47 -50 L 51 -39 L 58 -49 L 60 -48 L 52 -36 Z";
 
-export default function Scene({ night, lively }: { night: boolean; lively: boolean }) {
+export default function Scene({ night, lively, showData = false }: { night: boolean; lively: boolean; showData?: boolean }) {
   const back = useRef<HTMLCanvasElement>(null);
   const front = useRef<HTMLCanvasElement>(null);
-  const state = useRef({ night, lively });
-  state.current = { night, lively };
+  const state = useRef({ night, lively, showData });
+  state.current = { night, lively, showData };
+  const mouse = useRef({ x: -1, glow: 0 }); // cursor position across the sky, 0..1
 
   useEffect(() => {
     const A = back.current!, B = front.current!;
@@ -312,16 +325,22 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     };
     resize();
     window.addEventListener("resize", resize);
+    const onPointer = (e: PointerEvent) => { mouse.current.x = e.clientX / window.innerWidth; mouse.current.glow = 1; };
+    const onLeave = () => { mouse.current.x = -1; };
+    window.addEventListener("pointermove", onPointer, { passive: true });
+    document.addEventListener("pointerleave", onLeave);
 
     // aurora: rays along a slowly folding curtain, drawn small then scaled up (soft, like long exposure)
-    const curtain = (t: number, base: number, amp: number, len: number, speed: number, alpha: number, img: HTMLCanvasElement) => {
+    const curtain = (t: number, base: number, amp: number, len: number, speed: number, alpha: number, img: HTMLCanvasElement, data = false) => {
       const w = aur.width, h = aur.height;
       for (let x = -4; x < w + 4; x += 2) {
         const k = x / w;
         const y = h * base + Math.sin(k * 4.2 + t * speed) * h * amp + Math.sin(k * 11 - t * speed * 1.6) * h * amp * 0.4;
         const rays = 0.5 + 0.5 * Math.sin(k * 90 + t * 0.6) * Math.sin(k * 37 - t * 0.4);
-        const L = h * len * (0.7 + 0.5 * Math.sin(k * 6 + t * speed * 0.7)) * (0.75 + rays * 0.5);
-        cu.globalAlpha = 0.6 * alpha * (0.35 + 0.65 * Math.max(0, Math.sin(k * 3.1 - t * speed * 0.9) * 0.5 + 0.5)) * (0.6 + rays * 0.4);
+        const v = data ? priceAt(k) : 0.5; // house prices, 0..1
+        const L = h * len * (data ? 0.45 + 1.0 * v : 1) * (0.7 + 0.5 * Math.sin(k * 6 + t * speed * 0.7)) * (0.75 + rays * 0.5);
+        const near = mouse.current.x < 0 ? 0 : Math.exp(-((k - mouse.current.x) ** 2) / 0.006) * mouse.current.glow; // brighter under the cursor
+        cu.globalAlpha = Math.min(1, 0.6 * alpha * (0.35 + 0.65 * Math.max(0, Math.sin(k * 3.1 - t * speed * 0.9) * 0.5 + 0.5)) * (0.6 + rays * 0.4) * (1 + 1.4 * near));
         cu.drawImage(img, x - 1, y - L, 4.5, L + 2); // overlapping strips, so no visible banding
       }
     };
@@ -355,7 +374,7 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         ca.globalAlpha = 1;
         cu.clearRect(0, 0, aur.width, aur.height);
         cu.globalCompositeOperation = "lighter";
-        curtain(t, 0.42, 0.07, 0.34, 0.12, 0.55, greens);
+        curtain(t, 0.42, 0.05, 0.34, 0.12, 0.55, greens, true);
         curtain(t + 30, 0.3, 0.06, 0.26, 0.09, 0.35, greens);
         curtain(t + 70, 0.5, 0.04, 0.18, 0.16, 0.3, pale);
         cu.globalCompositeOperation = "source-over";
@@ -366,6 +385,9 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
         ca.drawImage(aur, 0, 0, W, H);
         ca.restore();
         glow = 0.7 + 0.3 * Math.sin(t * 0.3);
+        mouse.current.glow *= 0.985; // the swell fades when the cursor stops
+
+
       }
 
       ca.drawImage(land, 0, 0, W, H);
@@ -404,6 +426,33 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
       }
 
       ca.drawImage(landF, 0, 0, W, H);
+
+      if (state.current.showData) {
+        // reveal the data behind the lights: the price line and its years
+        const yAt = (k: number) => H * 0.6 - H * 0.42 * priceAt(k); // the 2013 low sits just above the fells, the 2026 high near the top
+        ca.save();
+        ca.strokeStyle = "rgba(255,240,200,0.9)";
+        ca.lineWidth = 2;
+        ca.setLineDash([6, 6]);
+        ca.beginPath();
+        for (let x = 0; x <= W; x += 6) (x ? ca.lineTo(x, yAt(x / W)) : ca.moveTo(x, yAt(0)));
+        ca.stroke();
+        ca.setLineDash([]);
+        ca.font = "600 13px ui-monospace, monospace";
+        ca.textAlign = "center";
+        SERIES.forEach((d, i) => {
+          if (i % 2 && i !== SERIES.length - 1) return;
+          const k = i / (SERIES.length - 1), x = Math.min(W - 30, Math.max(30, k * W)), y = yAt(k);
+          ca.fillStyle = "rgba(255,240,200,0.95)";
+          ca.beginPath();
+          ca.arc(x, y, 3.5, 0, 6.283);
+          ca.fill();
+          ca.fillStyle = "rgba(233,238,246,0.85)";
+          ca.fillText(String(d.year), x, y - 12);
+          if (i === 0 || i === 3 || i === SERIES.length - 1) ca.fillText(`€${Math.round(d.median / 1000)}k`, x, y + 22);
+        });
+        ca.restore();
+      }
 
       // the Arctic Circle line, marked across the snow with small lamps
       for (let x = 12; x < W; x += 46) {
@@ -493,7 +542,7 @@ export default function Scene({ night, lively }: { night: boolean; lively: boole
     };
     const start = window.setTimeout(() => { raf = requestAnimationFrame(frame); }, 400);
     return () => {
-      window.clearTimeout(start); cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
+      window.clearTimeout(start); cancelAnimationFrame(raf); window.removeEventListener("resize", resize); window.removeEventListener("pointermove", onPointer); document.removeEventListener("pointerleave", onLeave); };
   }, []);
 
   return (

@@ -41,45 +41,45 @@
     {
       "title": "A Jev that can ask Opus for help gives Opus accuracy at 4x lower cost",
       "link": "https://hightouch.com/blog/llm-judges-identity-resolution",
-      "points": 245,
+      "points": 261,
       "comments": "https://news.ycombinator.com/item?id=50397429",
       "site": "hightouch.com"
     },
     {
-      "title": "AI is dramatically accelerating AI research",
-      "link": "https://www.planned-obsolescence.org/p/ai-is-dramatically-accelerating-ai",
-      "points": 132,
-      "comments": "https://news.ycombinator.com/item?id=50397994",
-      "site": "planned-obsolescence.org"
-    },
-    {
       "title": "CATL Sodium Battery Hits LFP Cost Parity in 2026: 15,000 Cycles, 30-Year Life",
       "link": "https://ievchina.com/energy-storage/catl-sodium-battery-cost-parity-lfp-2026-15000-cycles/",
-      "points": 15,
+      "points": 25,
       "comments": "https://news.ycombinator.com/item?id=50399657",
       "site": "ievchina.com"
     },
     {
+      "title": "AI is dramatically accelerating AI research",
+      "link": "https://www.planned-obsolescence.org/p/ai-is-dramatically-accelerating-ai",
+      "points": 148,
+      "comments": "https://news.ycombinator.com/item?id=50397994",
+      "site": "planned-obsolescence.org"
+    },
+    {
       "title": "ChatGPT silently passes data between connectors and the bounty wants an ID card",
       "link": "https://community.openai.com/t/security-follow-up-tool-call-silently-routed-to-a-different-connector/1413053",
-      "points": 16,
+      "points": 27,
       "comments": "https://news.ycombinator.com/item?id=50399569",
       "site": "community.openai.com"
     },
     {
-      "title": "Firecracker VM Escape: PwnEscape Part 2",
-      "link": "https://pwn.ai/blog/firecracker-escape",
-      "points": 129,
-      "comments": "https://news.ycombinator.com/item?id=50397219",
-      "site": "pwn.ai"
-    },
-    {
       "title": "Tesla to wind down Cybertruck production",
       "link": "https://www.nbcnews.com/tech/tech-news/tesla-wind-cybertruck-production-years-poor-sales-markets-rcna607817",
-      "points": 770,
+      "points": 775,
       "comments": "https://news.ycombinator.com/item?id=50391456",
       "site": "nbcnews.com"
+    },
+    {
+      "title": "Firecracker VM Escape: PwnEscape Part 2",
+      "link": "https://pwn.ai/blog/firecracker-escape",
+      "points": 132,
+      "comments": "https://news.ycombinator.com/item?id=50397219",
+      "site": "pwn.ai"
     }
   ],
-  "updated": "2026-11-06T23:18:30.049Z"
+  "updated": "2026-11-06T23:30:18.381Z"
 }

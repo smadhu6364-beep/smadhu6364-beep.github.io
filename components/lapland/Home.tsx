@@ -117,6 +117,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
   const [night, setNight] = useState(true);
   const [lively, setLively] = useState(true);
   const [pick, setPick] = useState(0); // which project the switcher shows
+  const [showData, setShowData] = useState(false); // reveal the data behind the aurora
   const [live, setLive] = useState(false); // is the picked project's demo running in the box
   const choose = (i: number) => { setPick(i); setLive(false); };
   const sound = useLaplandSound();
@@ -154,7 +155,15 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
 
   return (
     <div className={`lap ${night ? "lap-night" : "lap-day"} ${sans} min-h-screen`}>
-      <Scene night={night} lively={lively} />
+      <Scene night={night} lively={lively} showData={showData} />
+      {/* "the sky is data" view: the page fades away and the price line is drawn in the aurora */}
+      {showData && (
+        <div className="fixed inset-x-4 bottom-6 z-40 mx-auto max-w-md rounded-2xl border border-[#7fe3bf55] bg-[#070c18e6] p-5 text-center text-[#e9eef6] shadow-2xl">
+          <p className={`${mono} text-[11px] uppercase tracking-[0.2em] text-[#7fe3bf]`}>The sky is data</p>
+          <p className="mt-2 text-sm leading-relaxed">These northern lights are drawn from my Irish property SQL project. Their height follows the national median house price, from €148k in 2013 to €397k in 2026. The dotted line is the data underneath.</p>
+          <button type="button" onClick={() => setShowData(false)} className={`${mono} mt-4 rounded-full bg-[#7fe3bf] px-4 py-2 text-[11px] uppercase tracking-[0.15em] text-[#06231a]`}>Back to the site</button>
+        </div>
+      )}
 
       {/* Top bar: who, what, live clocks, and the controls as small icons */}
       <header className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 pt-5 sm:px-6">
@@ -167,6 +176,9 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         </a>
         <div className="flex flex-wrap items-center gap-1.5">
           <TopChips mono={mono} />
+          <button type="button" onClick={() => { setNight(true); setShowData(!showData); window.scrollTo({ top: 0, behavior: "smooth" }); }} aria-pressed={showData} className={`${mono} inline-flex h-10 items-center gap-1.5 rounded-full border border-[#7fe3bf88] bg-[color:var(--lap-card)] px-3 text-[11px] text-[#7fe3bf] transition hover:bg-[#7fe3bf] hover:text-[#06231a] sm:h-8`} title="The northern lights are drawn from house-price data">
+            ✦ The sky is data
+          </button>
           <button type="button" className={icon} onClick={() => setNight(!night)} aria-pressed={night} aria-label={night ? "Switch to day view" : "Switch to night view"} title={night ? "Night view" : "Day view"}>
             {night ? "☾" : "☀"}
           </button>
@@ -180,7 +192,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         </div>
       </header>
 
-      <main id="top" className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-6 sm:px-6 lg:grid-cols-12">
+      <main id="top" className={`transition-opacity duration-700 ${showData ? "pointer-events-none opacity-0" : "opacity-100"} mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-4 px-4 pb-[38vh] pt-6 sm:px-6 lg:grid-cols-12`}>
         {/* Intro */}
         <section id="about" className={`${card} scroll-mt-6 lg:col-span-7`}>
           <Label fi="minä" en="About me" mono={mono} />
