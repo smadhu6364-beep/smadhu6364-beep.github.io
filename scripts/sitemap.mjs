@@ -1,4 +1,4 @@
-// Runs after `next build`: writes out/sitemap.xml listing /, /cv/ and every exported /projects/<slug>/ page.
+// Runs after `next build`: writes out/sitemap.xml listing /, /cv/, /dashboard/ and every exported /projects/<slug>/ page.
 import fs from "node:fs";
 import path from "node:path";
 
@@ -13,7 +13,7 @@ if (!publishAirbnb) {
   console.log("PUBLISH_AIRBNB is false: Airbnb page and images left out of the export");
 }
 const today = new Date().toISOString().slice(0, 10);
-const paths = ["/", "/cv/"];
+const paths = ["/", "/cv/", "/dashboard/"];
 const projDir = path.join(out, "projects");
 if (fs.existsSync(projDir)) {
   for (const d of fs.readdirSync(projDir, { withFileTypes: true })) {

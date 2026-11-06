@@ -18,7 +18,7 @@ export const profile = {
   linkedin: "https://www.linkedin.com/in/madhu-sudhan-a966b3225/",
   linkedinHandle: "madhu-sudhan-a966b3225",
   positioning:
-    "I've run day-to-day operations on busy front lines, and now I build data and AI tools. I'm looking for data and analytics roles in Ireland.",
+    "Two years in travel operations in Bengaluru (Trip Factory, Thomas Cook), now an MSc Business Analytics student at DCU building SQL, Python and LLM projects. I'm looking for data analyst roles in Ireland.",
 };
 
 export type Job = {
@@ -47,8 +47,7 @@ export const experience: Job[] = [
     tags: ["Customer service", "Query and complaint resolution", "Records accuracy"],
     points: [
       "Audited booking records for errors and corrected them, keeping customer data accurate.",
-      "Resolved a high volume of booking queries and issues, working each one back to the record that caused it.",
-      "Worked with the operations team to keep daily processes and records running smoothly.",
+      "Resolved customer booking queries by tracing each one back to the record that caused it.",
     ],
   },
   {
@@ -164,7 +163,7 @@ const allProjects: Project[] = [
     stack: ["React", "FastAPI", "Gemini Vision", "Firebase", "Leaflet"],
     detail: [
       "Take a photo of a local problem. Gemini Vision categorises it, scores its severity, works out which authority is responsible and drafts a complaint letter.",
-      "Reports appear on a live community map.",
+      "Eleven issue types, low/medium/high severity, photos stored in Firebase, colour-coded pins on a Leaflet map, upvotes to confirm an issue, and a dashboard with resolution rate.",
     ],
     image: { src: "/projects/civicpulse.webp", alt: "CivicPulse report form with photo upload, description and a map for picking the location", w: 1280, h: 800 },
     caseStudy: true,
@@ -172,15 +171,15 @@ const allProjects: Project[] = [
   {
     id: "roam",
     name: "Roam",
-    tagline: "A trip-planning and booking interface prototype.",
+    tagline: "Plan a trip end to end: find a destination, build the itinerary, watch the cost add up, check out.",
     repo: "https://github.com/smadhu6364-beep/roam-travel",
     demo: "https://madhu.is-a.dev/roam-travel/",
     kind: "Web apps",
     tags: ["TypeScript", "React", "Next.js", "GitHub Actions"],
     stack: ["Next.js 16", "React 19", "TypeScript", "Tailwind"],
     detail: [
-      "Front-end prototype for planning and booking trips.",
-      "Flights and payments are scaffolded, not live.",
+      "17 pages: destination search with budget, season and activity filters, an itinerary builder with a live cost calculator, and a booking and checkout flow.",
+      "Front end only: flights, payments and accounts are not connected to a backend yet. Forms are validated with Zod; light and dark themes.",
     ],
     image: { src: "/projects/roam.webp", alt: "Roam home page with the headline Plan. Explore. Experience. and a destination search box", w: 1280, h: 800 },
     caseStudy: true,
@@ -188,15 +187,15 @@ const allProjects: Project[] = [
   {
     id: "aiml",
     name: "In-browser vision demos",
-    tagline: "Body, face, hand and object detection running in the browser.",
+    tagline: "Four real-time computer vision demos on your webcam, running entirely in the browser.",
     repo: "https://github.com/smadhu6364-beep/aiml-project",
     demo: "https://madhu.is-a.dev/aiml-project/",
     kind: "AI & LLMs",
     tags: ["JavaScript", "React", "TensorFlow.js"],
     stack: ["TensorFlow.js", "React", "BodyPix", "Face Mesh", "Handpose", "COCO-SSD"],
     detail: [
-      "A set of demos using BodyPix, Face Mesh, Handpose and COCO-SSD with TensorFlow.js and React.",
-      "Everything runs client-side, no server needed.",
+      "Object detection for 80 everyday object types (COCO-SSD), a 468-point face mesh, 21-point hand tracking with thumbs-up and victory gestures, and body-part segmentation (BodyPix).",
+      "Pre-trained Google models loaded with TensorFlow.js and React; inference runs on the device, so no video is uploaded anywhere.",
     ],
   },
 ];

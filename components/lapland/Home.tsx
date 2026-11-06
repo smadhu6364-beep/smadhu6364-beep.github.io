@@ -19,8 +19,8 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
 // Work in progress. Statuses are honest: nothing here is finished until it says so.
 const KITCHEN = [
   { icon: "🧪", dish: "LLM risk-register benchmark paper", status: "simmering", note: "Writing it up with Kruthik Jadhav, being prepared for an IEEE conference." },
-  { icon: "📊", dish: "MSc Business Analytics at DCU", status: "on the stove", note: "Statistics, Power BI and machine learning in Python, one module at a time." },
-  { icon: "❄️", dish: "This website", status: "plating", note: "Every tree, train and ray of aurora is drawn in code. Still adding little things." },
+  { icon: "📊", dish: "MSc Business Analytics at DCU", status: "on the stove", note: "This term: Statistics, Visualisation and Communication in Power BI, Programming and Machine Learning in Python, and Research Skills." },
+  { icon: "❄️", dish: "This website", status: "plating", note: "Rebuilt this month: a hand-coded Lapland scene, a project switcher with live demos, an interactive dashboard and tech news that refreshes every morning." },
 ];
 
 // projects with a written case study at /projects/<id>/
@@ -188,7 +188,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
             I used to fix booking mistakes for a living. Now I go looking for them in data.
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed opacity-80">
-            Two years in operations in Bengaluru, now an MSc Business Analytics student at DCU. I write SQL and Python, I check my numbers twice, and I&rsquo;m looking for analyst roles in Ireland.
+            Two years in travel operations in Bengaluru, now an MSc Business Analytics student at DCU. My latest project queries 812,018 Irish house sales in SQL and turns them into a dashboard. I&rsquo;m looking for data analyst roles in Ireland.
           </p>
           <div className="mt-5 flex flex-wrap gap-2">
             <a href="/cv" className={pill}>CV ↗</a>
@@ -354,7 +354,7 @@ export default function LaplandHome({ display, sans, mono }: { display: string; 
         <section data-reveal className={`${card} lg:col-span-7`}>
           <Label fi="työ" en="Work" mono={mono} />
           <ol className="mt-5 space-y-5">
-            {experience.map((j) => (
+            {experience.filter((j) => j.company !== "Amitri Cafe").map((j) => (
               <li key={j.company} className="grid gap-1 border-l-2 border-[color:var(--lap-accent)] pl-4 sm:grid-cols-[1fr_auto]">
                 <div>
                   <p className="text-lg font-medium leading-snug">{j.role}</p>
