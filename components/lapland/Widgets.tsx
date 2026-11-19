@@ -248,7 +248,7 @@ const CLAIMS = [
   { text: "The northern lights on this page are a stock photo.", sus: true, why: "Sus! Every star, tree and ray of light here is drawn in code. No photos at all." },
   { text: "Our LLM benchmark is covered by 456 unit tests.", sus: false, why: "True. They all run offline, and the repo is public." },
   { text: "I fixed booking issues for customers at Thomas Cook in Bengaluru.", sus: false, why: "True. That's where I learned to check every number twice." },
-  { text: "I co-wrote an article that HackerNoon published.", sus: false, why: "True. It's about catching a scoring bug in our own research." },
+  { text: "I co-wrote two articles that HackerNoon published.", sus: false, why: "True. One on catching a scoring bug in our own research, one on re-running experiments on free GPUs." },
 ];
 
 export function SusGame({ mono }: { mono: string }) {

@@ -18,7 +18,6 @@ function Label({ fi, en, mono }: { fi: string; en: string; mono: string }) {
 
 // Work in progress. Statuses are honest: nothing here is finished until it says so.
 const KITCHEN = [
-  { icon: "📰", dish: "A second HackerNoon article", status: "with the editors", note: "How we re-ran a research project's experiments on free GPUs, with a co-author. In editorial review." },
   { icon: "🧪", dish: "LLM risk-register benchmark paper", status: "simmering", note: "Writing it up with Kruthik Jadhav, being prepared for an IEEE conference." },
   { icon: "📊", dish: "MSc Business Analytics at DCU", status: "on the stove", note: "Statistics, Power BI and machine learning in Python, one module at a time." },
   { icon: "❄️", dish: "This website", status: "plating", note: "Every tree, train and ray of aurora is drawn in code. Still adding little things." },
@@ -42,6 +41,16 @@ const BADGES = [
     cta: "Read it",
     href: "https://hackernoon.com/how-we-caught-an-llm-scoring-bug-and-fixed-it-without-compromising-our-research",
     color: "#7fe3bf",
+  },
+  {
+    role: "Co-author",
+    org: "HackerNoon",
+    when: "Nov 2026",
+    title: "A journal asked for three seeds. We had a laptop and €0",
+    note: "Published with Kruthik Jadhav. How we re-ran a paper revision's transformer experiments on free Kaggle GPUs.",
+    cta: "Read it",
+    href: "https://hackernoon.com/a-journal-asked-for-three-seeds-we-had-a-laptop-and-euro0",
+    color: "#9fd0ff",
   },
   {
     role: "Researcher",
