@@ -214,7 +214,7 @@ export const skills = [
   },
   {
     name: "AI / ML",
-    skills: ["Gemini API", "Prompt engineering", "TensorFlow.js", "LLM evaluation", "Reproducible research"],
+    skills: ["scikit-learn", "Machine learning", "Gemini API", "Prompt engineering", "TensorFlow.js", "LLM evaluation", "Reproducible research"],
   },
   {
     name: "Tools",
