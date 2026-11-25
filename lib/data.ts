@@ -123,6 +123,22 @@ const allProjects: Project[] = [
     caseStudy: true,
   },
   {
+    id: "yelp-ml",
+    name: "Which restaurants are about to get worse reviews?",
+    tagline: "Predicting next year's rise in 1-2 star Yelp reviews, and checking whether ML beats a simple rule.",
+    repo: "https://github.com/smadhu6364-beep/baa1112-group3-ml",
+    featured: true,
+    kind: "Data & BI",
+    credit: "DCU MSc group project (5 people); I built the cleaning, models and validation",
+    tags: ["Python", "pandas", "scikit-learn", "Machine learning", "Statistics", "Data visualisation"],
+    stack: ["Python", "pandas", "scikit-learn", "HistGradientBoosting", "Bootstrap CIs"],
+    detail: [
+      "4.72 million Yelp reviews for 52,268 restaurants, turned into 137,894 restaurant-years (2010-2020) with a time-based train, validation and test split to stop leakage.",
+      "Tuned gradient boosting reached a test ROC-AUC of 0.706, only 0.011 above a five-input statistical baseline (95% CI 0.007-0.015): most of the signal is regression to the mean, so we recommended the simple rule first and kept ML as a challenger.",
+      "As a watch list, the top 10% of flagged restaurants saw a real rise 55% of the time, against 34% at random.",
+    ],
+  },
+  {
     id: "irish-property",
     name: "Irish property prices",
     tagline: "How have Irish house prices changed since 2010, and where have they moved most?",
